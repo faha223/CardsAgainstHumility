@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gv_CurrentQuestion"
+    android:theme="@android:style/Theme.Material"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#282828">
+    <CardsAgainstHumility.HorizontalListView
+        android:id="@+id/gv_PlayerHand"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:minWidth="25dp"
+        android:minHeight="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0.0dp" />
+</RelativeLayout>

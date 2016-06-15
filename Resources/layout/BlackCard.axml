@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:theme="@android:style/Theme.Material"
+    android:orientation="vertical"
+    android:layout_width="240dp"
+    android:layout_height="336dp"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:layout_centerInParent="true"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true">
+    <ImageView
+        android:src="@drawable/BlackCard"
+        android:layout_width="240dp"
+        android:layout_height="336dp" />
+    <RelativeLayout
+        android:layout_width="240dp"
+        android:layout_height="336dp">
+        <TextView
+            android:text="What is killing my sex life?"
+            android:id="@+id/bc_CardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:textColor="#fffffe" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="240dp"
+        android:layout_height="336dp">
+        <ImageView
+            android:src="@drawable/logo_black"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_width="34dp"
+            android:layout_height="26dp"
+            android:id="@+id/bc_logo_image"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layerType="software" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="240dp"
+        android:layout_height="336dp">
+        <TextView
+            android:text="Cards Against Humanity"
+            android:id="@+id/bc_logo_text"
+            android:textColor="#fffffe"
+            android:layout_marginLeft="65dp"
+            android:layout_marginBottom="25dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:textSize="8dp"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+</FrameLayout>
