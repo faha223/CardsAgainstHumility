@@ -27,24 +27,6 @@ namespace CardsAgainstHumility
 
         Typeface tf;
 
-        private View SelectedCard
-        {
-            get
-            {
-                return _selectedCardView;
-            }
-            set
-            {
-                if (_selectedCardView != value)
-                {
-                    if (_selectedCardView != null)
-                        _selectedCardView.StartAnimation(deselectedCardAnimation);
-                    _selectedCardView = value;
-                    _selectedCardView.StartAnimation(selectedCardAnimation);
-                }
-            }
-        }
-
         private View CurrentQuestionView;
 
         private Animation selectedCardAnimation
@@ -93,7 +75,7 @@ namespace CardsAgainstHumility
             CurrentQuestionView.LayoutParameters = layoutParams;
             _currentQuestionHolder.AddView(CurrentQuestionView);
             
-            UpdateCurrentQuestion(null);
+            UpdateCurrentQuestion();
 
             UpdatePlayerHand();
 
@@ -106,26 +88,22 @@ namespace CardsAgainstHumility
 
         private void UpdatePlayerHand()
         {
-            RunOnUiThread(() =>
+            if (_playerHandArrayAdapter == null)
             {
-                if (_playerHandArrayAdapter == null)
-                {
-                    _playerHandArrayAdapter = new WhiteCardArrayAdapter(this, SelectCard, CardsAgainstHumility.PlayerHand);
-                    var lvPlayerHand = FindViewById<HorizontalListView>(Resource.Id.gv_PlayerHand);
-                    lvPlayerHand.Adapter = _playerHandArrayAdapter;
-                }
-                else
-                {
-                    _playerHandArrayAdapter.NewData(CardsAgainstHumility.PlayerHand);
-                }
-            });
+                _playerHandArrayAdapter = new WhiteCardArrayAdapter(this, SelectCard, CardsAgainstHumility.PlayerHand);
+                var lvPlayerHand = FindViewById<HorizontalListView>(Resource.Id.gv_PlayerHand);
+                lvPlayerHand.Adapter = _playerHandArrayAdapter;
+            }
+            else
+            {
+                _playerHandArrayAdapter.NewData(CardsAgainstHumility.PlayerHand);
+            }
         }
 
-        private void UpdateCurrentQuestion(BlackCard currentQuestion)
+        private void UpdateCurrentQuestion()
         {
-            RunOnUiThread(() =>
-            {
-                if (currentQuestion == null)
+            var currentQuestion = CardsAgainstHumility.CurrentQuestion;
+            if (currentQuestion == null)
                 CurrentQuestionView.Visibility = ViewStates.Invisible;
             else
             {
@@ -137,7 +115,6 @@ namespace CardsAgainstHumility
                 text.SetTextSize(Android.Util.ComplexUnitType.Dip, currentQuestion.FontSize);
                 CurrentQuestionView.Visibility = ViewStates.Visible;
             }
-            });
         }
 
         protected override void OnDestroy()
@@ -172,8 +149,11 @@ namespace CardsAgainstHumility
         private void OnUpdateGame(object sender, GameUpdateEventArgs args)
         {
             Console.WriteLine("Game Updated");
-            UpdatePlayerHand();
-            UpdateCurrentQuestion(CardsAgainstHumility.CurrentQuestion);
+            RunOnUiThread(() =>
+            {
+                UpdatePlayerHand();
+                UpdateCurrentQuestion();
+            });
         }
 
         private void OnGameError(object sender, EventArgs args)
@@ -183,9 +163,8 @@ namespace CardsAgainstHumility
 
         private void SelectCard(WhiteCard card, View view)
         {
-            Console.WriteLine("\"{0}\" selected", card.Text);
+            Console.WriteLine("\"{0}\" selected", card.Id);
             CardsAgainstHumility.SelectCard(card);
-            SelectedCard = view;
         }
     }
 }

@@ -13,11 +13,9 @@ namespace CardsAgainstHumility
 {
     public class WhiteCardArrayAdapter : ArrayAdapter<WhiteCard>
     {
-        IEnumerable<WhiteCard> _list { get; set; }
+        List<WhiteCard> _list { get; set; }
         private Typeface tf;
         private Action<WhiteCard, View> _onClickAction;
-
-        bool moved = false;
 
         public override int Count
         {
@@ -29,7 +27,7 @@ namespace CardsAgainstHumility
             }
         }
 
-        public WhiteCardArrayAdapter(Context context, Action<WhiteCard, View> OnClickAction, IEnumerable<WhiteCard> list) : base(context, Resource.Layout.WhiteCard)
+        public WhiteCardArrayAdapter(Context context, Action<WhiteCard, View> OnClickAction, List<WhiteCard> list) : base(context, Resource.Layout.WhiteCard)
         {
             _list = list;
             _onClickAction = OnClickAction;
@@ -40,9 +38,16 @@ namespace CardsAgainstHumility
             catch { }
         }
 
-        public void NewData(IEnumerable<WhiteCard> _newList)
+        public void NewData(List<WhiteCard> _newList)
         {
-            _list = _newList;
+            // Remove all cards that aren't in the new list
+            _list.RemoveAll(d => !_list.Select(c => c.Id).Contains(d.Id));
+
+            // Add all the cards that aren't in the old list
+            var toAdd = _newList.Where(d => !_list.Select(c => c.Id).Contains(d.Id));
+            _list.AddRange(toAdd);
+
+            // Notify that the data set has changed
             NotifyDataSetChanged();
         }
 

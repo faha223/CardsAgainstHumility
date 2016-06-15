@@ -85,6 +85,8 @@ namespace CardsAgainstHumility
 
         public static string PlayerName { get; set; }
 
+        public static int AwesomePoints { get; set; }
+
         public static string Host { get; set; }
 
         public static List<WhiteCard> PlayerHand { get; set; }
@@ -458,6 +460,7 @@ namespace CardsAgainstHumility
                     PlayerHand.Add(new WhiteCard(card, 20));
                 }
                 IsCardCzar = player.isCzar;
+                AwesomePoints = player.awesomePoints;
             }
 
             if (!string.IsNullOrWhiteSpace(gameState.currentBlackCard))
