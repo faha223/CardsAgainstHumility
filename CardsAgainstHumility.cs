@@ -12,6 +12,9 @@ using Newtonsoft.Json;
 using CardsAgainstHumility.Events;
 using CardsAgainstHumility.SocketComm;
 using System.Linq;
+using Android.Provider;
+using Android.Content;
+using Android.Database;
 
 namespace CardsAgainstHumility
 {
@@ -20,17 +23,9 @@ namespace CardsAgainstHumility
         GET, POST
     }
 
-    class CardsAgainstHumility
+    public static class CardsAgainstHumility
     {
         private static Random rand = new Random();
-
-        private static DateTime epoch
-        {
-            get
-            {
-                return new DateTime(1970, 1, 1, 0, 0, 0);
-            }
-        }
 
         private static Socket GetSocket(string path, IO.Options options = null)
         {
@@ -42,33 +37,12 @@ namespace CardsAgainstHumility
             return sock;
         }
 
-        private static Socket _gameSocket;
-        private static Socket GameSocket
-        {
-            get
-            {
-                return _gameSocket;
-            }
-            set
-            {
-                _gameSocket = value;
-            }
-        }
+        private static Socket GameSocket;
 
-        private static Socket _lobbySocket;
-        private static Socket LobbySocket
-        {
-            get
-            {
-                return _lobbySocket;
-            }
-            set
-            {
-                _lobbySocket = value;
-            }
-        }
+        private static Socket LobbySocket;
 
         #region Properties
+
         private static string _playerId { get; set; }
 
         public static string PlayerId
@@ -95,9 +69,28 @@ namespace CardsAgainstHumility
 
         public static bool IsCardCzar { get; private set; }
 
-        #endregion
+        #endregion Properties
+
+        public static void InitDefaultValues(Activity activity)
+        {
+            // The Host defaults to my home IP address. I'm hosting a server on 16567.
+            // This is just a modified NodeJS Against Humanity server updated to Socket.IO 1.4.6
+            Host = "http://74.139.199.67:16567/";
+            PlayerName = GetUserName(activity);
+
+            var settings = activity.GetSharedPreferences("CardsAgainstHumility", Android.Content.FileCreationMode.Private);
+
+            if (settings != null)
+            {
+                if (settings.Contains("PlayerName"))
+                    PlayerName = settings.GetString("PlayerName", PlayerName);
+                if (settings.Contains("Host"))
+                    Host = settings.GetString("Host", Host);
+            }
+        }
 
         #region Helper Functions
+
         public static string NewId()
         {
             var sb = new StringBuilder();
@@ -118,9 +111,69 @@ namespace CardsAgainstHumility
             }
             return sb.ToString();
         }
-        #endregion
+
+        private static async Task<JsonValue> JsonRequestAsync(Method method, string route, Dictionary<string, string> parameters)
+        {
+            string content = null;
+            if ((parameters != null) && (parameters.Count > 0))
+            {
+                var sb = new StringBuilder();
+                sb.Append("{");
+                foreach (var item in parameters)
+                {
+                    sb.Append($"\"{item.Key}\":\"{item.Value}\",");
+                }
+                sb.Remove(sb.Length - 1, 1);
+                sb.Append("}");
+                content = sb.ToString();
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(Host);
+
+                HttpResponseMessage response;
+                switch (method)
+                {
+                    case Method.GET:
+                        response = await client.GetAsync(route).ConfigureAwait(false);
+                        break;
+                    case Method.POST:
+                        response = await client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
+                        break;
+                    default:
+                        return null;
+                }
+                if (response.IsSuccessStatusCode)
+                {
+                    return JsonValue.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                }
+                return null;
+            }
+        }
+
+        private static string GetUserName(Activity activity)
+        {
+            Android.Net.Uri uri = ContactsContract.Profile.ContentUri;
+            string[] projection = { ContactsContract.Contacts.InterfaceConsts.DisplayName };
+
+            CursorLoader loader = new CursorLoader(activity, uri, projection, null, null, null);
+            ICursor cursor = (ICursor)loader.LoadInBackground();
+
+            if (cursor != null)
+            {
+                if (cursor.MoveToFirst())
+                {
+                    return cursor.GetString(cursor.GetColumnIndex(projection[0]));
+                }
+            }
+            return Environment.UserName;
+        }
+
+        #endregion Helper Functions
 
         #region Api
+
         public static async Task<List<GameInstance>> ListAsync()
         {
             JsonValue value = await JsonRequestAsync(Method.GET, "list", null).ConfigureAwait(false);
@@ -244,65 +297,8 @@ namespace CardsAgainstHumility
                 UpdateGameState(value);
             }
         }
-        #endregion
 
-        public static void InitDefaultValues(Activity activity)
-        {
-            // The Host defaults to my home IP address. I'm hosting a server on 16567.
-            // This is just a modified NodeJS Against Humanity server updated to Socket.IO 1.4.6
-            Host = "http://74.139.199.67:16567/";
-            PlayerName = $"Player_{rand.Next()}";
-
-            var settings = activity.GetSharedPreferences("CardsAgainstHumility", Android.Content.FileCreationMode.Private);
-
-            if (settings != null)
-            {
-                if (settings.Contains("PlayerName"))
-                    PlayerName = settings.GetString("PlayerName", PlayerName);
-                if (settings.Contains("Host"))
-                    Host = settings.GetString("Host", Host);
-            }
-        }
-
-        private static async Task<JsonValue> JsonRequestAsync(Method method, string route, Dictionary<string, string> parameters)
-        {
-            string content = null;
-            if ((parameters != null) && (parameters.Count > 0))
-            {
-                var sb = new StringBuilder();
-                sb.Append("{");
-                foreach (var item in parameters)
-                {
-                    sb.Append($"\"{item.Key}\":\"{item.Value}\",");
-                }
-                sb.Remove(sb.Length - 1, 1);
-                sb.Append("}");
-                content = sb.ToString();
-            }
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(Host);
-
-                HttpResponseMessage response;
-                switch (method)
-                {
-                    case Method.GET:
-                        response = await client.GetAsync(route).ConfigureAwait(false);
-                        break;
-                    case Method.POST:
-                        response = await client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
-                        break;
-                    default:
-                        return null;
-                }
-                if (response.IsSuccessStatusCode)
-                {
-                    return JsonValue.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-                }
-                return null;
-            }
-        }
+        #endregion Api
 
         private static void UpdateGameState(JsonValue value)
         {
@@ -378,10 +374,11 @@ namespace CardsAgainstHumility
         }
 
         #region Lobby Event Handlers
+
         private static void lobby_SocketConnected(object[] obj)
         {
             Lobby_SocketConnected?.Invoke(null, new EventArgs());
-            _lobbySocket.Emit("enterLobby");
+            LobbySocket.Emit("enterLobby");
         }
 
         public static event EventHandler<EventArgs> Lobby_SocketConnected;
@@ -420,6 +417,7 @@ namespace CardsAgainstHumility
         #endregion Lobby Event Handlers
 
         #region Game Event Handlers
+
         private static void game_SocketConnected(object[] obj)
         {
             Game_SocketConnected?.Invoke(null, new EventArgs());
@@ -479,6 +477,7 @@ namespace CardsAgainstHumility
         }
 
         public static event EventHandler<EventArgs> Game_Error;
+
         #endregion Game Event Handlers
     }
 }

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="CardsAgainstHumility" android:versionCode="1" android:versionName="1.0" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="CardsAgainstHumility.CardsAgainstHumility" android:versionCode="1" android:versionName="1.0" android:installLocation="auto">
 	<uses-sdk />
+	<uses-permission android:name="android.permission.READ_CONTACTS" />
 	<application android:label="Cards Against Humility" android:icon="@drawable/Icon"></application>
 </manifest>
