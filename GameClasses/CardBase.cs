@@ -9,7 +9,8 @@ namespace CardsAgainstHumility.GameClasses
         {
             get
             {
-                return _text.Replace("_", "_______");
+                
+                return (_text == null) ? string.Empty : _text.Replace("_", "_______");
             }
             protected set
             {

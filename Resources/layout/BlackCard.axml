@@ -45,7 +45,7 @@
         android:layout_width="240dp"
         android:layout_height="336dp">
         <TextView
-            android:text="Cards Against Humanity"
+            android:text="Cards Against Humility"
             android:id="@+id/bc_logo_text"
             android:textColor="#fffffe"
             android:layout_marginLeft="65dp"

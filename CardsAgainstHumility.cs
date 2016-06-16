@@ -37,9 +37,7 @@ namespace CardsAgainstHumility
             return sock;
         }
 
-        private static Socket GameSocket;
-
-        private static Socket LobbySocket;
+        private static Socket Socket;
 
         #region Properties
 
@@ -61,13 +59,25 @@ namespace CardsAgainstHumility
 
         public static int AwesomePoints { get; set; }
 
+        public static string SelectedCard { get; set; }
+
         public static string Host { get; set; }
 
         public static List<WhiteCard> PlayerHand { get; set; }
 
+        public static List<WhiteCard> PlayedCards { get; set; }
+
         public static BlackCard CurrentQuestion { get; set; }
 
         public static bool IsCardCzar { get; private set; }
+
+        public static bool GameStarted { get; private set; }
+
+        public static bool ReadyToSelectWinner { get; private set; }
+
+        public static bool ReadyForReview { get; private set; }
+
+        public static List<string> PlayersNotYetSubmitted { get; private set; }
 
         #endregion Properties
 
@@ -132,18 +142,28 @@ namespace CardsAgainstHumility
             {
                 client.BaseAddress = new Uri(Host);
 
-                HttpResponseMessage response;
-                switch (method)
+                HttpResponseMessage response = null;
+
+                try
                 {
-                    case Method.GET:
-                        response = await client.GetAsync(route).ConfigureAwait(false);
-                        break;
-                    case Method.POST:
-                        response = await client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
-                        break;
-                    default:
-                        return null;
+                    switch (method)
+                    {
+                        case Method.GET:
+                            response = await client.GetAsync(route).ConfigureAwait(false);
+                            break;
+                        case Method.POST:
+                            response = await client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
+                            break;
+                        default:
+                            return null;
+                    }
                 }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("An exception occurred: {0}", ex.Message);
+                    return null;
+                }
+
                 if (response.IsSuccessStatusCode)
                 {
                     return JsonValue.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
@@ -209,7 +229,7 @@ namespace CardsAgainstHumility
             };
         }
 
-        public static async Task<GameInstance> JoinGame(string id)
+        public static async Task JoinGame(string id)
         {
             var param = new Dictionary<string, string>();
             GameId = id;
@@ -217,21 +237,13 @@ namespace CardsAgainstHumility
             param.Add("playerId", PlayerId);
             param.Add("playerName", PlayerName);
 
-            JsonValue value = await JsonRequestAsync(Method.POST, "joingame", param).ConfigureAwait(false);
-            var gi = new GameInstance();
+            var value = JsonRequestAsync(Method.POST, "joingame", param).ConfigureAwait(false);
 
-            if (value.ContainsKey("id"))
-            {
-                gi.Name = (value.ContainsKey("name") ? (string)value["name"] : string.Empty);
-                gi.Players = (value.ContainsKey("players") ? value["players"].Count : 0);
-                gi.MaxPlayers = (value.ContainsKey("maxPlayers") ? (int)value["maxPlayers"] : 10);
-                gi.Id = value["id"];
-            }
+            var gameState = JsonConvert.DeserializeObject<GameState>((await value).ToString());
 
-            UpdateGameState(value);
             ConnectToGame();
 
-            return gi;
+            UpdateGameState(gameState);
         }
 
         public static async void DepartGame()
@@ -244,17 +256,8 @@ namespace CardsAgainstHumility
 
                 await JsonRequestAsync(Method.POST, "departgame", parameters).ConfigureAwait(false);
                 GameId = null;
-                if(GameSocket != null)
-                {
-                    var sock = GameSocket;
-                    sock.Close();
-                    sock.Off(Socket.EventConnect, game_SocketConnected);
-                    sock.Off(Socket.EventConnectError, game_SocketConnectError);
-                    sock.Off(Socket.EventConnectTimeout, game_SocketConnectTimeout);
-                    sock.Off("updateGame", game_UpdateGame);
-                    sock.Off("gameError", game_GameError);
-                    GameSocket = null;
-                }
+
+                DisconnectSocket();
             }
         }
 
@@ -262,26 +265,32 @@ namespace CardsAgainstHumility
         {
             if (GameId != null)
             {
+                SelectedCard = whiteCard.Id;
+
                 var param = new Dictionary<string, string>();
                 param.Add("gameId", GameId);
                 param.Add("playerId", PlayerId);
                 param.Add("whiteCardId", whiteCard.Id);
 
-                JsonValue value = await JsonRequestAsync(Method.POST, "selectCard", param).ConfigureAwait(false);
-                UpdateGameState(value);
+                //JsonValue value = 
+                await JsonRequestAsync(Method.POST, "selectCard", param).ConfigureAwait(false);
+                //var gameState = JsonConvert.DeserializeObject<GameState>(value.ToString());
+                //UpdateGameState(gameState);
             }
         }
 
-        public static async void SelectWinner(string card)
+        public static async void SelectWinner(WhiteCard card)
         {
             if (GameId != null)
             {
                 var param = new Dictionary<string, string>();
                 param.Add("gameId", GameId);
-                param.Add("cardId", card);
+                param.Add("cardId", card.Id);
 
-                JsonValue value = await JsonRequestAsync(Method.POST, "selectWinner", param).ConfigureAwait(false);
-                UpdateGameState(value);
+                //JsonValue value = 
+                await JsonRequestAsync(Method.POST, "selectWinner", param).ConfigureAwait(false);
+                //var gameState = JsonConvert.DeserializeObject<GameState>(value.ToString());
+                //UpdateGameState(gameState);
             }
         }
 
@@ -293,84 +302,89 @@ namespace CardsAgainstHumility
                 param.Add("playerId", PlayerId);
                 param.Add("gameId", GameId);
 
-                JsonValue value = await JsonRequestAsync(Method.POST, "readyForNextRound", param).ConfigureAwait(false);
-                UpdateGameState(value);
+                //JsonValue value = 
+                await JsonRequestAsync(Method.POST, "readyForNextRound", param).ConfigureAwait(false);
+                //var gameState = JsonConvert.DeserializeObject<GameState>(value.ToString());
+                //UpdateGameState(gameState);
             }
         }
 
         #endregion Api
 
-        private static void UpdateGameState(JsonValue value)
+        private static void UpdateGameState(GameState gameState)
         {
-            if (PlayerHand == null)
-                PlayerHand = new List<WhiteCard>();
-            PlayerHand.Clear();
-            foreach (JsonValue player in value["players"])
+            var player = gameState.players.SingleOrDefault(p => p.id == PlayerId);
+            PlayerHand = new List<WhiteCard>();
+            GameStarted = gameState.isStarted;
+
+            if (player != null)
             {
-                if (player["id"] == PlayerId)
+                foreach (var card in player.cards)
                 {
-                    foreach (JsonValue card in player["cards"])
-                    {
-                        PlayerHand.Add(new WhiteCard((string)card, 20));
-                    }
+                    PlayerHand.Add(new WhiteCard(card, 20));
                 }
+                IsCardCzar = player.isCzar;
+                AwesomePoints = player.awesomePoints;
+                SelectedCard = player.selectedWhiteCardId;
             }
-            if (!string.IsNullOrEmpty(value["currentBlackCard"]))
+
+            PlayedCards = new List<WhiteCard>();
+            foreach (var card in gameState.players.Where(c => !string.IsNullOrEmpty(c.selectedWhiteCardId)).Select(c => c.selectedWhiteCardId))
             {
-                CurrentQuestion = new BlackCard(value["currentBlackCard"], 20, 1, 0);
+                PlayedCards.Add(new WhiteCard(card, 20));
             }
+
+            PlayersNotYetSubmitted = gameState.players.Where(c => string.IsNullOrEmpty(c.selectedWhiteCardId) && c.id != _playerId).Select(c => c.name).ToList();
+
+            if (!string.IsNullOrWhiteSpace(gameState.currentBlackCard))
+                CurrentQuestion = new BlackCard(gameState.currentBlackCard, 20, 1, 0);
             else
                 CurrentQuestion = null;
+
+            ReadyToSelectWinner = gameState.isReadyForScoring;
+            ReadyForReview = gameState.isReadyForReview;
+
+            Game_Update?.Invoke(null, new GameUpdateEventArgs(gameState));
         }
 
         public static void ConnectToLobby()
         {
-            if (LobbySocket == null)
-            {
-                var sock = GetSocket($"{Host}lobby");
-                sock.On(Socket.EventConnect, lobby_SocketConnected);
-                sock.On(Socket.EventConnectError, lobby_SocketConnectError);
-                sock.On(Socket.EventConnectTimeout, lobby_SocketConnectTimeout);
-                sock.On("lobbyJoin", lobby_LobbyJoin);
-                sock.On("gameAdded", lobby_GameAdded);
-                LobbySocket = sock;
+            if (Socket != null)
+                DisconnectSocket();
 
-                sock.Connect();
-            }
+            var sock = GetSocket($"{Host}lobby");
+            sock.On(Socket.EventConnect, lobby_SocketConnected);
+            sock.On(Socket.EventConnectError, lobby_SocketConnectError);
+            sock.On(Socket.EventConnectTimeout, lobby_SocketConnectTimeout);
+            sock.On("lobbyJoin", lobby_LobbyJoin);
+            sock.On("gameAdded", lobby_GameAdded);
+            Socket = sock;
+            sock.Connect();
         }
 
-        public static void DisconnectLobby()
+        public static void DisconnectSocket()
         {
-            if(LobbySocket != null)
-            {
-                var sock = LobbySocket;
-                sock.Close();
-                sock.Off(Socket.EventConnect, lobby_SocketConnected);
-                sock.Off(Socket.EventConnectError, lobby_SocketConnectError);
-                sock.Off(Socket.EventConnectTimeout, lobby_SocketConnectTimeout);
-                sock.Off("lobbyJoin", lobby_LobbyJoin);
-                sock.Off("gameAdded", lobby_GameAdded);
-                LobbySocket = null;
-            }
+            Socket.Close();
+            Socket.Dispose();
+            Socket = null;
         }
 
         private static void ConnectToGame()
         {
-            if (GameSocket == null)
-            {
-                var sock = GetSocket(Host, new IO.Options()
-                {
-                    Query = $"playerId={PlayerId}"
-                });
-                sock.On(Socket.EventConnect, game_SocketConnected);
-                sock.On(Socket.EventConnectError, game_SocketConnectError);
-                sock.On(Socket.EventConnectTimeout, game_SocketConnectTimeout);
-                sock.On("updateGame", game_UpdateGame);
-                sock.On("gameError", game_GameError);
-                GameSocket = sock;
+            if (Socket != null)
+                DisconnectSocket();
 
-                sock.Connect();
-            }
+            var sock = GetSocket(Host, new IO.Options()
+            {
+                Query = $"playerId={PlayerId}"
+            });
+            Socket = sock;
+            sock.Connect();
+            sock.On(Socket.EventConnect, game_SocketConnected);
+            sock.On(Socket.EventConnectError, game_SocketConnectError);
+            sock.On(Socket.EventConnectTimeout, game_SocketConnectTimeout);
+            sock.On("updateGame", game_UpdateGame);
+            sock.On("gameError", game_GameError);
         }
 
         #region Lobby Event Handlers
@@ -378,7 +392,7 @@ namespace CardsAgainstHumility
         private static void lobby_SocketConnected(object[] obj)
         {
             Lobby_SocketConnected?.Invoke(null, new EventArgs());
-            LobbySocket.Emit("enterLobby");
+            Socket.Emit("enterLobby");
         }
 
         public static event EventHandler<EventArgs> Lobby_SocketConnected;
@@ -421,7 +435,7 @@ namespace CardsAgainstHumility
         private static void game_SocketConnected(object[] obj)
         {
             Game_SocketConnected?.Invoke(null, new EventArgs());
-            GameSocket.Emit("connectToGame", new connectToGameArgs()
+            Socket.Emit("connectToGame", new connectToGameArgs()
             {
                 gameId = GameId,
                 playerId = PlayerId,
@@ -448,25 +462,7 @@ namespace CardsAgainstHumility
         private static void game_UpdateGame(object[] obj)
         {
             var gameState = JsonConvert.DeserializeObject<GameState>(obj[0].ToString());
-            var player = gameState.players.SingleOrDefault(p => p.id == PlayerId);
-            PlayerHand = new List<WhiteCard>();
-
-            if (player != null)
-            {
-                foreach (var card in player.cards)
-                {
-                    PlayerHand.Add(new WhiteCard(card, 20));
-                }
-                IsCardCzar = player.isCzar;
-                AwesomePoints = player.awesomePoints;
-            }
-
-            if (!string.IsNullOrWhiteSpace(gameState.currentBlackCard))
-                CurrentQuestion = new BlackCard(gameState.currentBlackCard, 20, 1, 0);
-            else
-                CurrentQuestion = null;
-
-            Game_Update?.Invoke(null, new GameUpdateEventArgs(gameState));
+            UpdateGameState(gameState);
         }
 
         public static event EventHandler<GameUpdateEventArgs> Game_Update;

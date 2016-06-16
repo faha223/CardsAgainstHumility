@@ -3,13 +3,7 @@ using Android.OS;
 using Android.Views;
 using Android.Views.Animations;
 using CardsAgainstHumility.GameClasses;
-using CardsAgainstHumility.SocketComm;
-using Newtonsoft.Json;
-using Org.Json;
-using SocketIO.Client;
 using System;
-using System.Linq;
-using System.Collections.Generic;
 using CardsAgainstHumility.Events;
 using Android.Widget;
 using Android.Graphics;
@@ -21,9 +15,12 @@ namespace CardsAgainstHumility
     [Activity(Label = "GameActivity", Theme = "@android:style/Theme.NoTitleBar")]
     public class GameActivity : Activity
     {
-        View _selectedCardView;
+        HorizontalListView PlayerHandView;
+        TextView cardCzarIndicator;
+        Button readyButton;
 
         WhiteCardArrayAdapter _playerHandArrayAdapter;
+        WhiteCardArrayAdapter _playedCardsArrayAdapter;
 
         Typeface tf;
 
@@ -55,7 +52,7 @@ namespace CardsAgainstHumility
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.GameView);
-
+            
             try
             {
                 tf = Typeface.CreateFromAsset(Assets, "Helvetica-Bold.ttf");
@@ -74,10 +71,10 @@ namespace CardsAgainstHumility
             layoutParams.SetMargins(0, (int)Math.Round(TypedValue.ApplyDimension(ComplexUnitType.Dip, 50, Resources.DisplayMetrics)), 0, 0);
             CurrentQuestionView.LayoutParameters = layoutParams;
             _currentQuestionHolder.AddView(CurrentQuestionView);
-            
-            UpdateCurrentQuestion();
 
+            UpdateCurrentQuestion();
             UpdatePlayerHand();
+            UpdateReadyButton();
 
             CardsAgainstHumility.Game_SocketConnected += OnSocketConnected;
             CardsAgainstHumility.Game_SocketConnectError += OnSocketConnectError;
@@ -88,16 +85,31 @@ namespace CardsAgainstHumility
 
         private void UpdatePlayerHand()
         {
+            var playerHand = ((CardsAgainstHumility.IsCardCzar && CardsAgainstHumility.GameStarted) ? CardsAgainstHumility.PlayedCards : CardsAgainstHumility.PlayerHand);
             if (_playerHandArrayAdapter == null)
             {
-                _playerHandArrayAdapter = new WhiteCardArrayAdapter(this, SelectCard, CardsAgainstHumility.PlayerHand);
-                var lvPlayerHand = FindViewById<HorizontalListView>(Resource.Id.gv_PlayerHand);
-                lvPlayerHand.Adapter = _playerHandArrayAdapter;
+                _playerHandArrayAdapter = new WhiteCardArrayAdapter(this, SelectCard, playerHand);
+                PlayerHandView = FindViewById<HorizontalListView>(Resource.Id.gv_PlayerHand);
+                PlayerHandView.Adapter = _playerHandArrayAdapter;
+                PlayerHandView.ItemSelected += (sender, args) =>
+                {
+                    if ((args.Position >= 0) && (args.Position < CardsAgainstHumility.PlayerHand.Count))
+                    {
+                        SelectCard(playerHand[args.Position], args.View);
+                    }
+                };
             }
             else
             {
-                _playerHandArrayAdapter.NewData(CardsAgainstHumility.PlayerHand);
+                _playerHandArrayAdapter.NewData(playerHand);
             }
+            if (cardCzarIndicator == null)
+            {
+                cardCzarIndicator = FindViewById<TextView>(Resource.Id.gv_CardCzar);
+                if (tf != null)
+                    cardCzarIndicator.SetTypeface(tf, TypefaceStyle.Normal);
+            }
+            cardCzarIndicator.Visibility = (CardsAgainstHumility.IsCardCzar ? ViewStates.Visible : ViewStates.Invisible);
         }
 
         private void UpdateCurrentQuestion()
@@ -109,12 +121,29 @@ namespace CardsAgainstHumility
             {
                 var text = CurrentQuestionView.FindViewById<TextView>(Resource.Id.bc_CardText);
                 if (tf != null)
+                {
+                    var txtlogo = CurrentQuestionView.FindViewById<TextView>(Resource.Id.bc_logo_text);
+                    txtlogo.SetTypeface(tf, TypefaceStyle.Normal);
                     text.SetTypeface(tf, TypefaceStyle.Normal);
+                }
 
                 text.Text = WebUtility.HtmlDecode(currentQuestion.Text);
                 text.SetTextSize(Android.Util.ComplexUnitType.Dip, currentQuestion.FontSize);
                 CurrentQuestionView.Visibility = ViewStates.Visible;
             }
+        }
+
+        private void UpdateReadyButton()
+        {
+            if (readyButton == null)
+            {
+                readyButton = FindViewById<Button>(Resource.Id.gv_ReadyButton);
+                readyButton.Click += (sender, args) =>
+                {
+                    CardsAgainstHumility.ReadyForNextRound();
+                };
+            }
+            readyButton.Visibility = (CardsAgainstHumility.ReadyForReview) ? ViewStates.Visible : ViewStates.Invisible;
         }
 
         protected override void OnDestroy()
@@ -153,6 +182,7 @@ namespace CardsAgainstHumility
             {
                 UpdatePlayerHand();
                 UpdateCurrentQuestion();
+                UpdateReadyButton();
             });
         }
 
@@ -163,8 +193,30 @@ namespace CardsAgainstHumility
 
         private void SelectCard(WhiteCard card, View view)
         {
-            Console.WriteLine("\"{0}\" selected", card.Id);
-            CardsAgainstHumility.SelectCard(card);
+            if (CardsAgainstHumility.GameStarted)
+            {
+                if (CardsAgainstHumility.IsCardCzar)
+                {
+                    if (CardsAgainstHumility.ReadyToSelectWinner)
+                        CardsAgainstHumility.SelectWinner(card);
+                    else
+                        RunOnUiThread(() =>
+                        {
+                            var builder = new AlertDialog.Builder(this);
+                            builder.SetTitle("Still waiting on");
+                            builder.SetMessage(string.Join(System.Environment.NewLine, CardsAgainstHumility.PlayersNotYetSubmitted));
+                            builder.Create().Show();
+                        });
+                }
+                else
+                {
+                    if (CardsAgainstHumility.SelectedCard == null)
+                    {
+                        Console.WriteLine("User played \"{0}\" ", card.Id);
+                        CardsAgainstHumility.SelectCard(card);
+                    }
+                }
+            }
         }
     }
 }

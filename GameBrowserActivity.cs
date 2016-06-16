@@ -15,32 +15,18 @@ namespace CardsAgainstHumility
     [Activity(Label = "MatchBrowserActivity", Theme = "@android:style/Theme.NoTitleBar")]
     public class GameBrowserActivity : Activity
     {
-        private Socket socket;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.GameBrowser);
-
             ThreadPool.QueueUserWorkItem(o => RefreshGamesList());
-
-            // Get our button from the layout resource,
-            // and attach an event to it
-
-            //Button quitButton = FindViewById<Button>(Resource.Id.QuitGame);
-
-            //quitButton.Click += delegate
-            //{
-            //    Finish();
-            //};
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-
             CardsAgainstHumility.Lobby_SocketConnected -= OnSocketConnected;
             CardsAgainstHumility.Lobby_SocketConnectError -= OnSocketConnectError;
             CardsAgainstHumility.Lobby_SocketConnectTimeout -= OnSocketConnectTimeout;
@@ -52,9 +38,9 @@ namespace CardsAgainstHumility
             RunOnUiThread(() =>
             {
                 TextView txtStatus = FindViewById<TextView>(Resource.Id.gb_Status);
-                txtStatus.Text = "Refreshing";
+                if(txtStatus != null) txtStatus.Text = "Refreshing";
                 ListView gameList = FindViewById<ListView>(Resource.Id.gb_List);
-                gameList.Adapter = new GameInstanceArrayAdapter(this, null, new GameInstance[] { });
+                if(gameList != null) gameList.Adapter = new GameInstanceArrayAdapter(this, null, new GameInstance[] { });
             });
             try
             {
@@ -64,14 +50,15 @@ namespace CardsAgainstHumility
                 {
                     ListView gameList = FindViewById<ListView>(Resource.Id.gb_List);
                     TextView txtStatus = FindViewById<TextView>(Resource.Id.gb_Status);
-                    gameList.Adapter = new GameInstanceArrayAdapter(this, JoinGame, games);
-                    txtStatus.Text = $"{((games.Count > 0) ? games.Count.ToString() : "No")} Game{(games.Count == 1 ? "" : "s")} Found";
+                    if(gameList != null) gameList.Adapter = new GameInstanceArrayAdapter(this, JoinGame, games);
+                    if(txtStatus != null) txtStatus.Text = $"{((games.Count > 0) ? games.Count.ToString() : "No")} Game{(games.Count == 1 ? "" : "s")} Found";
 
                     CardsAgainstHumility.Lobby_SocketConnected += OnSocketConnected;
                     CardsAgainstHumility.Lobby_SocketConnectError += OnSocketConnectError;
                     CardsAgainstHumility.Lobby_SocketConnectTimeout += OnSocketConnectTimeout;
                     CardsAgainstHumility.Lobby_Join += OnLobbyJoin;
                     CardsAgainstHumility.Lobby_GameAdded += OnGameAdded;
+                    CardsAgainstHumility.ConnectToLobby();
                 });
             }
             catch (Exception ex)
@@ -80,7 +67,7 @@ namespace CardsAgainstHumility
                 RunOnUiThread(() =>
                 {
                     TextView txtStatus = FindViewById<TextView>(Resource.Id.gb_Status);
-                    txtStatus.Text = ("Connection Error");
+                    if(txtStatus != null) txtStatus.Text = ("Connection Error");
                 });
             }
         }
@@ -116,7 +103,7 @@ namespace CardsAgainstHumility
 
         private void OnLobbyJoin(object sender, EventArgs args)
         {
-            //Console.WriteLine(obj[0].ToString());
+            Console.WriteLine("Lobby Joined");
         }
 
         private void OnGameAdded(object sender, GameAddedEventArgs args)
@@ -125,8 +112,8 @@ namespace CardsAgainstHumility
             {
                 ListView gameList = FindViewById<ListView>(Resource.Id.gb_List);
                 TextView txtStatus = FindViewById<TextView>(Resource.Id.gb_Status);
-                gameList.Adapter = new GameInstanceArrayAdapter(this, JoinGame, args.Games);
-                txtStatus.Text = $"{((args.Games.Count > 0) ? args.Games.Count.ToString() : "No")} Game{(args.Games.Count == 1 ? "" : "s")} Found";
+                if(gameList != null) gameList.Adapter = new GameInstanceArrayAdapter(this, JoinGame, args.Games);
+                if(txtStatus != null) txtStatus.Text = $"{((args.Games.Count > 0) ? args.Games.Count.ToString() : "No")} Game{(args.Games.Count == 1 ? "" : "s")} Found";
             });
         }
     }

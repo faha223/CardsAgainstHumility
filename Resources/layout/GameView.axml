@@ -6,6 +6,12 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#282828">
+    <TextView
+        android:id="@+id/gv_CardCzar"
+        android:text="You are the Card Czar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true" />
     <CardsAgainstHumility.HorizontalListView
         android:id="@+id/gv_PlayerHand"
         android:clipChildren="false"
@@ -16,4 +22,11 @@
         android:layout_height="200dp"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="0.0dp" />
+    <Button
+        android:id="@+id/gv_ReadyButton"
+        android:layout_height="48dp"
+        android:layout_width="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:text="Ready" />
 </RelativeLayout>

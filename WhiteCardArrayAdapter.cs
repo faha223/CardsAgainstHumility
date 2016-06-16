@@ -29,6 +29,8 @@ namespace CardsAgainstHumility
 
         public WhiteCardArrayAdapter(Context context, Action<WhiteCard, View> OnClickAction, List<WhiteCard> list) : base(context, Resource.Layout.WhiteCard)
         {
+            if (list == null)
+                list = new List<WhiteCard>();
             _list = list;
             _onClickAction = OnClickAction;
             try
@@ -40,12 +42,24 @@ namespace CardsAgainstHumility
 
         public void NewData(List<WhiteCard> _newList)
         {
-            // Remove all cards that aren't in the new list
-            _list.RemoveAll(d => !_list.Select(c => c.Id).Contains(d.Id));
+            if (_newList == null)
+                return;
+            lock (_list)
+            {
+                if (_newList.Count == 0)
+                {
+                    _list.Clear();
+                }
+                else
+                {
+                    // Remove all cards that aren't in the new list
+                    _list.RemoveAll(d => !_newList.Select(c => c.Id).Contains(d.Id));
 
-            // Add all the cards that aren't in the old list
-            var toAdd = _newList.Where(d => !_list.Select(c => c.Id).Contains(d.Id));
-            _list.AddRange(toAdd);
+                    // Add all the cards that aren't in the old list
+                    var toAdd = _newList.Where(d => !_list.Select(c => c.Id).Contains(d.Id));
+                    _list.AddRange(toAdd);
+                }
+            }
 
             // Notify that the data set has changed
             NotifyDataSetChanged();
@@ -71,10 +85,10 @@ namespace CardsAgainstHumility
                 txtText.Text = WebUtility.HtmlDecode(item.Text);
                 txtText.SetTextSize(Android.Util.ComplexUnitType.Dip, item.FontSize);
 
-                v.Click += (sender, args) =>
-                {
-                    _onClickAction?.Invoke(item, v);
-                };
+                //v.Click += (sender, args) =>
+                //{
+                //    _onClickAction?.Invoke(item, v);
+                //};
             }
 
             return v;
