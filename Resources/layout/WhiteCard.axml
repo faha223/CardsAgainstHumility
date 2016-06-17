@@ -17,6 +17,7 @@
         android:layout_height="336dp">
         <TextView
             android:text="The Biggest, Blackest Dick."
+            android:breakStrategy="simple"
             android:id="@+id/wc_CardText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

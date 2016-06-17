@@ -16,11 +16,32 @@ namespace CardsAgainstHumility
     public class GameActivity : Activity
     {
         HorizontalListView PlayerHandView;
-        TextView cardCzarIndicator;
+        TextView statusIndicator;
         Button readyButton;
-
         WhiteCardArrayAdapter _playerHandArrayAdapter;
-        WhiteCardArrayAdapter _playedCardsArrayAdapter;
+
+        private string Status
+        {
+            get
+            {
+                if(statusIndicator != null)
+                    return statusIndicator.Text;
+                return null;
+            }
+            set
+            {
+                if (statusIndicator == null)
+                    return;
+                if (statusIndicator.Text != value)
+                {
+                    statusIndicator.Text = value;
+                    if (string.IsNullOrWhiteSpace(statusIndicator.Text))
+                        statusIndicator.Visibility = ViewStates.Invisible;
+                    else
+                        statusIndicator.Visibility = ViewStates.Visible;
+                }
+            }
+        }
 
         Typeface tf;
 
@@ -103,33 +124,41 @@ namespace CardsAgainstHumility
             {
                 _playerHandArrayAdapter.NewData(playerHand);
             }
-            if (cardCzarIndicator == null)
+            if (statusIndicator == null)
             {
-                cardCzarIndicator = FindViewById<TextView>(Resource.Id.gv_CardCzar);
+                statusIndicator = FindViewById<TextView>(Resource.Id.gv_CardCzar);
                 if (tf != null)
-                    cardCzarIndicator.SetTypeface(tf, TypefaceStyle.Normal);
+                    statusIndicator.SetTypeface(tf, TypefaceStyle.Normal);
             }
-            cardCzarIndicator.Visibility = (CardsAgainstHumility.IsCardCzar ? ViewStates.Visible : ViewStates.Invisible);
+            if(CardsAgainstHumility.IsCardCzar)
+                Status = "You are the Card Czar";
+            else if(!CardsAgainstHumility.GameStarted)
+                Status = "Waiting for more Players";
+            else 
+                Status = null;
         }
 
         private void UpdateCurrentQuestion()
         {
             var currentQuestion = CardsAgainstHumility.CurrentQuestion;
-            if (currentQuestion == null)
-                CurrentQuestionView.Visibility = ViewStates.Invisible;
-            else
+            if (CurrentQuestionView != null)
             {
-                var text = CurrentQuestionView.FindViewById<TextView>(Resource.Id.bc_CardText);
-                if (tf != null)
+                if (currentQuestion == null)
+                    CurrentQuestionView.Visibility = ViewStates.Invisible;
+                else
                 {
-                    var txtlogo = CurrentQuestionView.FindViewById<TextView>(Resource.Id.bc_logo_text);
-                    txtlogo.SetTypeface(tf, TypefaceStyle.Normal);
-                    text.SetTypeface(tf, TypefaceStyle.Normal);
-                }
+                    var text = CurrentQuestionView.FindViewById<TextView>(Resource.Id.bc_CardText);
+                    if (tf != null)
+                    {
+                        var txtlogo = CurrentQuestionView.FindViewById<TextView>(Resource.Id.bc_logo_text);
+                        txtlogo.SetTypeface(tf, TypefaceStyle.Normal);
+                        text.SetTypeface(tf, TypefaceStyle.Normal);
+                    }
 
-                text.Text = WebUtility.HtmlDecode(currentQuestion.Text);
-                text.SetTextSize(Android.Util.ComplexUnitType.Dip, currentQuestion.FontSize);
-                CurrentQuestionView.Visibility = ViewStates.Visible;
+                    text.Text = WebUtility.HtmlDecode(currentQuestion.Text);
+                    text.SetTextSize(Android.Util.ComplexUnitType.Dip, currentQuestion.FontSize);
+                    CurrentQuestionView.Visibility = ViewStates.Visible;
+                }
             }
         }
 

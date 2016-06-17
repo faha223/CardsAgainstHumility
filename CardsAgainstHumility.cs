@@ -27,18 +27,6 @@ namespace CardsAgainstHumility
     {
         private static Random rand = new Random();
 
-        private static Socket GetSocket(string path, IO.Options options = null)
-        {
-            Socket sock;
-            if (options == null)
-                sock = IO.Socket(path);
-            else
-                sock = IO.Socket(path, options);
-            return sock;
-        }
-
-        private static Socket Socket;
-
         #region Properties
 
         private static string _playerId { get; set; }
@@ -63,6 +51,8 @@ namespace CardsAgainstHumility
 
         public static string Host { get; set; }
 
+        public static int Port { get; set; }
+
         public static List<WhiteCard> PlayerHand { get; set; }
 
         public static List<WhiteCard> PlayedCards { get; set; }
@@ -80,24 +70,6 @@ namespace CardsAgainstHumility
         public static List<string> PlayersNotYetSubmitted { get; private set; }
 
         #endregion Properties
-
-        public static void InitDefaultValues(Activity activity)
-        {
-            // The Host defaults to my home IP address. I'm hosting a server on 16567.
-            // This is just a modified NodeJS Against Humanity server updated to Socket.IO 1.4.6
-            Host = "http://74.139.199.67:16567/";
-            PlayerName = GetUserName(activity);
-
-            var settings = activity.GetSharedPreferences("CardsAgainstHumility", Android.Content.FileCreationMode.Private);
-
-            if (settings != null)
-            {
-                if (settings.Contains("PlayerName"))
-                    PlayerName = settings.GetString("PlayerName", PlayerName);
-                if (settings.Contains("Host"))
-                    Host = settings.GetString("Host", Host);
-            }
-        }
 
         #region Helper Functions
 
@@ -122,25 +94,17 @@ namespace CardsAgainstHumility
             return sb.ToString();
         }
 
-        private static async Task<JsonValue> JsonRequestAsync(Method method, string route, Dictionary<string, string> parameters)
+        private static async Task<JsonValue> JsonRequestAsync(Method method, string route, object param, bool expectResponse = true)
         {
             string content = null;
-            if ((parameters != null) && (parameters.Count > 0))
+            if(method == Method.POST && param != null)
             {
-                var sb = new StringBuilder();
-                sb.Append("{");
-                foreach (var item in parameters)
-                {
-                    sb.Append($"\"{item.Key}\":\"{item.Value}\",");
-                }
-                sb.Remove(sb.Length - 1, 1);
-                sb.Append("}");
-                content = sb.ToString();
+                content = JsonConvert.SerializeObject(param);
             }
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(Host);
+                client.BaseAddress = new Uri($"{Host}:{Port}");
 
                 HttpResponseMessage response = null;
 
@@ -152,13 +116,16 @@ namespace CardsAgainstHumility
                             response = await client.GetAsync(route).ConfigureAwait(false);
                             break;
                         case Method.POST:
-                            response = await client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
+                            if (expectResponse)
+                                response = await client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
+                            else
+                                client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).Wait();
                             break;
                         default:
                             return null;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine("An exception occurred: {0}", ex.Message);
                     return null;
@@ -192,124 +159,26 @@ namespace CardsAgainstHumility
 
         #endregion Helper Functions
 
-        #region Api
-
-        public static async Task<List<GameInstance>> ListAsync()
+        public static void InitDefaultValues(Activity activity)
         {
-            JsonValue value = await JsonRequestAsync(Method.GET, "list", null).ConfigureAwait(false);
-            var instances = new List<GameInstance>();
-            foreach (JsonObject item in value)
+            // The Host defaults to my home IP address. I'm hosting a server on 16567.
+            // This is just a modified NodeJS Against Humanity server updated to Socket.IO 1.4.6
+            Host = "http://74.139.199.67";
+            Port = 16567;
+            PlayerName = GetUserName(activity);
+
+            var settings = activity.GetSharedPreferences("CardsAgainstHumility", Android.Content.FileCreationMode.Private);
+
+            if (settings != null)
             {
-                if (item.ContainsKey("id"))
-                {
-                    instances.Add(new GameInstance
-                    {
-                        Id = item["id"],
-                        Name = item.ContainsKey("name") ? (string)item["name"] : "(no name)",
-                        Players = item.ContainsKey("players") ? (int)item["players"] : 0,
-                        MaxPlayers = item.ContainsKey("maxPlayers") ? (int)item["maxPlayers"] : 10
-                    });
-                }
-            }
-            return instances;
-        }
-
-        public static async Task<GameInstance> Add(string id)
-        {
-            var param = new Dictionary<string, string>();
-            param.Add("name", string.Format("{0}'s Game", PlayerName));
-            param.Add("id", id);
-            JsonValue value = await JsonRequestAsync(Method.POST, "add", param).ConfigureAwait(false);
-            return new GameInstance()
-            {
-                Name = value["name"],
-                Id = value["id"],
-                Players = value["players"].Count,
-                MaxPlayers = value["maxPlayers"]
-            };
-        }
-
-        public static async Task JoinGame(string id)
-        {
-            var param = new Dictionary<string, string>();
-            GameId = id;
-            param.Add("gameId", id);
-            param.Add("playerId", PlayerId);
-            param.Add("playerName", PlayerName);
-
-            var value = JsonRequestAsync(Method.POST, "joingame", param).ConfigureAwait(false);
-
-            var gameState = JsonConvert.DeserializeObject<GameState>((await value).ToString());
-
-            ConnectToGame();
-
-            UpdateGameState(gameState);
-        }
-
-        public static async void DepartGame()
-        {
-            if (GameId != null)
-            {
-                var parameters = new Dictionary<string, string>();
-                parameters.Add("gameId", GameId);
-                parameters.Add("playerId", PlayerId);
-
-                await JsonRequestAsync(Method.POST, "departgame", parameters).ConfigureAwait(false);
-                GameId = null;
-
-                DisconnectSocket();
+                if (settings.Contains("PlayerName"))
+                    PlayerName = settings.GetString("PlayerName", PlayerName);
+                if (settings.Contains("Host"))
+                    Host = settings.GetString("Host", Host);
+                if (settings.Contains("Port"))
+                    Port = settings.GetInt("Port", Port);
             }
         }
-
-        public static async void SelectCard(WhiteCard whiteCard)
-        {
-            if (GameId != null)
-            {
-                SelectedCard = whiteCard.Id;
-
-                var param = new Dictionary<string, string>();
-                param.Add("gameId", GameId);
-                param.Add("playerId", PlayerId);
-                param.Add("whiteCardId", whiteCard.Id);
-
-                //JsonValue value = 
-                await JsonRequestAsync(Method.POST, "selectCard", param).ConfigureAwait(false);
-                //var gameState = JsonConvert.DeserializeObject<GameState>(value.ToString());
-                //UpdateGameState(gameState);
-            }
-        }
-
-        public static async void SelectWinner(WhiteCard card)
-        {
-            if (GameId != null)
-            {
-                var param = new Dictionary<string, string>();
-                param.Add("gameId", GameId);
-                param.Add("cardId", card.Id);
-
-                //JsonValue value = 
-                await JsonRequestAsync(Method.POST, "selectWinner", param).ConfigureAwait(false);
-                //var gameState = JsonConvert.DeserializeObject<GameState>(value.ToString());
-                //UpdateGameState(gameState);
-            }
-        }
-
-        public static async void ReadyForNextRound()
-        {
-            if (GameId != null)
-            {
-                var param = new Dictionary<string, string>();
-                param.Add("playerId", PlayerId);
-                param.Add("gameId", GameId);
-
-                //JsonValue value = 
-                await JsonRequestAsync(Method.POST, "readyForNextRound", param).ConfigureAwait(false);
-                //var gameState = JsonConvert.DeserializeObject<GameState>(value.ToString());
-                //UpdateGameState(gameState);
-            }
-        }
-
-        #endregion Api
 
         private static void UpdateGameState(GameState gameState)
         {
@@ -347,12 +216,144 @@ namespace CardsAgainstHumility
             Game_Update?.Invoke(null, new GameUpdateEventArgs(gameState));
         }
 
+        #region Api
+
+        public static async Task<List<GameInstance>> ListAsync()
+        {
+            JsonValue value = await JsonRequestAsync(Method.GET, "list", null).ConfigureAwait(false);
+            var instances = new List<GameInstance>();
+            foreach (JsonObject item in value)
+            {
+                if (item.ContainsKey("id"))
+                {
+                    instances.Add(new GameInstance
+                    {
+                        Id = item["id"],
+                        Name = item.ContainsKey("name") ? (string)item["name"] : "(no name)",
+                        Players = item.ContainsKey("players") ? (int)item["players"] : 0,
+                        MaxPlayers = item.ContainsKey("maxPlayers") ? (int)item["maxPlayers"] : 10
+                    });
+                }
+            }
+            return instances;
+        }
+
+        public static async Task<string> Add(string id)
+        {
+            var param = new
+            {
+                name = $"{PlayerName}'s Game",
+                id = id
+            };
+            JsonValue value = await JsonRequestAsync(Method.POST, "add", param).ConfigureAwait(false);
+
+            return JsonConvert.DeserializeObject<GameState>(value.ToString()).id;
+        }
+
+        public static async Task JoinGame(string id)
+        {
+            GameId = id;
+
+            var param = new
+            {
+                gameId = id,
+                playerId = PlayerId,
+                playerName = PlayerName
+            };
+
+            var value = JsonRequestAsync(Method.POST, "joingame", param).ConfigureAwait(false);
+
+            var gameState = JsonConvert.DeserializeObject<GameState>((await value).ToString());
+
+            ConnectToGame();
+
+            UpdateGameState(gameState);
+        }
+
+        public static async Task DepartGame()
+        {
+            if (GameId != null)
+            {
+                var param = new
+                {
+                    gameId = GameId,
+                    playerId = PlayerId
+                };
+
+                await JsonRequestAsync(Method.POST, "departgame", param, false).ConfigureAwait(false);
+                GameId = null;
+
+                DisconnectSocket();
+            }
+        }
+
+        public static async void SelectCard(WhiteCard whiteCard)
+        {
+            if (GameId != null)
+            {
+                SelectedCard = whiteCard.Id;
+
+                var param = new
+                {
+                    gameId = GameId,
+                    playerId = PlayerId,
+                    whiteCardId = whiteCard.Id
+                };
+
+                await JsonRequestAsync(Method.POST, "selectCard", param).ConfigureAwait(false);
+            }
+        }
+
+        public static async void SelectWinner(WhiteCard card)
+        {
+            if (GameId != null)
+            {
+                var param = new
+                {
+                    gameId = GameId,
+                    cardId = card.Id
+                };
+
+                await JsonRequestAsync(Method.POST, "selectWinner", param).ConfigureAwait(false);
+            }
+        }
+
+        public static async void ReadyForNextRound()
+        {
+            if (GameId != null)
+            {
+                var param = new
+                {
+                    playerId = PlayerId,
+                    gameId = GameId
+                };
+
+                await JsonRequestAsync(Method.POST, "readyForNextRound", param).ConfigureAwait(false);
+            }
+        }
+
+        #endregion Api
+
+        #region Socket.IO
+
+        private static Socket Socket;
+
+        private static Socket GetSocket(string path, IO.Options options = null)
+        {
+            Socket sock;
+            if (options == null)
+                sock = IO.Socket(path);
+            else
+                sock = IO.Socket(path, options);
+            return sock;
+        }
+
         public static void ConnectToLobby()
         {
             if (Socket != null)
                 DisconnectSocket();
 
-            var sock = GetSocket($"{Host}lobby");
+            var sock = GetSocket($"{Host}:{Port}/lobby");
             sock.On(Socket.EventConnect, lobby_SocketConnected);
             sock.On(Socket.EventConnectError, lobby_SocketConnectError);
             sock.On(Socket.EventConnectTimeout, lobby_SocketConnectTimeout);
@@ -362,30 +363,31 @@ namespace CardsAgainstHumility
             sock.Connect();
         }
 
-        public static void DisconnectSocket()
-        {
-            Socket.Close();
-            Socket.Dispose();
-            Socket = null;
-        }
-
         private static void ConnectToGame()
         {
             if (Socket != null)
                 DisconnectSocket();
 
-            var sock = GetSocket(Host, new IO.Options()
+            var sock = GetSocket($"{Host}:{Port}/game", new IO.Options()
             {
                 Query = $"playerId={PlayerId}"
             });
-            Socket = sock;
-            sock.Connect();
             sock.On(Socket.EventConnect, game_SocketConnected);
             sock.On(Socket.EventConnectError, game_SocketConnectError);
             sock.On(Socket.EventConnectTimeout, game_SocketConnectTimeout);
             sock.On("updateGame", game_UpdateGame);
             sock.On("gameError", game_GameError);
+            Socket = sock;
+            sock.Connect();
         }
+
+        public static void DisconnectSocket()
+        {
+            Socket.Close();
+            Socket = null;
+        }
+
+        #endregion Socket.IO
 
         #region Lobby Event Handlers
 

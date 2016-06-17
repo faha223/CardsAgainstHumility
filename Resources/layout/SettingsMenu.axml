@@ -7,49 +7,69 @@
     android:minWidth="25px"
     android:minHeight="25px"
     android:background="#282828">
-  <Button
-      android:id="@+id/s_btnSave"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
-      android:text="Save Changes" />
-  <LinearLayout
-      android:orientation="horizontal"
-      android:minWidth="25px"
-      android:minHeight="25px"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/s_lPlayerName">
-    <TextView
-        android:text="Player Name"
-        android:layout_width="120dp"
+    <Button
+        android:id="@+id/s_btnSave"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView1" />
-    <EditText
-        android:inputType="text"
-        android:imeOptions="actionDone"
-        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:text="Save Changes" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/s_txtPlayerName" />
-  </LinearLayout>
-  <LinearLayout
-      android:orientation="horizontal"
-      android:minWidth="25px"
-      android:minHeight="25px"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_below="@id/s_lPlayerName"
-      android:id="@+id/s_lServerAddress">
-    <TextView
-        android:text="Server Url"
-        android:layout_width="120dp"
+        android:id="@+id/s_lPlayerName">
+        <TextView
+            android:text="Player Name"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView1" />
+        <EditText
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/s_txtPlayerName" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView2" />
-    <EditText
-        android:inputType="text"
-        android:imeOptions="actionDone"
-        android:layout_width="fill_parent"
+        android:layout_below="@id/s_lPlayerName"
+        android:id="@+id/s_lServerAddress">
+        <TextView
+            android:text="Server Url"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2" />
+        <EditText
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/s_txtServerAddress" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/s_txtServerAddress" />
-  </LinearLayout>
+        android:layout_below="@id/s_lServerAddress"
+        android:id="@+id/s_lServerPort">
+        <TextView
+            android:text="Server Port"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3" />
+        <EditText
+            android:inputType="text"
+            android:imeOptions="actionDone"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/s_txtServerPort" />
+    </LinearLayout>
 </RelativeLayout>

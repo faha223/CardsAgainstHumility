@@ -112,8 +112,8 @@ namespace CardsAgainstHumility
 
             try
             {
-                var gi = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId());
-                CardsAgainstHumility.JoinGame(gi.Id).Wait();
+                var gid = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId());
+                CardsAgainstHumility.JoinGame(gid).Wait();
                 StartActivity(typeof(GameActivity));
             }
             catch (Exception ex)

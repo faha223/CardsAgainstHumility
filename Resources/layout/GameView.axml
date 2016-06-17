@@ -11,7 +11,9 @@
         android:text="You are the Card Czar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:textSize="20dp"
+        android:gravity="center" />
     <CardsAgainstHumility.HorizontalListView
         android:id="@+id/gv_PlayerHand"
         android:clipChildren="false"
