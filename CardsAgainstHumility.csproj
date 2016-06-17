@@ -74,6 +74,10 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
+    <Reference Include="Xamarin.Android.Support.v4, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Xamarin.Android.Support.v4.23.1.1.1\lib\MonoAndroid403\Xamarin.Android.Support.v4.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardsAgainstHumility.cs" />
@@ -97,6 +101,7 @@
     <Compile Include="SocketComm\connectToGameArgs.cs" />
     <Compile Include="SocketComm\player.cs" />
     <Compile Include="SocketComm\GameState.cs" />
+    <Compile Include="PlayerArrayAdapter.cs" />
     <Compile Include="WhiteCardArrayAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +127,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\SettingsMenu.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Player.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -158,6 +166,10 @@
     <XamarinComponentReference Include="socketio">
       <Visible>False</Visible>
       <Version>0.7.0.1</Version>
+    </XamarinComponentReference>
+    <XamarinComponentReference Include="xamandroidsupportv4-18">
+      <Visible>False</Visible>
+      <Version>23.1.1.1</Version>
     </XamarinComponentReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

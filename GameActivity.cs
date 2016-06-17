@@ -20,6 +20,9 @@ namespace CardsAgainstHumility
         TextView statusIndicator;
         Button readyButton;
         WhiteCardArrayAdapter _playerHandArrayAdapter;
+        ListView PlayerList;
+        TextView PlayerListHeader;
+        PlayerArrayAdapter PlayerArrayAdapter;
 
         WhiteCard _selectedCard;
         View _selectedCardView;
@@ -117,11 +120,18 @@ namespace CardsAgainstHumility
             layoutParams.SetMargins(0, (int)Math.Round(TypedValue.ApplyDimension(ComplexUnitType.Dip, 50, Resources.DisplayMetrics)), 0, 0);
             CurrentQuestionView.LayoutParameters = layoutParams;
             _currentQuestionHolder.AddView(CurrentQuestionView);
-
+            PlayerList = FindViewById<ListView>(Resource.Id.gv_playerList);
+            PlayerArrayAdapter = new PlayerArrayAdapter(this, null, CardsAgainstHumility.Players);
+            PlayerList.Adapter = PlayerArrayAdapter;
+            FindViewById<TextView>(Resource.Id.gv_GameName).Text = CardsAgainstHumility.GameName;
+            if (tf != null)
+                FindViewById<TextView>(Resource.Id.gv_GameName).SetTypeface(tf, TypefaceStyle.Normal);
+            
             UpdateCurrentQuestion();
             UpdatePlayerHand();
             UpdateReadyButton();
             UpdateStatusText();
+            UpdatePlayerList();
 
             CardsAgainstHumility.Game_SocketConnected += OnSocketConnected;
             CardsAgainstHumility.Game_SocketConnectError += OnSocketConnectError;
@@ -217,6 +227,11 @@ namespace CardsAgainstHumility
             readyButton.Visibility = (CardsAgainstHumility.ReadyForReview && !CardsAgainstHumility.IsReady) ? ViewStates.Visible : ViewStates.Invisible;
         }
 
+        private void UpdatePlayerList()
+        {
+            PlayerArrayAdapter.NewData(CardsAgainstHumility.Players);
+        }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -255,6 +270,7 @@ namespace CardsAgainstHumility
                 UpdateCurrentQuestion();
                 UpdateStatusText();
                 UpdateReadyButton();
+                UpdatePlayerList();
             });
         }
 

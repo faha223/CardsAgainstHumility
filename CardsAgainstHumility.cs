@@ -43,6 +43,8 @@ namespace CardsAgainstHumility
 
         public static string GameId { get; private set; }
 
+        public static string GameName { get; private set; }
+
         public static List<Player> Players { get; private set; }
 
         public static int RequiredNumberOfPlayers { get; private set; }
@@ -191,6 +193,7 @@ namespace CardsAgainstHumility
             var player = gameState.players.SingleOrDefault(p => p.id == PlayerId);
             PlayerHand = new List<WhiteCard>();
             GameStarted = gameState.isStarted;
+            GameName = gameState.name;
 
             if (player != null)
             {
