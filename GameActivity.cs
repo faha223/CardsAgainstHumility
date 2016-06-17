@@ -4,6 +4,7 @@ using Android.Views;
 using Android.Views.Animations;
 using CardsAgainstHumility.GameClasses;
 using System;
+using System.Linq;
 using CardsAgainstHumility.Events;
 using Android.Widget;
 using Android.Graphics;
@@ -19,6 +20,30 @@ namespace CardsAgainstHumility
         TextView statusIndicator;
         Button readyButton;
         WhiteCardArrayAdapter _playerHandArrayAdapter;
+
+        WhiteCard _selectedCard;
+        View _selectedCardView;
+        View SelectedCardView
+        {
+            get
+            {
+                return _selectedCardView;
+            }
+            set
+            {
+                if (_selectedCardView != value)
+                {
+                    if(_selectedCardView != null)
+                    {
+                        _selectedCardView.Click -= ConfirmCard;
+                        _selectedCardView.StartAnimation(deselectedCardAnimation);
+                    }
+                    _selectedCardView = value;
+                    _selectedCardView.StartAnimation(selectedCardAnimation);
+                    _selectedCardView.Click += ConfirmCard;
+                }
+            }
+        }
 
         private string Status
         {
@@ -96,6 +121,7 @@ namespace CardsAgainstHumility
             UpdateCurrentQuestion();
             UpdatePlayerHand();
             UpdateReadyButton();
+            UpdateStatusText();
 
             CardsAgainstHumility.Game_SocketConnected += OnSocketConnected;
             CardsAgainstHumility.Game_SocketConnectError += OnSocketConnectError;
@@ -123,19 +149,35 @@ namespace CardsAgainstHumility
             else
             {
                 _playerHandArrayAdapter.NewData(playerHand);
+                if ((!CardsAgainstHumility.IsCardCzar) && (CardsAgainstHumility.SelectedCard != null))
+                    PlayerHandView.Enabled = false;
             }
+        }
+
+        private void UpdateStatusText()
+        {
             if (statusIndicator == null)
             {
                 statusIndicator = FindViewById<TextView>(Resource.Id.gv_CardCzar);
                 if (tf != null)
                     statusIndicator.SetTypeface(tf, TypefaceStyle.Normal);
             }
-            if(CardsAgainstHumility.IsCardCzar)
-                Status = "You are the Card Czar";
-            else if(!CardsAgainstHumility.GameStarted)
-                Status = "Waiting for more Players";
-            else 
-                Status = null;
+
+            if (CardsAgainstHumility.GameStarted)
+            {
+                if (CardsAgainstHumility.ReadyForReview)
+                {
+                    Status = CardsAgainstHumility.IsReady ? $"Waiting on other players ({CardsAgainstHumility.Players.Count(c => c.IsReady)} of {CardsAgainstHumility.Players.Count})" : "Get Ready for the Next Round";
+                }
+                else if (CardsAgainstHumility.IsCardCzar)
+                    Status = "You are the Card Czar";
+                else
+                    Status = null;
+            }
+            else
+            {
+                Status = $"Waiting for more players ({CardsAgainstHumility.Players.Count} of {CardsAgainstHumility.RequiredNumberOfPlayers})";
+            }
         }
 
         private void UpdateCurrentQuestion()
@@ -172,7 +214,7 @@ namespace CardsAgainstHumility
                     CardsAgainstHumility.ReadyForNextRound();
                 };
             }
-            readyButton.Visibility = (CardsAgainstHumility.ReadyForReview) ? ViewStates.Visible : ViewStates.Invisible;
+            readyButton.Visibility = (CardsAgainstHumility.ReadyForReview && !CardsAgainstHumility.IsReady) ? ViewStates.Visible : ViewStates.Invisible;
         }
 
         protected override void OnDestroy()
@@ -211,6 +253,7 @@ namespace CardsAgainstHumility
             {
                 UpdatePlayerHand();
                 UpdateCurrentQuestion();
+                UpdateStatusText();
                 UpdateReadyButton();
             });
         }
@@ -224,26 +267,32 @@ namespace CardsAgainstHumility
         {
             if (CardsAgainstHumility.GameStarted)
             {
-                if (CardsAgainstHumility.IsCardCzar)
-                {
-                    if (CardsAgainstHumility.ReadyToSelectWinner)
-                        CardsAgainstHumility.SelectWinner(card);
-                    else
-                        RunOnUiThread(() =>
-                        {
-                            var builder = new AlertDialog.Builder(this);
-                            builder.SetTitle("Still waiting on");
-                            builder.SetMessage(string.Join(System.Environment.NewLine, CardsAgainstHumility.PlayersNotYetSubmitted));
-                            builder.Create().Show();
-                        });
-                }
+                _selectedCard = card;
+                SelectedCardView = view;
+            }
+        }
+
+        private void ConfirmCard(object sender, EventArgs args)
+        {
+            if (CardsAgainstHumility.IsCardCzar && _selectedCard != null)
+            {
+                if (CardsAgainstHumility.ReadyToSelectWinner)
+                    CardsAgainstHumility.SelectWinner(_selectedCard);
                 else
-                {
-                    if (CardsAgainstHumility.SelectedCard == null)
+                    RunOnUiThread(() =>
                     {
-                        Console.WriteLine("User played \"{0}\" ", card.Id);
-                        CardsAgainstHumility.SelectCard(card);
-                    }
+                        var builder = new AlertDialog.Builder(this);
+                        builder.SetTitle("Still waiting on");
+                        builder.SetMessage(string.Join(System.Environment.NewLine, CardsAgainstHumility.PlayersNotYetSubmitted));
+                        builder.Create().Show();
+                    });
+            }
+            else
+            {
+                if (CardsAgainstHumility.SelectedCard == null)
+                {
+                    Console.WriteLine("User played \"{0}\" ", _selectedCard.Id);
+                    CardsAgainstHumility.SelectCard(_selectedCard);
                 }
             }
         }

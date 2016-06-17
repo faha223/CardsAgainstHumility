@@ -43,6 +43,10 @@ namespace CardsAgainstHumility
 
         public static string GameId { get; private set; }
 
+        public static List<Player> Players { get; private set; }
+
+        public static int RequiredNumberOfPlayers { get; private set; }
+
         public static string PlayerName { get; set; }
 
         public static int AwesomePoints { get; set; }
@@ -58,6 +62,8 @@ namespace CardsAgainstHumility
         public static List<WhiteCard> PlayedCards { get; set; }
 
         public static BlackCard CurrentQuestion { get; set; }
+
+        public static bool IsReady { get; private set; }
 
         public static bool IsCardCzar { get; private set; }
 
@@ -193,14 +199,31 @@ namespace CardsAgainstHumility
                     PlayerHand.Add(new WhiteCard(card, 20));
                 }
                 IsCardCzar = player.isCzar;
+                IsReady = player.isReady;
                 AwesomePoints = player.awesomePoints;
                 SelectedCard = player.selectedWhiteCardId;
             }
 
-            PlayedCards = new List<WhiteCard>();
-            foreach (var card in gameState.players.Where(c => !string.IsNullOrEmpty(c.selectedWhiteCardId)).Select(c => c.selectedWhiteCardId))
+            Players = new List<Player>();
+            foreach(var p in gameState.players)
             {
-                PlayedCards.Add(new WhiteCard(card, 20));
+                Players.Add(new Player()
+                {
+                    Id = p.id,
+                    Name = p.name,
+                    IsCardCzar = p.isCzar,
+                    IsReady = p.isReady,
+                    AwesomePoints = p.awesomePoints
+                });
+            }
+
+            PlayedCards = new List<WhiteCard>();
+            if (gameState.isReadyForScoring)
+            {
+                foreach (var card in gameState.players.Where(c => !string.IsNullOrEmpty(c.selectedWhiteCardId)).Select(c => c.selectedWhiteCardId))
+                {
+                    PlayedCards.Add(new WhiteCard(card, 20));
+                }
             }
 
             PlayersNotYetSubmitted = gameState.players.Where(c => string.IsNullOrEmpty(c.selectedWhiteCardId) && c.id != _playerId).Select(c => c.name).ToList();
@@ -210,8 +233,13 @@ namespace CardsAgainstHumility
             else
                 CurrentQuestion = null;
 
+            RequiredNumberOfPlayers = 3;
             ReadyToSelectWinner = gameState.isReadyForScoring;
             ReadyForReview = gameState.isReadyForReview;
+            if(ReadyForReview)
+            {
+                Console.WriteLine("Round Winner: {0}", gameState.winnerId);
+            }
 
             Game_Update?.Invoke(null, new GameUpdateEventArgs(gameState));
         }

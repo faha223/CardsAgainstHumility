@@ -85,6 +85,7 @@
     <Compile Include="GameClasses\BlackCard.cs" />
     <Compile Include="GameClasses\CardBase.cs" />
     <Compile Include="GameClasses\GameInstance.cs" />
+    <Compile Include="GameClasses\Player.cs" />
     <Compile Include="GameClasses\WhiteCard.cs" />
     <Compile Include="GameInstanceArrayAdapter.cs" />
     <Compile Include="Helpers\UINotifying.cs" />
