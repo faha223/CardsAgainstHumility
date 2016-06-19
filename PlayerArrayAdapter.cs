@@ -15,7 +15,6 @@ namespace CardsAgainstHumility
     {
         List<Player> _list { get; set; }
         private Typeface tf;
-        private Action<Player, View> _onClickAction;
 
         public override int Count
         {
@@ -27,12 +26,11 @@ namespace CardsAgainstHumility
             }
         }
 
-        public PlayerArrayAdapter(Context context, Action<Player, View> OnClickAction, List<Player> list) : base(context, Resource.Layout.WhiteCard)
+        public PlayerArrayAdapter(Context context, List<Player> list) : base(context, Resource.Layout.WhiteCard)
         {
             if (list == null)
                 list = new List<Player>();
             _list = list;
-            _onClickAction = OnClickAction;
             try
             {
                 tf = Typeface.CreateFromAsset(context.Assets, "Helvetica-Bold.ttf");
@@ -42,23 +40,12 @@ namespace CardsAgainstHumility
 
         public void NewData(List<Player> _newList)
         {
-            if (_newList == null)
-                return;
+            // Properties may have changed. Reload the whole list.
             lock (_list)
             {
-                if (_newList.Count == 0)
-                {
-                    _list.Clear();
-                }
-                else
-                {
-                    // Remove all cards that aren't in the new list
-                    _list.RemoveAll(d => !_newList.Select(c => c.Id).Contains(d.Id));
-
-                    // Add all the cards that aren't in the old list
-                    var toAdd = _newList.Where(d => !_list.Select(c => c.Id).Contains(d.Id));
-                    _list.AddRange(toAdd);
-                }
+                _list.Clear();
+                if(_newList != null)
+                    _list.AddRange(_newList);
             }
 
             // Notify that the data set has changed
@@ -76,11 +63,21 @@ namespace CardsAgainstHumility
             {
                 var item = _list.ElementAt(position);
                 var txtName = v.FindViewById<TextView>(Resource.Id.p_Name);
+                var isCzar = v.FindViewById(Resource.Id.p_isCzar);
+                var notReady = v.FindViewById<TextView>(Resource.Id.p_notReady);
+                var aPoints = v.FindViewById<TextView>(Resource.Id.p_aPoints);
+
                 txtName.Text = item.Name;
                 if (tf != null)
                 {
                     txtName.SetTypeface(tf, TypefaceStyle.Normal);
+                    notReady.SetTypeface(tf, TypefaceStyle.Normal);
+                    aPoints.SetTypeface(tf, TypefaceStyle.Normal);
                 }
+
+                notReady.Visibility = ((item.IsReady && CardsAgainstHumility.GameStarted && CardsAgainstHumility.ReadyForReview) ? ViewStates.Invisible : ViewStates.Visible);
+                isCzar.Visibility = (item.IsCardCzar ? ViewStates.Visible : ViewStates.Invisible);
+                aPoints.Text = item.AwesomePoints.ToString();
             }
 
             return v;

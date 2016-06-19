@@ -51,16 +51,19 @@ namespace CardsAgainstHumility
 			public const int BlackCard = 2130837504;
 			
 			// aapt resource value: 0x7f020001
-			public const int Icon = 2130837505;
+			public const int czarIcon = 2130837505;
 			
 			// aapt resource value: 0x7f020002
-			public const int logo_black = 2130837506;
+			public const int Icon = 2130837506;
 			
 			// aapt resource value: 0x7f020003
-			public const int logo_white = 2130837507;
+			public const int logo_black = 2130837507;
 			
 			// aapt resource value: 0x7f020004
-			public const int WhiteCard = 2130837508;
+			public const int logo_white = 2130837508;
+			
+			// aapt resource value: 0x7f020005
+			public const int WhiteCard = 2130837509;
 			
 			static Drawable()
 			{
@@ -153,47 +156,56 @@ namespace CardsAgainstHumility
 			// aapt resource value: 0x7f050015
 			public const int main_uiList = 2131034133;
 			
-			// aapt resource value: 0x7f05001a
-			public const int p_Name = 2131034138;
+			// aapt resource value: 0x7f05001d
+			public const int p_Name = 2131034141;
 			
 			// aapt resource value: 0x7f05001b
-			public const int s_btnSave = 2131034139;
+			public const int p_aPoints = 2131034139;
+			
+			// aapt resource value: 0x7f05001a
+			public const int p_isCzar = 2131034138;
 			
 			// aapt resource value: 0x7f05001c
-			public const int s_lPlayerName = 2131034140;
-			
-			// aapt resource value: 0x7f05001f
-			public const int s_lServerAddress = 2131034143;
-			
-			// aapt resource value: 0x7f050022
-			public const int s_lServerPort = 2131034146;
+			public const int p_notReady = 2131034140;
 			
 			// aapt resource value: 0x7f05001e
-			public const int s_txtPlayerName = 2131034142;
+			public const int s_btnSave = 2131034142;
 			
-			// aapt resource value: 0x7f050021
-			public const int s_txtServerAddress = 2131034145;
+			// aapt resource value: 0x7f05001f
+			public const int s_lPlayerName = 2131034143;
 			
-			// aapt resource value: 0x7f050024
-			public const int s_txtServerPort = 2131034148;
-			
-			// aapt resource value: 0x7f05001d
-			public const int textView1 = 2131034141;
-			
-			// aapt resource value: 0x7f050020
-			public const int textView2 = 2131034144;
-			
-			// aapt resource value: 0x7f050023
-			public const int textView3 = 2131034147;
+			// aapt resource value: 0x7f050022
+			public const int s_lServerAddress = 2131034146;
 			
 			// aapt resource value: 0x7f050025
-			public const int wc_CardText = 2131034149;
+			public const int s_lServerPort = 2131034149;
 			
-			// aapt resource value: 0x7f050026
-			public const int wc_logo_image = 2131034150;
+			// aapt resource value: 0x7f050021
+			public const int s_txtPlayerName = 2131034145;
+			
+			// aapt resource value: 0x7f050024
+			public const int s_txtServerAddress = 2131034148;
 			
 			// aapt resource value: 0x7f050027
-			public const int wc_logo_text = 2131034151;
+			public const int s_txtServerPort = 2131034151;
+			
+			// aapt resource value: 0x7f050020
+			public const int textView1 = 2131034144;
+			
+			// aapt resource value: 0x7f050023
+			public const int textView2 = 2131034147;
+			
+			// aapt resource value: 0x7f050026
+			public const int textView3 = 2131034150;
+			
+			// aapt resource value: 0x7f050028
+			public const int wc_CardText = 2131034152;
+			
+			// aapt resource value: 0x7f050029
+			public const int wc_logo_image = 2131034153;
+			
+			// aapt resource value: 0x7f05002a
+			public const int wc_logo_text = 2131034154;
 			
 			static Id()
 			{

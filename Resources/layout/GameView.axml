@@ -40,23 +40,28 @@
                 android:text="Ready" />
         </RelativeLayout>
     </FrameLayout>
-    <LinearLayout 
+    <RelativeLayout
         android:layout_width="240dp"
-        android:layout_height="match_parent" 
+        android:layout_height="match_parent"
+        android:background="#282828"
         android:layout_gravity="start">
-      <TextView 
-          android:id="@+id/gv_GameName"
-          android:layout_width="match_parent"
-          android:layout_height="20dp" />
-      <TextView 
-          android:id="@+id/gv_PlayerCount"
-          android:layout_width="match_parent"
-          android:layout_height="20dp"
-          android:layout_below="@id/gv_GameName" />
-      <ListView
-          android:id="@+id/gv_playerList"
-          android:layout_width="match_parent"
-          android:layout_height="fill_parent"
-          android:layout_below="@id/gv_PlayerCount" />
-      </LinearLayout>
+        <TextView
+            android:id="@+id/gv_GameName"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignParentTop="true"
+            android:gravity="center" />
+        <TextView
+            android:id="@+id/gv_PlayerCount"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:gravity="center" />
+        <ListView
+            android:id="@+id/gv_playerList"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="40dp" />
+    </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

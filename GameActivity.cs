@@ -120,12 +120,17 @@ namespace CardsAgainstHumility
             layoutParams.SetMargins(0, (int)Math.Round(TypedValue.ApplyDimension(ComplexUnitType.Dip, 50, Resources.DisplayMetrics)), 0, 0);
             CurrentQuestionView.LayoutParameters = layoutParams;
             _currentQuestionHolder.AddView(CurrentQuestionView);
+
+            PlayerListHeader = FindViewById<TextView>(Resource.Id.gv_PlayerCount);
+
             PlayerList = FindViewById<ListView>(Resource.Id.gv_playerList);
-            PlayerArrayAdapter = new PlayerArrayAdapter(this, null, CardsAgainstHumility.Players);
+            PlayerArrayAdapter = new PlayerArrayAdapter(this, CardsAgainstHumility.Players);
             PlayerList.Adapter = PlayerArrayAdapter;
+
             FindViewById<TextView>(Resource.Id.gv_GameName).Text = CardsAgainstHumility.GameName;
             if (tf != null)
                 FindViewById<TextView>(Resource.Id.gv_GameName).SetTypeface(tf, TypefaceStyle.Normal);
+            
             
             UpdateCurrentQuestion();
             UpdatePlayerHand();
@@ -229,6 +234,7 @@ namespace CardsAgainstHumility
 
         private void UpdatePlayerList()
         {
+            PlayerListHeader.Text = $"Players ({CardsAgainstHumility.Players.Count} of {CardsAgainstHumility.MaxPlayers})";
             PlayerArrayAdapter.NewData(CardsAgainstHumility.Players);
         }
 

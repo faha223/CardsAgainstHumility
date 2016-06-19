@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-  <TextView android:layout_width="match_parent"
-            android:height="20dp"
-            android:id="@+id/p_Name"/>
-</LinearLayout>
+    android:layout_height="30dp">
+    <ImageView
+        android:id="@+id/p_isCzar"
+        android:src="@drawable/czarIcon"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true" />
+    <TextView
+        android:id="@+id/p_aPoints"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:text="100"
+        android:layout_marginLeft="40dp"
+        android:layout_alignParentLeft="true"
+        android:gravity="center" />
+    <TextView
+        android:id="@+id/p_notReady"
+        android:text="Not Ready"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:gravity="center_vertical" />
+    <TextView
+        android:text="Jerkwad"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:gravity="center_vertical"
+        android:id="@+id/p_Name" />
+</RelativeLayout>

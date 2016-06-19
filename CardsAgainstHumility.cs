@@ -47,6 +47,8 @@ namespace CardsAgainstHumility
 
         public static List<Player> Players { get; private set; }
 
+        public static int MaxPlayers { get; private set; }
+
         public static int RequiredNumberOfPlayers { get; private set; }
 
         public static string PlayerName { get; set; }
@@ -219,6 +221,7 @@ namespace CardsAgainstHumility
                     AwesomePoints = p.awesomePoints
                 });
             }
+            MaxPlayers = gameState.maxPlayers;
 
             PlayedCards = new List<WhiteCard>();
             if (gameState.isReadyForScoring)
