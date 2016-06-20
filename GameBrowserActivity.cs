@@ -5,9 +5,6 @@ using Android.OS;
 using Android.Widget;
 using System.Threading;
 using CardsAgainstHumility.GameClasses;
-using SocketIO.Client;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using CardsAgainstHumility.Events;
 
 namespace CardsAgainstHumility
@@ -39,6 +36,7 @@ namespace CardsAgainstHumility
             {
                 TextView txtStatus = FindViewById<TextView>(Resource.Id.gb_Status);
                 if(txtStatus != null) txtStatus.Text = "Refreshing";
+                if (txtStatus != null) txtStatus.SetTypeface(UIAssets.AppFont, Android.Graphics.TypefaceStyle.Normal);
                 ListView gameList = FindViewById<ListView>(Resource.Id.gb_List);
                 if(gameList != null) gameList.Adapter = new GameInstanceArrayAdapter(this, null, new GameInstance[] { });
             });
@@ -50,8 +48,10 @@ namespace CardsAgainstHumility
                 {
                     ListView gameList = FindViewById<ListView>(Resource.Id.gb_List);
                     TextView txtStatus = FindViewById<TextView>(Resource.Id.gb_Status);
+
                     if(gameList != null) gameList.Adapter = new GameInstanceArrayAdapter(this, JoinGame, games);
-                    if(txtStatus != null) txtStatus.Text = $"{((games.Count > 0) ? games.Count.ToString() : "No")} Game{(games.Count == 1 ? "" : "s")} Found";
+                    if (txtStatus != null) txtStatus.SetTypeface(UIAssets.AppFont, Android.Graphics.TypefaceStyle.Normal);
+                    if (txtStatus != null) txtStatus.Text = $"{((games.Count > 0) ? games.Count.ToString() : "No")} Game{(games.Count == 1 ? "" : "s")} Found";
 
                     CardsAgainstHumility.Lobby_SocketConnected += OnSocketConnected;
                     CardsAgainstHumility.Lobby_SocketConnectError += OnSocketConnectError;

@@ -10,6 +10,7 @@ using Android.Widget;
 using Android.Graphics;
 using System.Net;
 using Android.Util;
+using Android.Support.V4.Widget;
 
 namespace CardsAgainstHumility
 {
@@ -23,6 +24,7 @@ namespace CardsAgainstHumility
         ListView PlayerList;
         TextView PlayerListHeader;
         PlayerArrayAdapter PlayerArrayAdapter;
+        DrawerLayout _drawer;
 
         WhiteCard _selectedCard;
         View _selectedCardView;
@@ -71,8 +73,6 @@ namespace CardsAgainstHumility
             }
         }
 
-        Typeface tf;
-
         private View CurrentQuestionView;
 
         private Animation selectedCardAnimation
@@ -101,12 +101,6 @@ namespace CardsAgainstHumility
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.GameView);
-            
-            try
-            {
-                tf = Typeface.CreateFromAsset(Assets, "Helvetica-Bold.ttf");
-            }
-            catch { }
 
             var _currentQuestionHolder = FindViewById<RelativeLayout>(Resource.Id.gv_CurrentQuestion);
             CurrentQuestionView = ((LayoutInflater)GetSystemService(LayoutInflaterService)).Inflate(Resource.Layout.BlackCard, null);
@@ -122,14 +116,22 @@ namespace CardsAgainstHumility
             _currentQuestionHolder.AddView(CurrentQuestionView);
 
             PlayerListHeader = FindViewById<TextView>(Resource.Id.gv_PlayerCount);
+            if (UIAssets.AppFont != null)
+                PlayerListHeader.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
 
             PlayerList = FindViewById<ListView>(Resource.Id.gv_playerList);
             PlayerArrayAdapter = new PlayerArrayAdapter(this, CardsAgainstHumility.Players);
             PlayerList.Adapter = PlayerArrayAdapter;
 
+            _drawer = FindViewById<DrawerLayout>(Resource.Id.gv_drawer);
+            _drawer.DrawerOpened += (sender, args) =>
+            {
+                _drawer.Invalidate();
+            };
+
             FindViewById<TextView>(Resource.Id.gv_GameName).Text = CardsAgainstHumility.GameName;
-            if (tf != null)
-                FindViewById<TextView>(Resource.Id.gv_GameName).SetTypeface(tf, TypefaceStyle.Normal);
+            if (UIAssets.AppFont != null)
+                FindViewById<TextView>(Resource.Id.gv_GameName).SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
             
             UpdateCurrentQuestion();
             UpdatePlayerHand();
@@ -173,8 +175,8 @@ namespace CardsAgainstHumility
             if (statusIndicator == null)
             {
                 statusIndicator = FindViewById<TextView>(Resource.Id.gv_CardCzar);
-                if (tf != null)
-                    statusIndicator.SetTypeface(tf, TypefaceStyle.Normal);
+                if (UIAssets.AppFont != null)
+                    statusIndicator.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
             }
 
             if (CardsAgainstHumility.GameStarted)
@@ -204,11 +206,11 @@ namespace CardsAgainstHumility
                 else
                 {
                     var text = CurrentQuestionView.FindViewById<TextView>(Resource.Id.bc_CardText);
-                    if (tf != null)
+                    if (UIAssets.AppFont != null)
                     {
                         var txtlogo = CurrentQuestionView.FindViewById<TextView>(Resource.Id.bc_logo_text);
-                        txtlogo.SetTypeface(tf, TypefaceStyle.Normal);
-                        text.SetTypeface(tf, TypefaceStyle.Normal);
+                        txtlogo.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                        text.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
                     }
 
                     text.Text = WebUtility.HtmlDecode(currentQuestion.Text);

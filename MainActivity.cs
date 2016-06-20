@@ -29,26 +29,17 @@ namespace CardsAgainstHumility
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            Typeface tf;
-            try
-            {
-                tf = Typeface.CreateFromAsset(Assets, "Helvetica-Bold.ttf");
-            }
-            catch (Exception e)
-            {
-                Log.Error("TextView", string.Format("Could not get Typeface: Helvetica.ttf Error: {0}", e));
-                return;
-            }
+            UIAssets.Initialize(Assets);
 
             var tv = FindViewById<TextView>(Resource.Id.main_logo1);
             if (tv != null)
-                tv.SetTypeface(tf, TypefaceStyle.Normal);
+                tv.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
             tv = FindViewById<TextView>(Resource.Id.main_logo2);
             if (tv != null)
-                tv.SetTypeface(tf, TypefaceStyle.Normal);
+                tv.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
             tv = FindViewById<TextView>(Resource.Id.main_logo3);
             if (tv != null)
-                tv.SetTypeface(tf, TypefaceStyle.Normal);
+                tv.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
 
             createButton = FindViewById<Button>(Resource.Id.main_btnCreateGame);
             joinButton = FindViewById<Button>(Resource.Id.main_btnJoinGame);
@@ -57,16 +48,9 @@ namespace CardsAgainstHumility
 
             if (createButton != null)
             {
-                createButton.Click += async delegate
+                createButton.Click += delegate
                 {
-                    try
-                    {
-                        await CreateGame().ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        ShowAlert("An error occurred while creating a game", ex.Message);
-                    }
+                    StartActivity(typeof(CreateGameActivity));
                 };
             }
             else
@@ -101,33 +85,6 @@ namespace CardsAgainstHumility
             }
             else
                 Console.WriteLine("Unable to get Quit Button");
-        }
-
-        private async Task CreateGame()
-        {
-            createButton.Enabled = false;
-            joinButton.Enabled = false;
-            settingsButton.Enabled = false;
-            quitButton.Enabled = false;
-
-            try
-            {
-                var gid = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId());
-                CardsAgainstHumility.JoinGame(gid).Wait();
-                StartActivity(typeof(GameActivity));
-            }
-            catch (Exception ex)
-            {
-                Log.WriteLine(LogPriority.Error, "Exception when Creating a game", ex.Message);
-                throw;
-            }
-            finally
-            {
-                createButton.Enabled = true;
-                joinButton.Enabled = true;
-                settingsButton.Enabled = true;
-                quitButton.Enabled = true;
-            }
         }
 
         private void ShowAlert(string caption, string message)

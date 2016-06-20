@@ -7,14 +7,15 @@
     android:minWidth="25px"
     android:minHeight="25px"
     android:background="#282828">
-  <TextView
-      android:id="@+id/gb_Status"
-      android:layout_width="match_parent"
-      android:layout_height="25dp" />
-  <ListView
-      android:minWidth="25px"
-      android:minHeight="25px"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:id="@+id/gb_List" />
+    <TextView
+        android:id="@+id/gb_Status"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:gravity="center"/>
+    <ListView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/gb_List" />
 </LinearLayout>

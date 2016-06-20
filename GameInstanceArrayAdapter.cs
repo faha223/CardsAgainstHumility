@@ -50,8 +50,11 @@ namespace CardsAgainstHumility
                             _onJoinButtonClick.Invoke(item);
                     };
                 }
+                btnJoin.SetTypeface(UIAssets.AppFont, Android.Graphics.TypefaceStyle.Normal);
                 v.FindViewById<TextView>(Resource.Id.gi_Name).Text = item.Name;
+                v.FindViewById<TextView>(Resource.Id.gi_Name).SetTypeface(UIAssets.AppFont, Android.Graphics.TypefaceStyle.Normal);
                 v.FindViewById<TextView>(Resource.Id.gi_Players).Text = string.Format("{0}/{1}", item.Players, item.MaxPlayers);
+                v.FindViewById<TextView>(Resource.Id.gi_Players).SetTypeface(UIAssets.AppFont, Android.Graphics.TypefaceStyle.Normal);
             }
 
             return v;

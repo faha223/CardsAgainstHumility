@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Graphics;
 
 namespace CardsAgainstHumility
 {
@@ -27,12 +28,22 @@ namespace CardsAgainstHumility
             txtPlayerName = FindViewById<EditText>(Resource.Id.s_txtPlayerName);
             txtHostName = FindViewById<EditText>(Resource.Id.s_txtServerAddress);
             txtPortNumber = FindViewById<EditText>(Resource.Id.s_txtServerPort);
+            Button btnSaveChanges = FindViewById<Button>(Resource.Id.s_btnSave);
+            if (UIAssets.AppFont != null)
+            {
+                FindViewById<TextView>(Resource.Id.s_lblPlayerName).SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                FindViewById<TextView>(Resource.Id.s_lblServerAddress).SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                FindViewById<TextView>(Resource.Id.s_lblServerPort).SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                txtPlayerName.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                txtHostName.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                txtPortNumber.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                btnSaveChanges.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+            }
 
             txtPlayerName.Text = CardsAgainstHumility.PlayerName;
             txtHostName.Text = CardsAgainstHumility.Host;
             txtPortNumber.Text = CardsAgainstHumility.Port.ToString();
 
-            Button btnSaveChanges = FindViewById<Button>(Resource.Id.s_btnSave);
             btnSaveChanges.Click += delegate
             {
                 int port;

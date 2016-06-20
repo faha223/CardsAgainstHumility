@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardsAgainstHumility.cs" />
+    <Compile Include="CreateGameActivity.cs" />
     <Compile Include="Events\GameAddedEventArgs.cs" />
     <Compile Include="Events\GameUpdateEventArgs.cs" />
     <Compile Include="Events\SocketConnectErrorEventArgs.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="SocketComm\player.cs" />
     <Compile Include="SocketComm\GameState.cs" />
     <Compile Include="PlayerArrayAdapter.cs" />
+    <Compile Include="UIAssets.cs" />
     <Compile Include="WhiteCardArrayAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +132,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\Player.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\CreateGameMenu.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

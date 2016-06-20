@@ -14,7 +14,6 @@ namespace CardsAgainstHumility
     public class PlayerArrayAdapter : ArrayAdapter<Player>
     {
         List<Player> _list { get; set; }
-        private Typeface tf;
 
         public override int Count
         {
@@ -31,11 +30,6 @@ namespace CardsAgainstHumility
             if (list == null)
                 list = new List<Player>();
             _list = list;
-            try
-            {
-                tf = Typeface.CreateFromAsset(context.Assets, "Helvetica-Bold.ttf");
-            }
-            catch { }
         }
 
         public void NewData(List<Player> _newList)
@@ -50,6 +44,7 @@ namespace CardsAgainstHumility
 
             // Notify that the data set has changed
             NotifyDataSetChanged();
+            NotifyDataSetInvalidated();
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)
@@ -68,11 +63,11 @@ namespace CardsAgainstHumility
                 var aPoints = v.FindViewById<TextView>(Resource.Id.p_aPoints);
 
                 txtName.Text = item.Name;
-                if (tf != null)
+                if (UIAssets.AppFont != null)
                 {
-                    txtName.SetTypeface(tf, TypefaceStyle.Normal);
-                    ready.SetTypeface(tf, TypefaceStyle.Normal);
-                    aPoints.SetTypeface(tf, TypefaceStyle.Normal);
+                    txtName.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                    ready.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                    aPoints.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
                 }
 
                 ready.Visibility = ((item.IsReady && CardsAgainstHumility.GameStarted && CardsAgainstHumility.ReadyForReview) ? ViewStates.Visible : ViewStates.Invisible);

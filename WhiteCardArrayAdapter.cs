@@ -14,7 +14,6 @@ namespace CardsAgainstHumility
     public class WhiteCardArrayAdapter : ArrayAdapter<WhiteCard>
     {
         List<WhiteCard> _list { get; set; }
-        private Typeface tf;
         private Action<WhiteCard, View> _onClickAction;
 
         public override int Count
@@ -33,11 +32,6 @@ namespace CardsAgainstHumility
                 list = new List<WhiteCard>();
             _list = list;
             _onClickAction = OnClickAction;
-            try
-            {
-                tf = Typeface.CreateFromAsset(context.Assets, "Helvetica-Bold.ttf");
-            }
-            catch { }
         }
 
         public void NewData(List<WhiteCard> _newList)
@@ -76,19 +70,14 @@ namespace CardsAgainstHumility
             {
                 var item = _list.ElementAt(position);
                 var txtText = v.FindViewById<TextView>(Resource.Id.wc_CardText);
-                if (tf != null)
+                if (UIAssets.AppFont != null)
                 {
                     var txtlogo = v.FindViewById<TextView>(Resource.Id.wc_logo_text);
-                    txtText.SetTypeface(tf, TypefaceStyle.Normal);
-                    txtlogo.SetTypeface(tf, TypefaceStyle.Normal);
+                    txtText.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                    txtlogo.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
                 }
                 txtText.Text = WebUtility.HtmlDecode(item.Text);
                 txtText.SetTextSize(Android.Util.ComplexUnitType.Dip, item.FontSize);
-
-                //v.Click += (sender, args) =>
-                //{
-                //    _onClickAction?.Invoke(item, v);
-                //};
             }
 
             return v;

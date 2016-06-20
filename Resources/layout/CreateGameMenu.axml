@@ -8,30 +8,30 @@
     android:minHeight="25px"
     android:background="#282828">
     <Button
-        android:id="@+id/s_btnSave"
+        android:id="@+id/cg_btnStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Save Changes" />
+        android:text="Start Game" />
     <LinearLayout
         android:orientation="horizontal"
         android:minWidth="25px"
         android:minHeight="25px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/s_lPlayerName">
+        android:id="@+id/cg_lGameName">
         <TextView
-            android:text="Player Name"
+            android:text="Game Name"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:id="@+id/s_lblPlayerName" />
+            android:id="@+id/cg_lblGameName" />
         <EditText
             android:inputType="text"
             android:imeOptions="actionDone"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/s_txtPlayerName" />
+            android:id="@+id/cg_txtGameName" />
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
@@ -39,20 +39,20 @@
         android:minHeight="25px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/s_lPlayerName"
-        android:id="@+id/s_lServerAddress">
+        android:layout_below="@id/cg_lGameName"
+        android:id="@+id/cg_lMaxPlayers">
         <TextView
-            android:text="Server Url"
+            android:text="Max Players"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:id="@+id/s_lblServerAddress" />
+            android:id="@+id/cg_lblMaxPlayers" />
         <EditText
             android:inputType="text"
             android:imeOptions="actionDone"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/s_txtServerAddress" />
+            android:id="@+id/cg_txtMaxPlayers" />
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
@@ -60,19 +60,19 @@
         android:minHeight="25px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/s_lServerAddress"
-        android:id="@+id/s_lServerPort">
+        android:layout_below="@id/cg_lMaxPlayers"
+        android:id="@+id/cg_lPointsToWin">
         <TextView
-            android:text="Server Port"
+            android:text="Points to Win"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:id="@+id/s_lblServerPort" />
+            android:id="@+id/cg_lblPointsToWin" />
         <EditText
             android:inputType="text"
             android:imeOptions="actionDone"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/s_txtServerPort" />
+            android:id="@+id/cg_txtPointsToWin" />
     </LinearLayout>
 </RelativeLayout>

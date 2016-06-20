@@ -274,10 +274,17 @@ namespace CardsAgainstHumility
 
         public static async Task<string> Add(string id)
         {
+            return await Add(id, $"{PlayerName}'s Game", 10, 5);
+        }
+
+        public static async Task<string> Add(string id, string gameName, int maxPlayers, int pointsToWin)
+        {
             var param = new
             {
-                name = $"{PlayerName}'s Game",
-                id = id
+                name = gameName,
+                id = id,
+                maxPlayers = maxPlayers,
+                pointsToWin = 5
             };
             JsonValue value = await JsonRequestAsync(Method.POST, "add", param).ConfigureAwait(false);
 
