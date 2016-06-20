@@ -64,18 +64,18 @@ namespace CardsAgainstHumility
                 var item = _list.ElementAt(position);
                 var txtName = v.FindViewById<TextView>(Resource.Id.p_Name);
                 var isCzar = v.FindViewById(Resource.Id.p_isCzar);
-                var notReady = v.FindViewById<TextView>(Resource.Id.p_notReady);
+                var ready = v.FindViewById<TextView>(Resource.Id.p_ready);
                 var aPoints = v.FindViewById<TextView>(Resource.Id.p_aPoints);
 
                 txtName.Text = item.Name;
                 if (tf != null)
                 {
                     txtName.SetTypeface(tf, TypefaceStyle.Normal);
-                    notReady.SetTypeface(tf, TypefaceStyle.Normal);
+                    ready.SetTypeface(tf, TypefaceStyle.Normal);
                     aPoints.SetTypeface(tf, TypefaceStyle.Normal);
                 }
 
-                notReady.Visibility = ((item.IsReady && CardsAgainstHumility.GameStarted && CardsAgainstHumility.ReadyForReview) ? ViewStates.Invisible : ViewStates.Visible);
+                ready.Visibility = ((item.IsReady && CardsAgainstHumility.GameStarted && CardsAgainstHumility.ReadyForReview) ? ViewStates.Visible : ViewStates.Invisible);
                 isCzar.Visibility = (item.IsCardCzar ? ViewStates.Visible : ViewStates.Invisible);
                 aPoints.Text = item.AwesomePoints.ToString();
             }

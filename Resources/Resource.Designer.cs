@@ -166,7 +166,7 @@ namespace CardsAgainstHumility
 			public const int p_isCzar = 2131034138;
 			
 			// aapt resource value: 0x7f05001c
-			public const int p_notReady = 2131034140;
+			public const int p_ready = 2131034140;
 			
 			// aapt resource value: 0x7f05001e
 			public const int s_btnSave = 2131034142;

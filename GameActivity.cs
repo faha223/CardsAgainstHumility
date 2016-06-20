@@ -131,7 +131,6 @@ namespace CardsAgainstHumility
             if (tf != null)
                 FindViewById<TextView>(Resource.Id.gv_GameName).SetTypeface(tf, TypefaceStyle.Normal);
             
-            
             UpdateCurrentQuestion();
             UpdatePlayerHand();
             UpdateReadyButton();

@@ -5,21 +5,21 @@
     <ImageView
         android:id="@+id/p_isCzar"
         android:src="@drawable/czarIcon"
-        android:layout_width="30dp"
+        android:layout_width="20dp"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true" />
     <TextView
         android:id="@+id/p_aPoints"
-        android:layout_width="30dp"
+        android:layout_width="20dp"
         android:layout_height="match_parent"
         android:text="100"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="20dp"
         android:layout_alignParentLeft="true"
         android:gravity="center" />
     <TextView
-        android:id="@+id/p_notReady"
-        android:text="Not Ready"
-        android:layout_width="80dp"
+        android:id="@+id/p_ready"
+        android:text="Ready"
+        android:layout_width="60dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:gravity="center_vertical" />
@@ -28,8 +28,8 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="60dp"
         android:gravity="center_vertical"
         android:id="@+id/p_Name" />
 </RelativeLayout>
