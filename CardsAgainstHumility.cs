@@ -77,6 +77,10 @@ namespace CardsAgainstHumility
 
         public static bool ReadyForReview { get; private set; }
 
+        public static string RoundWinner { get; private set; }
+
+        public static string WinningCard { get; private set; }
+
         public static List<string> PlayersNotYetSubmitted { get; private set; }
 
         #endregion Properties
@@ -245,6 +249,17 @@ namespace CardsAgainstHumility
             if(ReadyForReview)
             {
                 Console.WriteLine("Round Winner: {0}", gameState.winnerId);
+                WinningCard = gameState.winningCardId;
+                var winner = gameState.players.SingleOrDefault(c => c.selectedWhiteCardId == WinningCard);
+                if (winner != null)
+                    RoundWinner = winner.name;
+                else
+                    RoundWinner = "Forgettable";
+            }
+            else
+            {
+                RoundWinner = string.Empty;
+                WinningCard = string.Empty;
             }
 
             Game_Update?.Invoke(null, new GameUpdateEventArgs(gameState));

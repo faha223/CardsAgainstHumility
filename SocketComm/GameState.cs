@@ -9,8 +9,9 @@ namespace CardsAgainstHumility.SocketComm
         public List<player> players { get; set; }
         public object[] history { get; set; }
         public bool isOver { get; set; }
+        public string winner { get; set; }
         public string winnerId { get; set; }
-        public string winningCard { get; set; }
+        public string winningCardId { get; set; }
         public bool isStarted { get; set; }
         public string currentBlackCard { get; set; }
         public bool isReadyForScoring { get; set; }

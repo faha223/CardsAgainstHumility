@@ -11,6 +11,7 @@ using Android.Graphics;
 using System.Net;
 using Android.Util;
 using Android.Support.V4.Widget;
+using Android.Graphics.Drawables;
 
 namespace CardsAgainstHumility
 {
@@ -25,6 +26,7 @@ namespace CardsAgainstHumility
         TextView PlayerListHeader;
         PlayerArrayAdapter PlayerArrayAdapter;
         DrawerLayout _drawer;
+        bool WinnerAlertShown = false;
 
         WhiteCard _selectedCard;
         View _selectedCardView;
@@ -205,16 +207,7 @@ namespace CardsAgainstHumility
                     CurrentQuestionView.Visibility = ViewStates.Invisible;
                 else
                 {
-                    var text = CurrentQuestionView.FindViewById<TextView>(Resource.Id.bc_CardText);
-                    if (UIAssets.AppFont != null)
-                    {
-                        var txtlogo = CurrentQuestionView.FindViewById<TextView>(Resource.Id.bc_logo_text);
-                        txtlogo.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
-                        text.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
-                    }
-
-                    text.Text = WebUtility.HtmlDecode(currentQuestion.Text);
-                    text.SetTextSize(Android.Util.ComplexUnitType.Dip, currentQuestion.FontSize);
+                    PrepareBlackCard(CurrentQuestionView, currentQuestion);
                     CurrentQuestionView.Visibility = ViewStates.Visible;
                 }
             }
@@ -228,6 +221,7 @@ namespace CardsAgainstHumility
                 readyButton.Click += (sender, args) =>
                 {
                     CardsAgainstHumility.ReadyForNextRound();
+                    WinnerAlertShown = false;
                 };
             }
             readyButton.Visibility = (CardsAgainstHumility.ReadyForReview && !CardsAgainstHumility.IsReady) ? ViewStates.Visible : ViewStates.Invisible;
@@ -237,6 +231,15 @@ namespace CardsAgainstHumility
         {
             PlayerListHeader.Text = $"Players ({CardsAgainstHumility.Players.Count} of {CardsAgainstHumility.MaxPlayers})";
             PlayerArrayAdapter.NewData(CardsAgainstHumility.Players);
+        }
+
+        private void UpdateRoundWinner()
+        {
+            if(CardsAgainstHumility.ReadyForReview && !CardsAgainstHumility.IsReady && !WinnerAlertShown)
+            {
+                ShowWinnerModal();
+                WinnerAlertShown = true;
+            }
         }
 
         protected override void OnDestroy()
@@ -278,6 +281,7 @@ namespace CardsAgainstHumility
                 UpdateStatusText();
                 UpdateReadyButton();
                 UpdatePlayerList();
+                UpdateRoundWinner();
             });
         }
 
@@ -318,6 +322,80 @@ namespace CardsAgainstHumility
                     CardsAgainstHumility.SelectCard(_selectedCard);
                 }
             }
+        }
+
+        private void ShowAlert(string caption, string message)
+        {
+            RunOnUiThread(() =>
+            {
+                var builder = new AlertDialog.Builder(this);
+                builder.SetTitle(caption);
+                builder.SetMessage(message);
+                builder.Create().Show();
+            });
+        }
+
+        private void PrepareBlackCard(View view, BlackCard currentQuestion)
+        {
+            var text = view.FindViewById<TextView>(Resource.Id.bc_CardText);
+            if (UIAssets.AppFont != null)
+            {
+                var txtlogo = view.FindViewById<TextView>(Resource.Id.bc_logo_text);
+                txtlogo.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                text.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+            }
+
+            text.Text = WebUtility.HtmlDecode(currentQuestion.Text);
+            text.SetTextSize(Android.Util.ComplexUnitType.Dip, currentQuestion.FontSize);
+        }
+
+        private void PrepareWhiteCard(View view, WhiteCard card)
+        {
+            var text = view.FindViewById<TextView>(Resource.Id.wc_CardText);
+            if (UIAssets.AppFont != null)
+            {
+                var txtlogo = view.FindViewById<TextView>(Resource.Id.wc_logo_text);
+                txtlogo.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                text.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+            }
+
+            text.Text = WebUtility.HtmlDecode(card.Text);
+            text.SetTextSize(Android.Util.ComplexUnitType.Dip, card.FontSize);
+        }
+
+        private void ShowWinnerModal()
+        {
+            RunOnUiThread(() =>
+            {
+                // Prepare the builder
+                var builder = new AlertDialog.Builder(this);
+                var view = LayoutInflater.Inflate(Resource.Layout.RoundWinnerAnnouncement, null);
+
+                // Show the winner's name
+                var winnerName = view.FindViewById<TextView>(Resource.Id.wm_Winner);
+                winnerName.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                winnerName.Text = $"{CardsAgainstHumility.RoundWinner} won the round";
+
+                // Prepare the black card
+                var blackCardView = view.FindViewById<FrameLayout>(Resource.Id.wm_BlackCard);
+                var blackCard = LayoutInflater.Inflate(Resource.Layout.BlackCard, null);
+                PrepareBlackCard(blackCard, CardsAgainstHumility.CurrentQuestion);
+                blackCard.ScaleX = blackCard.ScaleY = 0.65f;
+                blackCardView.AddView(blackCard);
+
+                // Prepare the white card
+                var whiteCardView = view.FindViewById<FrameLayout>(Resource.Id.wm_WhiteCard);
+                var whiteCard = LayoutInflater.Inflate(Resource.Layout.WhiteCard, null);
+                PrepareWhiteCard(whiteCard, new WhiteCard(CardsAgainstHumility.WinningCard, 20));
+                whiteCard.ScaleX = whiteCard.ScaleY = 0.65f;
+                whiteCardView.AddView(whiteCard);
+
+                // Show the modal
+                builder.SetView(view);
+                var dlg = builder.Create();
+                dlg.Window.SetBackgroundDrawable(new ColorDrawable(Color.Transparent));
+                dlg.Show();
+            });
         }
     }
 }
