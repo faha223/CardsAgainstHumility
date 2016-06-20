@@ -18,6 +18,8 @@ namespace CardsAgainstHumility
     [Activity(Label = "GameActivity", Theme = "@android:style/Theme.NoTitleBar")]
     public class GameActivity : Activity
     {
+        #region Members
+
         HorizontalListView PlayerHandView;
         TextView statusIndicator;
         Button readyButton;
@@ -27,6 +29,11 @@ namespace CardsAgainstHumility
         PlayerArrayAdapter PlayerArrayAdapter;
         DrawerLayout _drawer;
         bool WinnerAlertShown = false;
+        View CurrentQuestionView;
+
+        #endregion Members
+
+        #region Properties
 
         WhiteCard _selectedCard;
         View _selectedCardView;
@@ -75,7 +82,9 @@ namespace CardsAgainstHumility
             }
         }
 
-        private View CurrentQuestionView;
+        #endregion Properties
+
+        #region Animations
 
         private Animation selectedCardAnimation
         {
@@ -99,23 +108,16 @@ namespace CardsAgainstHumility
             }
         }
 
+        #endregion Animations
+
+        #region Activity
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.GameView);
 
-            var _currentQuestionHolder = FindViewById<RelativeLayout>(Resource.Id.gv_CurrentQuestion);
-            CurrentQuestionView = ((LayoutInflater)GetSystemService(LayoutInflaterService)).Inflate(Resource.Layout.BlackCard, null);
-            CurrentQuestionView.SetZ(-10);
-            var layoutParams = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WrapContent, 
-                ViewGroup.LayoutParams.WrapContent);
-            layoutParams.AddRule(LayoutRules.CenterInParent);
-            layoutParams.AddRule(LayoutRules.AlignParentTop);
-            layoutParams.AddRule(LayoutRules.CenterHorizontal);
-            layoutParams.SetMargins(0, (int)Math.Round(TypedValue.ApplyDimension(ComplexUnitType.Dip, 50, Resources.DisplayMetrics)), 0, 0);
-            CurrentQuestionView.LayoutParameters = layoutParams;
-            _currentQuestionHolder.AddView(CurrentQuestionView);
+            CurrentQuestionView = FindViewById(Resource.Id.gv_CurrentQuestion);
 
             PlayerListHeader = FindViewById<TextView>(Resource.Id.gv_PlayerCount);
             if (UIAssets.AppFont != null)
@@ -147,6 +149,24 @@ namespace CardsAgainstHumility
             CardsAgainstHumility.Game_Update += OnUpdateGame;
             CardsAgainstHumility.Game_Error += OnGameError;
         }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            CardsAgainstHumility.DepartGame();
+            CardsAgainstHumility.Game_SocketConnected -= OnSocketConnected;
+            CardsAgainstHumility.Game_SocketConnectError -= OnSocketConnectError;
+            CardsAgainstHumility.Game_SocketConnectTimeout -= OnSocketConnectTimeout;
+            CardsAgainstHumility.Game_Update -= OnUpdateGame;
+            CardsAgainstHumility.Game_Error -= OnGameError;
+
+            CurrentQuestionView.Dispose();
+            CurrentQuestionView = null;
+        }
+
+        #endregion Activity
+
+        #region Update Game Logic
 
         private void UpdatePlayerHand()
         {
@@ -185,7 +205,10 @@ namespace CardsAgainstHumility
             {
                 if (CardsAgainstHumility.ReadyForReview)
                 {
-                    Status = CardsAgainstHumility.IsReady ? $"Waiting on other players ({CardsAgainstHumility.Players.Count(c => c.IsReady)} of {CardsAgainstHumility.Players.Count})" : "Get Ready for the Next Round";
+                    string readyStatus = $"Waiting on other players ({CardsAgainstHumility.Players.Count(c => c.IsReady)} of {CardsAgainstHumility.Players.Count})";
+                    string czarNotReadyStatus = $"{CardsAgainstHumility.RoundWinner} won the round";
+                    string playerNotReadyStatus = "Get Ready for the Next Round";
+                    Status = CardsAgainstHumility.IsReady ? readyStatus : (CardsAgainstHumility.IsCardCzar ? czarNotReadyStatus : playerNotReadyStatus);
                 }
                 else if (CardsAgainstHumility.IsCardCzar)
                     Status = "You are the Card Czar";
@@ -194,7 +217,8 @@ namespace CardsAgainstHumility
             }
             else
             {
-                Status = $"Waiting for more players ({CardsAgainstHumility.Players.Count} of {CardsAgainstHumility.RequiredNumberOfPlayers})";
+                var numPlayersNeeded = CardsAgainstHumility.RequiredNumberOfPlayers - CardsAgainstHumility.Players.Count;
+                Status = $"Waiting for {numPlayersNeeded} more player{(numPlayersNeeded == 1 ? string.Empty : "s")}";
             }
         }
 
@@ -235,26 +259,21 @@ namespace CardsAgainstHumility
 
         private void UpdateRoundWinner()
         {
-            if(CardsAgainstHumility.ReadyForReview && !CardsAgainstHumility.IsReady && !WinnerAlertShown)
+            // Don't show this if the player is the card czar. They already know.
+            // Don't show this if you already showed it this round
+            // Don't show this if the player is already ready
+            // Don't show this if the round hasn't ended yet
+
+            if(!CardsAgainstHumility.IsCardCzar && CardsAgainstHumility.ReadyForReview && !CardsAgainstHumility.IsReady && !WinnerAlertShown)
             {
                 ShowWinnerModal();
                 WinnerAlertShown = true;
             }
         }
 
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            CardsAgainstHumility.DepartGame();
-            CardsAgainstHumility.Game_SocketConnected -= OnSocketConnected;
-            CardsAgainstHumility.Game_SocketConnectError -= OnSocketConnectError;
-            CardsAgainstHumility.Game_SocketConnectTimeout -= OnSocketConnectTimeout;
-            CardsAgainstHumility.Game_Update -= OnUpdateGame;
-            CardsAgainstHumility.Game_Error -= OnGameError;
+        #endregion Update Game Logic
 
-            CurrentQuestionView.Dispose();
-            CurrentQuestionView = null;
-        }
+        #region CardsAgainstHumility Event Handlers
 
         private void OnSocketConnected(object sender, EventArgs args)
         {
@@ -290,6 +309,10 @@ namespace CardsAgainstHumility
             Console.WriteLine("Game Error: {0}", args.ToString());
         }
 
+        #endregion CardsAgainstHumility Event Handlers
+
+        #region Game Events
+
         private void SelectCard(WhiteCard card, View view)
         {
             if (CardsAgainstHumility.GameStarted)
@@ -324,6 +347,10 @@ namespace CardsAgainstHumility
             }
         }
 
+        #endregion Game Events
+
+        #region Helper Methods
+
         private void ShowAlert(string caption, string message)
         {
             RunOnUiThread(() =>
@@ -332,6 +359,35 @@ namespace CardsAgainstHumility
                 builder.SetTitle(caption);
                 builder.SetMessage(message);
                 builder.Create().Show();
+            });
+        }
+
+        private void ShowWinnerModal()
+        {
+            RunOnUiThread(() =>
+            {
+                // Prepare the builder
+                var dlg = new Dialog(this);
+                var view = LayoutInflater.Inflate(Resource.Layout.RoundWinnerAnnouncement, null);
+
+                // Show the winner's name
+                var winnerName = view.FindViewById<TextView>(Resource.Id.wm_Winner);
+                winnerName.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                winnerName.Text = $"{CardsAgainstHumility.RoundWinner} won the round";
+                winnerName.SetTextSize(ComplexUnitType.Dip, 16);
+
+                // Prepare the black card
+                var blackCard = view.FindViewById<View>(Resource.Id.wm_BlackCard);
+                PrepareBlackCard(blackCard, CardsAgainstHumility.CurrentQuestion);
+
+                // Prepare the white card
+                var whiteCard = view.FindViewById<FrameLayout>(Resource.Id.wm_WhiteCard);
+                PrepareWhiteCard(whiteCard, new WhiteCard(CardsAgainstHumility.WinningCard, 20));
+
+                // Show the modal
+                dlg.AddContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
+                dlg.Window.SetBackgroundDrawable(new ColorDrawable(Color.Transparent));
+                dlg.Show();
             });
         }
 
@@ -363,39 +419,6 @@ namespace CardsAgainstHumility
             text.SetTextSize(Android.Util.ComplexUnitType.Dip, card.FontSize);
         }
 
-        private void ShowWinnerModal()
-        {
-            RunOnUiThread(() =>
-            {
-                // Prepare the builder
-                var builder = new AlertDialog.Builder(this);
-                var view = LayoutInflater.Inflate(Resource.Layout.RoundWinnerAnnouncement, null);
-
-                // Show the winner's name
-                var winnerName = view.FindViewById<TextView>(Resource.Id.wm_Winner);
-                winnerName.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
-                winnerName.Text = $"{CardsAgainstHumility.RoundWinner} won the round";
-
-                // Prepare the black card
-                var blackCardView = view.FindViewById<FrameLayout>(Resource.Id.wm_BlackCard);
-                var blackCard = LayoutInflater.Inflate(Resource.Layout.BlackCard, null);
-                PrepareBlackCard(blackCard, CardsAgainstHumility.CurrentQuestion);
-                blackCard.ScaleX = blackCard.ScaleY = 0.65f;
-                blackCardView.AddView(blackCard);
-
-                // Prepare the white card
-                var whiteCardView = view.FindViewById<FrameLayout>(Resource.Id.wm_WhiteCard);
-                var whiteCard = LayoutInflater.Inflate(Resource.Layout.WhiteCard, null);
-                PrepareWhiteCard(whiteCard, new WhiteCard(CardsAgainstHumility.WinningCard, 20));
-                whiteCard.ScaleX = whiteCard.ScaleY = 0.65f;
-                whiteCardView.AddView(whiteCard);
-
-                // Show the modal
-                builder.SetView(view);
-                var dlg = builder.Create();
-                dlg.Window.SetBackgroundDrawable(new ColorDrawable(Color.Transparent));
-                dlg.Show();
-            });
-        }
+        #endregion Helper Methods
     }
 }

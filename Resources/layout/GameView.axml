@@ -8,12 +8,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <RelativeLayout
-            android:id="@+id/gv_CurrentQuestion"
             android:theme="@android:style/Theme.Material"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#282828">
+            <include layout="@layout/BlackCard" 
+                     android:id="@+id/gv_CurrentQuestion"
+                     android:layout_centerInParent="true"
+                     android:layout_alignParentTop="true"
+                     android:layout_width="wrap_content" 
+                     android:layout_height="wrap_content"
+                     android:layout_marginTop="50dp" />
             <TextView
                 android:id="@+id/gv_CardCzar"
                 android:text="You are the Card Czar"

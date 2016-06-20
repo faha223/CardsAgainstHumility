@@ -69,7 +69,7 @@
             android:gravity="right"
             android:id="@+id/s_lblServerPort" />
         <EditText
-            android:inputType="text"
+            android:inputType="number"
             android:imeOptions="actionDone"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

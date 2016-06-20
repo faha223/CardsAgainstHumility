@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipChildren="false">
     <TextView
         android:id="@+id/wm_Winner"
         android:text="Specialfred453 won the round"
         android:layout_height="25dp"
-        android:layout_width="match_parent" />
+        android:layout_width="match_parent"
+        android:gravity="center" />
     <LinearLayout
         android:layout_below="@id/wm_Winner"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent">
-        <FrameLayout
+        android:layout_height="fill_parent"
+        android:clipChildren="false"
+        android:gravity="center">
+        <include
+            layout="@layout/BlackCard"
             android:id="@+id/wm_BlackCard"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="120dp" />
+        <include
+            layout="@layout/WhiteCard"
             android:id="@+id/wm_WhiteCard"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent" />
     </LinearLayout>
 </RelativeLayout>
