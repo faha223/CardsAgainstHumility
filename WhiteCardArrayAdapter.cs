@@ -40,23 +40,28 @@ namespace CardsAgainstHumility
                 return;
             lock (_list)
             {
+                int changes = 0;
                 if (_newList.Count == 0)
                 {
+                    changes = _list.Count;
                     _list.Clear();
                 }
                 else
                 {
                     // Remove all cards that aren't in the new list
+                    changes += _list.Count(c => !_newList.Select(d => d.Id).Contains(c.Id));
                     _list.RemoveAll(d => !_newList.Select(c => c.Id).Contains(d.Id));
 
                     // Add all the cards that aren't in the old list
                     var toAdd = _newList.Where(d => !_list.Select(c => c.Id).Contains(d.Id));
+                    changes += toAdd.Count();
                     _list.AddRange(toAdd);
                 }
-            }
 
-            // Notify that the data set has changed
-            NotifyDataSetChanged();
+                // Notify that the data set has changed
+                if (changes > 0)
+                    NotifyDataSetChanged();
+            }
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)

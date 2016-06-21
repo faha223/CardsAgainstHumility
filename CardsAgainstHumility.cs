@@ -15,6 +15,7 @@ using System.Linq;
 using Android.Provider;
 using Android.Content;
 using Android.Database;
+using CardsAgainstHumility.Helpers;
 
 namespace CardsAgainstHumility
 {
@@ -153,24 +154,6 @@ namespace CardsAgainstHumility
             }
         }
 
-        private static string GetUserName(Activity activity)
-        {
-            Android.Net.Uri uri = ContactsContract.Profile.ContentUri;
-            string[] projection = { ContactsContract.Contacts.InterfaceConsts.DisplayName };
-
-            CursorLoader loader = new CursorLoader(activity, uri, projection, null, null, null);
-            ICursor cursor = (ICursor)loader.LoadInBackground();
-
-            if (cursor != null)
-            {
-                if (cursor.MoveToFirst())
-                {
-                    return cursor.GetString(cursor.GetColumnIndex(projection[0]));
-                }
-            }
-            return Environment.UserName;
-        }
-
         #endregion Helper Functions
 
         public static void InitDefaultValues(Activity activity)
@@ -179,7 +162,7 @@ namespace CardsAgainstHumility
             // This is just a modified NodeJS Against Humanity server updated to Socket.IO 1.4.6
             Host = "http://74.139.199.67";
             Port = 16567;
-            PlayerName = GetUserName(activity);
+            PlayerName = UserInfo.GetUserName(activity);
 
             var settings = activity.GetSharedPreferences("CardsAgainstHumility", Android.Content.FileCreationMode.Private);
 

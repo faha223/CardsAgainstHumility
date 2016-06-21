@@ -94,6 +94,7 @@
     <Compile Include="GameClasses\WhiteCard.cs" />
     <Compile Include="GameInstanceArrayAdapter.cs" />
     <Compile Include="Helpers\UINotifying.cs" />
+    <Compile Include="Helpers\UserInfo.cs" />
     <Compile Include="HorizontalListView.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />

@@ -3,5 +3,6 @@
 	<uses-sdk android:minSdkVersion="16" />
 	<uses-permission android:name="android.permission.READ_CONTACTS" />
 	<uses-permission android:name="android.permission.READ_PROFILE" />
+	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	<application android:label="Cards Against Humility" android:icon="@drawable/Icon"></application>
 </manifest>

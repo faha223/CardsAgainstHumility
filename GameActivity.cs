@@ -23,6 +23,7 @@ namespace CardsAgainstHumility
         HorizontalListView PlayerHandView;
         TextView statusIndicator;
         Button readyButton;
+        Button confirmButton;
         WhiteCardArrayAdapter _playerHandArrayAdapter;
         ListView PlayerList;
         TextView PlayerListHeader;
@@ -48,13 +49,17 @@ namespace CardsAgainstHumility
                 if (_selectedCardView != value)
                 {
                     if(_selectedCardView != null)
-                    {
-                        _selectedCardView.Click -= ConfirmCard;
                         _selectedCardView.StartAnimation(deselectedCardAnimation);
-                    }
+
                     _selectedCardView = value;
-                    _selectedCardView.StartAnimation(selectedCardAnimation);
-                    _selectedCardView.Click += ConfirmCard;
+
+                    if(_selectedCardView != null)
+                        _selectedCardView.StartAnimation(selectedCardAnimation);
+
+                    RunOnUiThread(() =>
+                    {
+                        UpdateConfirmButton();
+                    });
                 }
             }
         }
@@ -142,6 +147,7 @@ namespace CardsAgainstHumility
             UpdateReadyButton();
             UpdateStatusText();
             UpdatePlayerList();
+            UpdateConfirmButton();
 
             CardsAgainstHumility.Game_SocketConnected += OnSocketConnected;
             CardsAgainstHumility.Game_SocketConnectError += OnSocketConnectError;
@@ -187,6 +193,11 @@ namespace CardsAgainstHumility
             else
             {
                 _playerHandArrayAdapter.NewData(playerHand);
+                if (_selectedCard != null && !playerHand.Select(c => c.Id).Contains(_selectedCard.Id))
+                {
+                    _selectedCard = null;
+                    SelectedCardView = null;
+                }
                 if ((!CardsAgainstHumility.IsCardCzar) && (CardsAgainstHumility.SelectedCard != null))
                     PlayerHandView.Enabled = false;
             }
@@ -242,6 +253,7 @@ namespace CardsAgainstHumility
             if (readyButton == null)
             {
                 readyButton = FindViewById<Button>(Resource.Id.gv_ReadyButton);
+                readyButton.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
                 readyButton.Click += (sender, args) =>
                 {
                     CardsAgainstHumility.ReadyForNextRound();
@@ -249,6 +261,23 @@ namespace CardsAgainstHumility
                 };
             }
             readyButton.Visibility = (CardsAgainstHumility.ReadyForReview && !CardsAgainstHumility.IsReady) ? ViewStates.Visible : ViewStates.Invisible;
+        }
+
+        private void UpdateConfirmButton()
+        {
+            if(confirmButton == null)
+            {
+                confirmButton = FindViewById<Button>(Resource.Id.gv_ConfirmButton);
+                confirmButton.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                confirmButton.Click += ConfirmCard;
+            }
+            bool showButton = (_selectedCard != null);
+            if (CardsAgainstHumility.IsCardCzar)
+                showButton &= string.IsNullOrWhiteSpace(CardsAgainstHumility.RoundWinner);
+            else
+                showButton &= CardsAgainstHumility.SelectedCard == null;
+
+            confirmButton.Visibility = (showButton) ? ViewStates.Visible : ViewStates.Invisible;
         }
 
         private void UpdatePlayerList()
@@ -301,6 +330,7 @@ namespace CardsAgainstHumility
                 UpdateReadyButton();
                 UpdatePlayerList();
                 UpdateRoundWinner();
+                UpdateConfirmButton();
             });
         }
 
@@ -315,7 +345,7 @@ namespace CardsAgainstHumility
 
         private void SelectCard(WhiteCard card, View view)
         {
-            if (CardsAgainstHumility.GameStarted)
+            if (CardsAgainstHumility.GameStarted && (CardsAgainstHumility.SelectedCard == null))
             {
                 _selectedCard = card;
                 SelectedCardView = view;
@@ -364,6 +394,10 @@ namespace CardsAgainstHumility
 
         private void ShowWinnerModal()
         {
+            var RoundWinner = (CardsAgainstHumility.RoundWinner == CardsAgainstHumility.PlayerName ? "You" : CardsAgainstHumility.RoundWinner);
+            var currentQuestion = CardsAgainstHumility.CurrentQuestion;
+            var winningAnswer = new WhiteCard(CardsAgainstHumility.WinningCard, 20);
+
             RunOnUiThread(() =>
             {
                 // Prepare the builder
@@ -373,16 +407,16 @@ namespace CardsAgainstHumility
                 // Show the winner's name
                 var winnerName = view.FindViewById<TextView>(Resource.Id.wm_Winner);
                 winnerName.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
-                winnerName.Text = $"{CardsAgainstHumility.RoundWinner} won the round";
+                winnerName.Text = $"{RoundWinner} won the round";
                 winnerName.SetTextSize(ComplexUnitType.Dip, 16);
 
                 // Prepare the black card
                 var blackCard = view.FindViewById<View>(Resource.Id.wm_BlackCard);
-                PrepareBlackCard(blackCard, CardsAgainstHumility.CurrentQuestion);
+                PrepareBlackCard(blackCard, currentQuestion);
 
                 // Prepare the white card
                 var whiteCard = view.FindViewById<FrameLayout>(Resource.Id.wm_WhiteCard);
-                PrepareWhiteCard(whiteCard, new WhiteCard(CardsAgainstHumility.WinningCard, 20));
+                PrepareWhiteCard(whiteCard, winningAnswer);
 
                 // Show the modal
                 dlg.AddContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
