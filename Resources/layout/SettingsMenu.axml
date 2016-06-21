@@ -54,25 +54,4 @@
             android:layout_height="wrap_content"
             android:id="@+id/s_txtServerAddress" />
     </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:minWidth="25px"
-        android:minHeight="25px"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/s_lServerAddress"
-        android:id="@+id/s_lServerPort">
-        <TextView
-            android:text="Server Port"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:id="@+id/s_lblServerPort" />
-        <EditText
-            android:inputType="number"
-            android:imeOptions="actionDone"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/s_txtServerPort" />
-    </LinearLayout>
 </RelativeLayout>

@@ -3,7 +3,6 @@ using Android.Content;
 using Android.Database;
 using Android.Provider;
 using System;
-using System.Linq;
 
 namespace CardsAgainstHumility.Helpers
 {
@@ -53,7 +52,7 @@ namespace CardsAgainstHumility.Helpers
             {
                 return new string[]
                 {
-                    ContactsContract.Profile.InterfaceConsts.NameRawContactId
+                    ContactsContract.Profile.InterfaceConsts.DisplayName
                 };
             }
         }

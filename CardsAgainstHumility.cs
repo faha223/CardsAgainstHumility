@@ -12,9 +12,6 @@ using Newtonsoft.Json;
 using CardsAgainstHumility.Events;
 using CardsAgainstHumility.SocketComm;
 using System.Linq;
-using Android.Provider;
-using Android.Content;
-using Android.Database;
 using CardsAgainstHumility.Helpers;
 
 namespace CardsAgainstHumility
@@ -59,8 +56,6 @@ namespace CardsAgainstHumility
         public static string SelectedCard { get; set; }
 
         public static string Host { get; set; }
-
-        public static int Port { get; set; }
 
         public static List<WhiteCard> PlayerHand { get; set; }
 
@@ -119,7 +114,7 @@ namespace CardsAgainstHumility
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri($"{Host}:{Port}");
+                client.BaseAddress = new Uri($"{Host}");
 
                 HttpResponseMessage response = null;
 
@@ -160,8 +155,8 @@ namespace CardsAgainstHumility
         {
             // The Host defaults to my home IP address. I'm hosting a server on 16567.
             // This is just a modified NodeJS Against Humanity server updated to Socket.IO 1.4.6
-            Host = "http://74.139.199.67";
-            Port = 16567;
+            // found at https://github.com/amirrajan/nodejs-against-humanity
+            Host = "https://polar-harbor-54061.herokuapp.com";
             PlayerName = UserInfo.GetUserName(activity);
 
             var settings = activity.GetSharedPreferences("CardsAgainstHumility", Android.Content.FileCreationMode.Private);
@@ -172,8 +167,6 @@ namespace CardsAgainstHumility
                     PlayerName = settings.GetString("PlayerName", PlayerName);
                 if (settings.Contains("Host"))
                     Host = settings.GetString("Host", Host);
-                if (settings.Contains("Port"))
-                    Port = settings.GetInt("Port", Port);
             }
         }
 
@@ -392,7 +385,7 @@ namespace CardsAgainstHumility
             if (Socket != null)
                 DisconnectSocket();
 
-            var sock = GetSocket($"{Host}:{Port}/lobby");
+            var sock = GetSocket($"{Host}/lobby");
             sock.On(Socket.EventConnect, lobby_SocketConnected);
             sock.On(Socket.EventConnectError, lobby_SocketConnectError);
             sock.On(Socket.EventConnectTimeout, lobby_SocketConnectTimeout);
@@ -407,7 +400,7 @@ namespace CardsAgainstHumility
             if (Socket != null)
                 DisconnectSocket();
 
-            var sock = GetSocket($"{Host}:{Port}/game", new IO.Options()
+            var sock = GetSocket($"{Host}/game", new IO.Options()
             {
                 Query = $"playerId={PlayerId}"
             });
