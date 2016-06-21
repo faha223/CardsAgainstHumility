@@ -31,6 +31,7 @@ namespace CardsAgainstHumility
         DrawerLayout _drawer;
         bool WinnerAlertShown = false;
         View CurrentQuestionView;
+        View SelectedAnswerView;
 
         #endregion Members
 
@@ -123,6 +124,7 @@ namespace CardsAgainstHumility
             SetContentView(Resource.Layout.GameView);
 
             CurrentQuestionView = FindViewById(Resource.Id.gv_CurrentQuestion);
+            SelectedAnswerView = FindViewById(Resource.Id.gv_SelectedCard);
 
             PlayerListHeader = FindViewById<TextView>(Resource.Id.gv_PlayerCount);
             if (UIAssets.AppFont != null)
@@ -141,13 +143,14 @@ namespace CardsAgainstHumility
             FindViewById<TextView>(Resource.Id.gv_GameName).Text = CardsAgainstHumility.GameName;
             if (UIAssets.AppFont != null)
                 FindViewById<TextView>(Resource.Id.gv_GameName).SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
-            
+
             UpdateCurrentQuestion();
-            UpdatePlayerHand();
-            UpdateReadyButton();
+            UpdateRoundWinner();
             UpdateStatusText();
+            UpdateReadyButton();
             UpdatePlayerList();
             UpdateConfirmButton();
+            UpdatePlayerHand();
 
             CardsAgainstHumility.Game_SocketConnected += OnSocketConnected;
             CardsAgainstHumility.Game_SocketConnectError += OnSocketConnectError;
@@ -159,7 +162,11 @@ namespace CardsAgainstHumility
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            CardsAgainstHumility.DepartGame();
+
+            // If isFinishing is false, the player isn't really leaving the game
+            if(IsFinishing)
+                CardsAgainstHumility.DepartGame();
+
             CardsAgainstHumility.Game_SocketConnected -= OnSocketConnected;
             CardsAgainstHumility.Game_SocketConnectError -= OnSocketConnectError;
             CardsAgainstHumility.Game_SocketConnectTimeout -= OnSocketConnectTimeout;
@@ -200,6 +207,29 @@ namespace CardsAgainstHumility
                 }
                 if ((!CardsAgainstHumility.IsCardCzar) && (CardsAgainstHumility.SelectedCard != null))
                     PlayerHandView.Enabled = false;
+            }
+
+            if((!CardsAgainstHumility.IsCardCzar && (CardsAgainstHumility.SelectedCard == null)) ||
+                (CardsAgainstHumility.IsCardCzar && (string.IsNullOrWhiteSpace(CardsAgainstHumility.RoundWinner))))
+            {
+                PlayerHandView.Visibility = ViewStates.Visible;
+                SelectedAnswerView.Visibility = ViewStates.Invisible;
+            }
+            else
+            {
+                WhiteCard whiteCard = _selectedCard;
+
+                // If the player is card czar this round, and they selected a winner, display that one
+                if (CardsAgainstHumility.IsCardCzar && CardsAgainstHumility.ReadyForReview && (_selectedCard == null))
+                    whiteCard = new WhiteCard(CardsAgainstHumility.WinningCard, 20);
+                
+                PrepareWhiteCard(SelectedAnswerView, whiteCard);
+
+                // Place the white card just below the bottom of the black card's text
+                PlaceWhiteCardBelowBlackCardText(SelectedAnswerView, CurrentQuestionView);
+
+                PlayerHandView.Visibility = ViewStates.Invisible;
+                SelectedAnswerView.Visibility = ViewStates.Visible;
             }
         }
 
@@ -324,13 +354,13 @@ namespace CardsAgainstHumility
             Console.WriteLine("Game Updated");
             RunOnUiThread(() =>
             {
-                UpdatePlayerHand();
                 UpdateCurrentQuestion();
+                UpdateRoundWinner();
                 UpdateStatusText();
                 UpdateReadyButton();
                 UpdatePlayerList();
-                UpdateRoundWinner();
                 UpdateConfirmButton();
+                UpdatePlayerHand();
             });
         }
 
@@ -418,6 +448,9 @@ namespace CardsAgainstHumility
                 var whiteCard = view.FindViewById<FrameLayout>(Resource.Id.wm_WhiteCard);
                 PrepareWhiteCard(whiteCard, winningAnswer);
 
+                // Place the white card just below the bottom of the black card's text
+                PlaceWhiteCardBelowBlackCardText(whiteCard, blackCard);
+
                 // Show the modal
                 dlg.AddContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));
                 dlg.Window.SetBackgroundDrawable(new ColorDrawable(Color.Transparent));
@@ -435,8 +468,11 @@ namespace CardsAgainstHumility
                 text.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
             }
 
-            text.Text = WebUtility.HtmlDecode(currentQuestion.Text);
-            text.SetTextSize(Android.Util.ComplexUnitType.Dip, currentQuestion.FontSize);
+            if (currentQuestion != null)
+            {
+                text.Text = WebUtility.HtmlDecode(currentQuestion.Text);
+                text.SetTextSize(Android.Util.ComplexUnitType.Dip, currentQuestion.FontSize);
+            }
         }
 
         private void PrepareWhiteCard(View view, WhiteCard card)
@@ -449,8 +485,23 @@ namespace CardsAgainstHumility
                 text.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
             }
 
-            text.Text = WebUtility.HtmlDecode(card.Text);
-            text.SetTextSize(Android.Util.ComplexUnitType.Dip, card.FontSize);
+            if (card != null)
+            {
+                text.Text = WebUtility.HtmlDecode(card.Text);
+                text.SetTextSize(Android.Util.ComplexUnitType.Dip, card.FontSize);
+            }
+        }
+
+        private void PlaceWhiteCardBelowBlackCardText(View whiteCard, View blackCard)
+        {
+            if((blackCard != null) && (whiteCard != null))
+            {
+                var blackCardTextView = blackCard.FindViewById<TextView>(Resource.Id.bc_CardText);
+                blackCardTextView.Measure(
+                    View.MeasureSpec.MakeMeasureSpec((int)Math.Round(200 * Resources.DisplayMetrics.Density), MeasureSpecMode.AtMost),
+                    View.MeasureSpec.MakeMeasureSpec(0, MeasureSpecMode.Unspecified));
+                whiteCard.TranslationY = blackCardTextView.MeasuredHeight + (40 * Resources.DisplayMetrics.Density);
+            }
         }
 
         #endregion Helper Methods

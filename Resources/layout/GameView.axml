@@ -3,76 +3,84 @@
     android:id="@+id/gv_drawer"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent">
-  <RelativeLayout
+    <RelativeLayout
         android:id="@+id/content_frame"
         android:theme="@android:style/Theme.Material"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#282828">
-    <include
-        layout="@layout/BlackCard"
-        android:id="@+id/gv_CurrentQuestion"
-        android:layout_centerInParent="true"
-        android:layout_alignParentTop="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp" />
-    <TextView
-        android:id="@+id/gv_CardCzar"
-        android:text="You are the Card Czar"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:textSize="20dp"
-        android:gravity="center" />
-    <CardsAgainstHumility.HorizontalListView
-        android:id="@+id/gv_PlayerHand"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:minWidth="25dp"
-        android:minHeight="25dp"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="0.0dp" />
-    <Button
-        android:id="@+id/gv_ReadyButton"
-        android:layout_height="48dp"
-        android:layout_width="100dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:text="Ready" />
-    <Button
-        android:id="@+id/gv_ConfirmButton"
-        android:layout_height="48dp"
-        android:layout_width="100dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:text="Confirm" />
-  </RelativeLayout>
-  <RelativeLayout
-      android:layout_width="240dp"
-      android:layout_height="match_parent"
-      android:background="#282828"
-      android:layout_gravity="start">
-    <TextView
-        android:id="@+id/gv_GameName"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_alignParentTop="true"
-        android:gravity="center" />
-    <TextView
-        android:id="@+id/gv_PlayerCount"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
-        android:gravity="center" />
-    <ListView
-        android:id="@+id/gv_playerList"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="40dp" />
-  </RelativeLayout>
+        <include
+            layout="@layout/BlackCard"
+            android:id="@+id/gv_CurrentQuestion"
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp" />
+        <include
+            layout="@layout/WhiteCard"
+            android:id="@+id/gv_SelectedCard"
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"/>
+        <TextView
+            android:id="@+id/gv_CardCzar"
+            android:text="You are the Card Czar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:textSize="20dp"
+            android:gravity="center" />
+        <CardsAgainstHumility.HorizontalListView
+            android:id="@+id/gv_PlayerHand"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:minWidth="25dp"
+            android:minHeight="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="0.0dp" />
+        <Button
+            android:id="@+id/gv_ReadyButton"
+            android:layout_height="48dp"
+            android:layout_width="100dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:text="Ready" />
+        <Button
+            android:id="@+id/gv_ConfirmButton"
+            android:layout_height="48dp"
+            android:layout_width="100dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:text="Confirm" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:background="#282828"
+        android:layout_gravity="start">
+        <TextView
+            android:id="@+id/gv_GameName"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignParentTop="true"
+            android:gravity="center" />
+        <TextView
+            android:id="@+id/gv_PlayerCount"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:gravity="center" />
+        <ListView
+            android:id="@+id/gv_playerList"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="40dp" />
+    </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

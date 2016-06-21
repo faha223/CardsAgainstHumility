@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 using Android.App;
 using System.Net.Http;
 using System.Json;
@@ -302,7 +301,7 @@ namespace CardsAgainstHumility
             UpdateGameState(gameState);
         }
 
-        public static async Task DepartGame()
+        public static void DepartGame()
         {
             if (GameId != null)
             {
@@ -312,7 +311,7 @@ namespace CardsAgainstHumility
                     playerId = PlayerId
                 };
 
-                await JsonRequestAsync(Method.POST, "departgame", param, false).ConfigureAwait(false);
+                JsonRequestAsync(Method.POST, "departgame", param, false).ConfigureAwait(false);
                 GameId = null;
 
                 DisconnectSocket();
