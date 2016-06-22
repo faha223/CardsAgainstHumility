@@ -115,29 +115,21 @@ namespace CardsAgainstHumility
 
                 HttpResponseMessage response = null;
 
-                try
+                switch (method)
                 {
-                    switch (method)
-                    {
-                        case Method.GET:
-                            response = await client.GetAsync(route).ConfigureAwait(false);
-                            break;
-                        case Method.POST:
-                            if (expectResponse)
-                                response = await client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
-                            else
-                                client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).Wait();
-                            break;
-                        default:
-                            return null;
-                    }
+                    case Method.GET:
+                        response = await client.GetAsync(route).ConfigureAwait(false);
+                        break;
+                    case Method.POST:
+                        if (expectResponse)
+                            response = await client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
+                        else
+                            client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).Wait();
+                        break;
+                    default:
+                        return null;
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("An exception occurred: {0}", ex.Message);
-                    return null;
-                }
-
+                
                 if (response.IsSuccessStatusCode)
                 {
                     return JsonValue.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
@@ -221,7 +213,6 @@ namespace CardsAgainstHumility
             ReadyForReview = gameState.isReadyForReview;
             if(ReadyForReview)
             {
-                Console.WriteLine("Round Winner: {0}", gameState.winnerId);
                 WinningCard = gameState.winningCardId;
                 var winner = gameState.players.SingleOrDefault(c => c.selectedWhiteCardId == WinningCard);
                 if (winner != null)
@@ -433,7 +424,6 @@ namespace CardsAgainstHumility
 
         private static void lobby_LobbyJoin(object[] obj)
         {
-            Console.WriteLine(obj[0].ToString());
             Lobby_Join?.Invoke(null, new EventArgs());
         }
 
@@ -441,7 +431,6 @@ namespace CardsAgainstHumility
 
         private static void lobby_GameAdded(object[] obj)
         {
-            Console.WriteLine("GamesAdded");
             var games = JsonConvert.DeserializeObject<List<GameInstance>>(obj[0].ToString());
             Lobby_GameAdded?.Invoke(null, new GameAddedEventArgs(games));
         }
