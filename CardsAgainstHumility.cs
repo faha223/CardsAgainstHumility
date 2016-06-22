@@ -210,6 +210,7 @@ namespace CardsAgainstHumility
                     PlayedCards.Add(new WhiteCard(card, 20));
                 }
             }
+            PlayedCards = PlayedCards.OrderBy(c => rand.Next()).ToList();
 
             PlayersNotYetSubmitted = gameState.players.Where(c => string.IsNullOrEmpty(c.selectedWhiteCardId) && c.id != _playerId).Select(c => c.name).ToList();
 
