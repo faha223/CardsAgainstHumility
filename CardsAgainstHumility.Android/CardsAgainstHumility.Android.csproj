@@ -190,9 +190,7 @@
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CardsAgainstHumility\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\CardsAgainstHumility\CardsAgainstHumility.csproj">
       <Project>{f3f9995e-6118-4d0e-8054-800cf18be4cd}</Project>
