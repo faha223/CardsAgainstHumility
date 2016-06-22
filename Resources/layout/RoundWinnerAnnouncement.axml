@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@android:style/Theme.Material"
     android:clipChildren="false">
     <TextView
         android:id="@+id/wm_Winner"
@@ -30,4 +31,12 @@
             android:layout_centerInParent="true"
             android:layout_alignParentTop="true" />
     </RelativeLayout>
+    <Button
+        android:id="@+id/wm_closeBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:text="X"
+        android:gravity="center" />
 </RelativeLayout>

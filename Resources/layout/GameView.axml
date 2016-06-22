@@ -25,7 +25,7 @@
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"/>
+            android:layout_marginTop="50dp" />
         <TextView
             android:id="@+id/gv_CardCzar"
             android:text="You are the Card Czar"

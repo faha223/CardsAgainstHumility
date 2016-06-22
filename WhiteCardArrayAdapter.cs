@@ -34,22 +34,27 @@ namespace CardsAgainstHumility
             _onClickAction = OnClickAction;
         }
 
-        public void NewData(List<WhiteCard> _newList)
+        public bool NewData(List<WhiteCard> _newList)
         {
             if (_newList == null)
-                return;
+                return false;
             lock (_list)
             {
                 int changes = 0;
+                bool completelyReplaced = false;
+
                 if (_newList.Count == 0)
                 {
                     changes = _list.Count;
                     _list.Clear();
+                    completelyReplaced = true;
                 }
                 else
                 {
                     // Remove all cards that aren't in the new list
                     changes += _list.Count(c => !_newList.Select(d => d.Id).Contains(c.Id));
+                    if (changes == _list.Count)
+                        completelyReplaced = true;
                     _list.RemoveAll(d => !_newList.Select(c => c.Id).Contains(d.Id));
 
                     // Add all the cards that aren't in the old list
@@ -61,6 +66,8 @@ namespace CardsAgainstHumility
                 // Notify that the data set has changed
                 if (changes > 0)
                     NotifyDataSetChanged();
+
+                return completelyReplaced;
             }
         }
 

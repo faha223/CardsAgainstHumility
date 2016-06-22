@@ -12,6 +12,7 @@ using System.Net;
 using Android.Util;
 using Android.Support.V4.Widget;
 using Android.Graphics.Drawables;
+using System.Collections.Generic;
 
 namespace CardsAgainstHumility
 {
@@ -151,6 +152,7 @@ namespace CardsAgainstHumility
             UpdatePlayerList();
             UpdateConfirmButton();
             UpdatePlayerHand();
+            UpdateSelectedCardView();
 
             CardsAgainstHumility.Game_SocketConnected += OnSocketConnected;
             CardsAgainstHumility.Game_SocketConnectError += OnSocketConnectError;
@@ -183,7 +185,19 @@ namespace CardsAgainstHumility
 
         private void UpdatePlayerHand()
         {
-            var playerHand = ((CardsAgainstHumility.IsCardCzar && CardsAgainstHumility.GameStarted) ? CardsAgainstHumility.PlayedCards : CardsAgainstHumility.PlayerHand);
+            List<WhiteCard> playerHand;
+
+            // Get the correct set of cards to display to the user
+            if (CardsAgainstHumility.GameStarted)
+            {
+                if (CardsAgainstHumility.IsCardCzar)
+                    playerHand = (CardsAgainstHumility.ReadyToSelectWinner ? CardsAgainstHumility.PlayedCards : new List<WhiteCard>());
+                else
+                    playerHand = (CardsAgainstHumility.ReadyToSelectWinner ? CardsAgainstHumility.PlayedCards : CardsAgainstHumility.PlayerHand);
+            }
+            else
+                playerHand = CardsAgainstHumility.PlayerHand;
+            
             if (_playerHandArrayAdapter == null)
             {
                 _playerHandArrayAdapter = new WhiteCardArrayAdapter(this, SelectCard, playerHand);
@@ -199,7 +213,10 @@ namespace CardsAgainstHumility
             }
             else
             {
-                _playerHandArrayAdapter.NewData(playerHand);
+                bool completelyReplaced = _playerHandArrayAdapter.NewData(playerHand);
+                if (completelyReplaced)
+                    PlayerHandView.ScrollTo(0);
+
                 if (_selectedCard != null && !playerHand.Select(c => c.Id).Contains(_selectedCard.Id))
                 {
                     _selectedCard = null;
@@ -209,28 +226,62 @@ namespace CardsAgainstHumility
                     PlayerHandView.Enabled = false;
             }
 
-            if((!CardsAgainstHumility.IsCardCzar && (CardsAgainstHumility.SelectedCard == null)) ||
-                (CardsAgainstHumility.IsCardCzar && (string.IsNullOrWhiteSpace(CardsAgainstHumility.RoundWinner))))
+            if(CardsAgainstHumility.GameStarted)
             {
-                PlayerHandView.Visibility = ViewStates.Visible;
-                SelectedAnswerView.Visibility = ViewStates.Invisible;
+                if(CardsAgainstHumility.IsCardCzar)
+                {
+                    // If the player is card czar, only show the "hand" while they are supposed to be choosing a winner
+                    if (CardsAgainstHumility.ReadyToSelectWinner && string.IsNullOrWhiteSpace(CardsAgainstHumility.WinningCard))
+                        PlayerHandView.Visibility = ViewStates.Visible;
+                    else
+                        PlayerHandView.Visibility = ViewStates.Invisible;
+                }
+                else
+                {
+                    // If the player has selected their card and is waiting on the other players, don't show the hand, otherwise, show the hand
+                    if (!CardsAgainstHumility.ReadyToSelectWinner && !CardsAgainstHumility.ReadyForReview && CardsAgainstHumility.SelectedCard != null)
+                        PlayerHandView.Visibility = ViewStates.Invisible;
+                    else
+                        PlayerHandView.Visibility = ViewStates.Visible;
+                }
             }
-            else
+            else // Let the player view their hand if the game hasn't started yet
+                PlayerHandView.Visibility = ViewStates.Visible;
+        }
+
+        private void UpdateSelectedCardView()
+        {
+            bool showSelectedCardView = false;
+            WhiteCard whiteCard = _selectedCard;
+            if (CardsAgainstHumility.GameStarted)
             {
-                WhiteCard whiteCard = _selectedCard;
+                if(CardsAgainstHumility.IsCardCzar)
+                {
+                    if(!string.IsNullOrWhiteSpace(CardsAgainstHumility.WinningCard))
+                    {
+                        if (whiteCard == null)
+                            whiteCard = new WhiteCard(CardsAgainstHumility.WinningCard, 20);
+                        showSelectedCardView = true;
+                    }
+                }
+                else
+                {
+                    if(CardsAgainstHumility.SelectedCard != null)
+                    {
+                        showSelectedCardView = true;
+                    }
+                }
+            }
 
-                // If the player is card czar this round, and they selected a winner, display that one
-                if (CardsAgainstHumility.IsCardCzar && CardsAgainstHumility.ReadyForReview && (_selectedCard == null))
-                    whiteCard = new WhiteCard(CardsAgainstHumility.WinningCard, 20);
-                
+            if (showSelectedCardView)
+            {
                 PrepareWhiteCard(SelectedAnswerView, whiteCard);
-
                 // Place the white card just below the bottom of the black card's text
                 PlaceWhiteCardBelowBlackCardText(SelectedAnswerView, CurrentQuestionView);
-
-                PlayerHandView.Visibility = ViewStates.Invisible;
                 SelectedAnswerView.Visibility = ViewStates.Visible;
             }
+            else
+                SelectedAnswerView.Visibility = ViewStates.Invisible;
         }
 
         private void UpdateStatusText()
@@ -253,8 +304,10 @@ namespace CardsAgainstHumility
                 }
                 else if (CardsAgainstHumility.IsCardCzar)
                     Status = "You are the Card Czar";
+                else if (!CardsAgainstHumility.ReadyToSelectWinner)
+                    Status = (CardsAgainstHumility.SelectedCard == null ? "Select an Answer" : $"Waiting for other players ({CardsAgainstHumility.PlayersNotYetSubmitted.Count} of {CardsAgainstHumility.Players.Count})");
                 else
-                    Status = null;
+                    Status = "Card Czar is Choosing a Winner";
             }
             else
             {
@@ -361,6 +414,7 @@ namespace CardsAgainstHumility
                 UpdatePlayerList();
                 UpdateConfirmButton();
                 UpdatePlayerHand();
+                UpdateSelectedCardView();
             });
         }
 
@@ -450,6 +504,14 @@ namespace CardsAgainstHumility
 
                 // Place the white card just below the bottom of the black card's text
                 PlaceWhiteCardBelowBlackCardText(whiteCard, blackCard);
+
+                // Link up the close button
+                var closeBtn = view.FindViewById<Button>(Resource.Id.wm_closeBtn);
+                closeBtn.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                closeBtn.Click += (owner, args) =>
+                {
+                    dlg.Dismiss();
+                };
 
                 // Show the modal
                 dlg.AddContentView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent));

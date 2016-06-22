@@ -93,7 +93,8 @@ namespace CardsAgainstHumility
             }
             catch (Exception ex)
             {
-                Log.WriteLine(LogPriority.Error, "Exception when Creating a game", ex.Message);
+                Log.WriteLine(LogPriority.Error, "Exception when Creating a game", 
+                    $"Message: {ex.Message}{System.Environment.NewLine}StackTrace: {ex.StackTrace}");
                 throw;
             }
             finally

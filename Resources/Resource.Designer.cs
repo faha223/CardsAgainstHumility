@@ -207,35 +207,35 @@ namespace CardsAgainstHumility
 			// aapt resource value: 0x7f050029
 			public const int p_ready = 2131034153;
 			
-			// aapt resource value: 0x7f05002e
-			public const int s_btnSave = 2131034158;
-			
 			// aapt resource value: 0x7f05002f
-			public const int s_lPlayerName = 2131034159;
-			
-			// aapt resource value: 0x7f050032
-			public const int s_lServerAddress = 2131034162;
+			public const int s_btnSave = 2131034159;
 			
 			// aapt resource value: 0x7f050030
-			public const int s_lblPlayerName = 2131034160;
+			public const int s_lPlayerName = 2131034160;
 			
 			// aapt resource value: 0x7f050033
-			public const int s_lblServerAddress = 2131034163;
+			public const int s_lServerAddress = 2131034163;
 			
 			// aapt resource value: 0x7f050031
-			public const int s_txtPlayerName = 2131034161;
+			public const int s_lblPlayerName = 2131034161;
 			
 			// aapt resource value: 0x7f050034
-			public const int s_txtServerAddress = 2131034164;
+			public const int s_lblServerAddress = 2131034164;
+			
+			// aapt resource value: 0x7f050032
+			public const int s_txtPlayerName = 2131034162;
 			
 			// aapt resource value: 0x7f050035
-			public const int wc_CardText = 2131034165;
+			public const int s_txtServerAddress = 2131034165;
 			
 			// aapt resource value: 0x7f050036
-			public const int wc_logo_image = 2131034166;
+			public const int wc_CardText = 2131034166;
 			
 			// aapt resource value: 0x7f050037
-			public const int wc_logo_text = 2131034167;
+			public const int wc_logo_image = 2131034167;
+			
+			// aapt resource value: 0x7f050038
+			public const int wc_logo_text = 2131034168;
 			
 			// aapt resource value: 0x7f05002c
 			public const int wm_BlackCard = 2131034156;
@@ -245,6 +245,9 @@ namespace CardsAgainstHumility
 			
 			// aapt resource value: 0x7f05002b
 			public const int wm_Winner = 2131034155;
+			
+			// aapt resource value: 0x7f05002e
+			public const int wm_closeBtn = 2131034158;
 			
 			static Id()
 			{

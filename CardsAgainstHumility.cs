@@ -156,7 +156,7 @@ namespace CardsAgainstHumility
             // This is just a modified NodeJS Against Humanity server updated to Socket.IO 1.4.6
             // found at https://github.com/amirrajan/nodejs-against-humanity
             Host = "https://polar-harbor-54061.herokuapp.com";
-            PlayerName = UserInfo.GetUserName(activity);
+            PlayerName = "Smelly Idiot";
 
             var settings = activity.GetSharedPreferences("CardsAgainstHumility", Android.Content.FileCreationMode.Private);
 
