@@ -13,6 +13,7 @@ using Android.Util;
 using Android.Support.V4.Widget;
 using Android.Graphics.Drawables;
 using System.Collections.Generic;
+using Android.Text;
 
 namespace CardsAgainstHumility
 {
@@ -532,7 +533,7 @@ namespace CardsAgainstHumility
 
             if (currentQuestion != null)
             {
-                text.Text = WebUtility.HtmlDecode(currentQuestion.Text);
+                text.TextFormatted = Html.FromHtml(currentQuestion.Text);
                 text.SetTextSize(Android.Util.ComplexUnitType.Dip, currentQuestion.FontSize);
             }
         }
@@ -549,7 +550,7 @@ namespace CardsAgainstHumility
 
             if (card != null)
             {
-                text.Text = WebUtility.HtmlDecode(card.Text);
+                text.TextFormatted = Html.FromHtml(card.Text);
                 text.SetTextSize(Android.Util.ComplexUnitType.Dip, card.FontSize);
             }
         }
@@ -562,7 +563,7 @@ namespace CardsAgainstHumility
                 blackCardTextView.Measure(
                     View.MeasureSpec.MakeMeasureSpec((int)Math.Round(200 * Resources.DisplayMetrics.Density), MeasureSpecMode.AtMost),
                     View.MeasureSpec.MakeMeasureSpec(0, MeasureSpecMode.Unspecified));
-                whiteCard.TranslationY = blackCardTextView.MeasuredHeight + (40 * Resources.DisplayMetrics.Density);
+                whiteCard.TranslationY = blackCardTextView.MeasuredHeight + (30 * Resources.DisplayMetrics.Density);
             }
         }
 

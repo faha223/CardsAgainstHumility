@@ -53,7 +53,7 @@ namespace CardsAgainstHumility
                 {
                     // Remove all cards that aren't in the new list
                     changes += _list.Count(c => !_newList.Select(d => d.Id).Contains(c.Id));
-                    if (changes == _list.Count)
+                    if (changes > 1)
                         completelyReplaced = true;
                     _list.RemoveAll(d => !_newList.Select(c => c.Id).Contains(d.Id));
 
