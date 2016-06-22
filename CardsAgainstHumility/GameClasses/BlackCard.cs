@@ -36,7 +36,7 @@ namespace CardsAgainstHumility.GameClasses
             }
             set
             {
-                _draw = (byte)(value.HasValue ? value.Value : 0);
+                _draw = (byte)value;
                 OnPropertyChanged("Draw");
             }
         }
