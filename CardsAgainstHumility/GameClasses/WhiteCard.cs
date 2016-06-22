@@ -7,7 +7,7 @@ namespace CardsAgainstHumility.GameClasses
             IsSelected = false;
         }
 
-        private bool _isSelected { get; set; }
+        private bool _isSelected;
         public bool IsSelected
         {
             get
@@ -17,7 +17,7 @@ namespace CardsAgainstHumility.GameClasses
             set
             {
                 _isSelected = value;
-                NotifyPropertyChanged("IsSelected");
+                OnPropertyChanged("IsSelected");
             }
         }
     }

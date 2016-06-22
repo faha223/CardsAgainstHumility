@@ -8,10 +8,12 @@ namespace CardsAgainstHumility.GameClasses
             Draw = (byte)draw;
         }
 
-        private byte _pick { get; set; }
+        public BlackCard(string text, int fontsize, int pick) : base(text, fontsize)
+        {
+            Pick = (byte)pick;
+        }
 
-        private byte _draw { get; set; }
-
+        private byte _pick;
         public int Pick
         {
             get
@@ -21,11 +23,12 @@ namespace CardsAgainstHumility.GameClasses
             set
             {
                 _pick = (byte)value;
-                NotifyPropertyChanged("Pick");
+                OnPropertyChanged("Pick");
             }
         }
 
-        public int? Draw
+        private byte _draw = 0;
+        public int Draw
         {
             get
             {
@@ -33,8 +36,8 @@ namespace CardsAgainstHumility.GameClasses
             }
             set
             {
-                _draw = (byte)value;
-                NotifyPropertyChanged("Draw");
+                _draw = (byte)(value.HasValue ? value.Value : 0);
+                OnPropertyChanged("Draw");
             }
         }
     }

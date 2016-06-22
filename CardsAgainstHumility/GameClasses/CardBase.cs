@@ -3,8 +3,8 @@ using CardsAgainstHumility.Helpers;
 namespace CardsAgainstHumility.GameClasses
 {
     public abstract class CardBase : UINotifying
-    { 
-        private string _text { get; set; }
+    {
+        private string _text;
         public string Text
         {
             get
@@ -25,12 +25,29 @@ namespace CardsAgainstHumility.GameClasses
             }
         }
 
-        public int FontSize { get; protected set; }
+        protected int _fontSize = 20;
+        public int FontSize
+        {
+            get
+            {
+                return _fontSize;
+            }
+            protected set
+            {
+                _fontSize = value;
+                OnPropertyChanged("FontSize");
+            }
+        }
 
         public CardBase(string text, int fontsize)
         {
             Text = text;
             FontSize = fontsize;
+        }
+
+        public CardBase(string text)
+        {
+            Text = text;
         }
     }
 }
