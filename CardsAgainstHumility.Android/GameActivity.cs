@@ -3,7 +3,6 @@ using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Support.V4.Widget;
-using Android.Text;
 using Android.Util;
 using Android.Views.Animations;
 using Android.Views;

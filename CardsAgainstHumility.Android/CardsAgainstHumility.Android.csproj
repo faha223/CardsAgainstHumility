@@ -91,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardsAgainstHumility\CardsAgainstHumility.cs" />
+    <Compile Include="CardsAgainstHumility\Interfaces\ISocket.cs" />
+    <Compile Include="CardsAgainstHumility\Interfaces\ISocketManager.cs" />
     <Compile Include="CreateGameActivity.cs" />
     <Compile Include="CardsAgainstHumility\Events\GameAddedEventArgs.cs" />
     <Compile Include="CardsAgainstHumility\Events\GameUpdateEventArgs.cs" />
@@ -115,6 +117,8 @@
     <Compile Include="CardsAgainstHumility\SocketComm\GameState.cs" />
     <Compile Include="CardsAgainstHumility\SocketComm\player.cs" />
     <Compile Include="Settings\SettingsLoader.cs" />
+    <Compile Include="SocketManagement\Socket.cs" />
+    <Compile Include="SocketManagement\SocketManager.cs" />
     <Compile Include="UIHelpers\UIAssets.cs" />
     <Compile Include="ArrayAdapters\WhiteCardArrayAdapter.cs" />
   </ItemGroup>

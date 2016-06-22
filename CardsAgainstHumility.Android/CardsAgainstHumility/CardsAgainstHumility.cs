@@ -5,12 +5,10 @@ using System.Net.Http;
 using System.Json;
 using CardsAgainstHumility.GameClasses;
 using System.Threading.Tasks;
-using SocketIO.Client;
 using Newtonsoft.Json;
 using CardsAgainstHumility.Events;
 using CardsAgainstHumility.SocketComm;
 using System.Linq;
-using CardsAgainstHumility.Helpers;
 using CardsAgainstHumility.Interfaces;
 
 namespace CardsAgainstHumility
@@ -150,8 +148,10 @@ namespace CardsAgainstHumility
 
         #endregion Helper Functions
 
-        public static void InitDefaultValues(ISettingsLoader settings)
+        public static void InitDefaultValues(ISettingsLoader settings, ISocketManager socketManager)
         {
+            SocketManager = socketManager;
+
             Host = "https://polar-harbor-54061.herokuapp.com";
             PlayerName = "Smelly Idiot";
 
@@ -365,27 +365,19 @@ namespace CardsAgainstHumility
 
         #region Socket.IO
 
-        private static Socket Socket;
+        private static ISocket Socket;
 
-        private static Socket GetSocket(string path, IO.Options options = null)
-        {
-            Socket sock;
-            if (options == null)
-                sock = IO.Socket(path);
-            else
-                sock = IO.Socket(path, options);
-            return sock;
-        }
+        private static ISocketManager SocketManager;
 
         public static void ConnectToLobby()
         {
             if (Socket != null)
                 DisconnectSocket();
 
-            var sock = GetSocket($"{Host}/lobby");
-            sock.On(Socket.EventConnect, lobby_SocketConnected);
-            sock.On(Socket.EventConnectError, lobby_SocketConnectError);
-            sock.On(Socket.EventConnectTimeout, lobby_SocketConnectTimeout);
+            var sock = SocketManager.GetSocket($"{Host}/lobby");
+            sock.On("connect", lobby_SocketConnected);
+            sock.On("connect_error", lobby_SocketConnectError);
+            sock.On("connect_timeout", lobby_SocketConnectTimeout);
             sock.On("lobbyJoin", lobby_LobbyJoin);
             sock.On("gameAdded", lobby_GameAdded);
             Socket = sock;
@@ -397,13 +389,10 @@ namespace CardsAgainstHumility
             if (Socket != null)
                 DisconnectSocket();
 
-            var sock = GetSocket($"{Host}/game", new IO.Options()
-            {
-                Query = $"playerId={PlayerId}"
-            });
-            sock.On(Socket.EventConnect, game_SocketConnected);
-            sock.On(Socket.EventConnectError, game_SocketConnectError);
-            sock.On(Socket.EventConnectTimeout, game_SocketConnectTimeout);
+            var sock = SocketManager.GetSocket($"{Host}/game", $"playerId={PlayerId}");
+            sock.On("connect", game_SocketConnected);
+            sock.On("connect_error", game_SocketConnectError);
+            sock.On("connect_timeout", game_SocketConnectTimeout);
             sock.On("updateGame", game_UpdateGame);
             sock.On("gameError", game_GameError);
             Socket = sock;
