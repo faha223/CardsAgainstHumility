@@ -180,13 +180,15 @@ namespace CardsAgainstHumility
             Players = new List<Player>();
             foreach(var p in gameState.players)
             {
+                // Copy the object verbatim, but also mark ready if the round hasn't reached scoring yet, and the player has selected a card
                 Players.Add(new Player()
                 {
-                    Id = p.id,
-                    Name = p.name,
-                    IsCardCzar = p.isCzar,
-                    IsReady = p.isReady,
-                    AwesomePoints = p.awesomePoints
+                    Id = p.id,                                                  
+                    Name = p.name,                                              
+                    IsCardCzar = p.isCzar,                                      
+                    IsReady = p.isReady ||
+                        (!gameState.isReadyForReview && !gameState.isReadyForScoring && (p.selectedWhiteCardId != null)),
+                    AwesomePoints = p.awesomePoints                             
                 });
             }
             MaxPlayers = gameState.maxPlayers;

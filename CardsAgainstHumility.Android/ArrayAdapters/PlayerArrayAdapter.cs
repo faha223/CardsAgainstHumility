@@ -70,7 +70,7 @@ namespace CardsAgainstHumility.Android.ArrayAdapters
                     aPoints.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
                 }
 
-                ready.Visibility = ((item.IsReady && CardsAgainstHumility.GameStarted && CardsAgainstHumility.ReadyForReview) ? ViewStates.Visible : ViewStates.Invisible);
+                ready.Visibility = ((item.IsReady && CardsAgainstHumility.GameStarted) ? ViewStates.Visible : ViewStates.Invisible);
                 isCzar.Visibility = (item.IsCardCzar ? ViewStates.Visible : ViewStates.Invisible);
                 aPoints.Text = item.AwesomePoints.ToString();
             }
