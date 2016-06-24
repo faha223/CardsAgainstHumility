@@ -12,7 +12,7 @@ namespace CardsAgainstHumility.GameClasses
                 
                 return (_text == null) ? string.Empty : _text.Replace("_", "_______");
             }
-            protected set
+            set
             {
                 _text = value;
             }
@@ -32,7 +32,7 @@ namespace CardsAgainstHumility.GameClasses
             {
                 return _fontSize;
             }
-            protected set
+            set
             {
                 _fontSize = value;
                 OnPropertyChanged("FontSize");

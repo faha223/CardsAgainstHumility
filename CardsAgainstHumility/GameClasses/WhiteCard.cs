@@ -2,6 +2,11 @@ namespace CardsAgainstHumility.GameClasses
 {
     public class WhiteCard : CardBase
     {
+        public WhiteCard():  base("", 20)
+        {
+
+        }
+
         public WhiteCard(string text, int fontsize) : base(text, fontsize)
         {
             IsSelected = false;

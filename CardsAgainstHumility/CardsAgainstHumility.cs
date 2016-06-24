@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Net.Http;
 using System.Json;
 using CardsAgainstHumility.GameClasses;
 using System.Threading.Tasks;
@@ -10,6 +9,7 @@ using CardsAgainstHumility.Events;
 using CardsAgainstHumility.SocketComm;
 using System.Linq;
 using CardsAgainstHumility.Interfaces;
+using System.Net.Http;
 
 namespace CardsAgainstHumility
 {
