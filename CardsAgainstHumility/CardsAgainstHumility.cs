@@ -18,6 +18,15 @@ namespace CardsAgainstHumility
         GET, POST
     }
 
+    public enum State
+    {
+        WaitingForPlayers,
+        PlayersChoice,
+        CzarsChoice,
+        RoundOver,
+        GameOver
+    }
+
     public static class CardsAgainstHumility
     {
         private static Random rand = new Random();
@@ -66,9 +75,29 @@ namespace CardsAgainstHumility
 
         public static bool GameStarted { get; private set; }
 
+        public static bool GameOver { get; private set; }
+
+        public static string Winner { get; private set; }
+
         public static bool ReadyToSelectWinner { get; private set; }
 
         public static bool ReadyForReview { get; private set; }
+
+        public static State CurrentPhase
+        {
+            get
+            {
+                if (!GameStarted)
+                    return State.WaitingForPlayers;
+                if (ReadyToSelectWinner)
+                    return State.CzarsChoice;
+                if (ReadyForReview)
+                    return State.RoundOver;
+                if (GameOver)
+                    return State.GameOver;
+                return State.PlayersChoice;
+            }
+        }
 
         public static string RoundWinner { get; private set; }
 
@@ -213,6 +242,8 @@ namespace CardsAgainstHumility
             RequiredNumberOfPlayers = 3;
             ReadyToSelectWinner = gameState.isReadyForScoring;
             ReadyForReview = gameState.isReadyForReview;
+            GameOver = gameState.isOver;
+
             if(ReadyForReview)
             {
                 WinningCard = gameState.winningCardId;
@@ -224,8 +255,17 @@ namespace CardsAgainstHumility
             }
             else
             {
-                RoundWinner = string.Empty;
-                WinningCard = string.Empty;
+                RoundWinner = null;
+                WinningCard = null;
+            }
+
+            if(gameState.winnerId != null)
+            {
+                var winner = gameState.players.SingleOrDefault(c => c.id == gameState.winnerId);
+                if (winner != null)
+                    Winner = winner.name;
+                else
+                    Winner = "Nobody";
             }
 
             Game_Update?.Invoke(null, new GameUpdateEventArgs(gameState));

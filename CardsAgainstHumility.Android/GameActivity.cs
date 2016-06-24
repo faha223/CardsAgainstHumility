@@ -235,12 +235,12 @@ namespace CardsAgainstHumility.Android
                     PlayerHandView.Enabled = false;
             }
 
-            if(CardsAgainstHumility.GameStarted)
+            if(CardsAgainstHumility.GameStarted && !CardsAgainstHumility.GameOver)
             {
                 if(CardsAgainstHumility.IsCardCzar)
                 {
                     // If the player is card czar, only show the "hand" while they are supposed to be choosing a winner
-                    if (CardsAgainstHumility.ReadyToSelectWinner && string.IsNullOrWhiteSpace(CardsAgainstHumility.WinningCard))
+                    if (CardsAgainstHumility.ReadyToSelectWinner && CardsAgainstHumility.WinningCard == null)
                         PlayerHandView.Visibility = ViewStates.Visible;
                     else
                         PlayerHandView.Visibility = ViewStates.Invisible;
@@ -266,7 +266,7 @@ namespace CardsAgainstHumility.Android
             {
                 if(CardsAgainstHumility.IsCardCzar)
                 {
-                    if(!string.IsNullOrWhiteSpace(CardsAgainstHumility.WinningCard))
+                    if(CardsAgainstHumility.WinningCard != null)
                     {
                         if (whiteCard == null)
                             whiteCard = new WhiteCard(CardsAgainstHumility.WinningCard, 20);
@@ -281,6 +281,8 @@ namespace CardsAgainstHumility.Android
                     }
                 }
             }
+            if (CardsAgainstHumility.GameOver)
+                showSelectedCardView = false;
 
             if (showSelectedCardView)
             {
@@ -304,7 +306,11 @@ namespace CardsAgainstHumility.Android
 
             if (CardsAgainstHumility.GameStarted)
             {
-                if (CardsAgainstHumility.ReadyForReview)
+                if(CardsAgainstHumility.GameOver)
+                {
+                    Status = $"Game Over{System.Environment.NewLine}{CardsAgainstHumility.Winner} Won{System.Environment.NewLine}Ready up to play again";
+                }
+                else if (CardsAgainstHumility.ReadyForReview)
                 {
                     string readyStatus = $"Waiting on other players ({CardsAgainstHumility.Players.Count(c => c.IsReady)} of {CardsAgainstHumility.Players.Count})";
                     string czarNotReadyStatus = $"{CardsAgainstHumility.RoundWinner} won the round";
@@ -330,7 +336,7 @@ namespace CardsAgainstHumility.Android
             var currentQuestion = CardsAgainstHumility.CurrentQuestion;
             if (CurrentQuestionView != null)
             {
-                if (currentQuestion == null)
+                if (currentQuestion == null || CardsAgainstHumility.GameOver)
                     CurrentQuestionView.Visibility = ViewStates.Invisible;
                 else
                 {
@@ -365,9 +371,11 @@ namespace CardsAgainstHumility.Android
             }
             bool showButton = (_selectedCard != null);
             if (CardsAgainstHumility.IsCardCzar)
-                showButton &= string.IsNullOrWhiteSpace(CardsAgainstHumility.RoundWinner);
+                showButton &= CardsAgainstHumility.RoundWinner == null;
             else
                 showButton &= CardsAgainstHumility.SelectedCard == null;
+
+            showButton &= !CardsAgainstHumility.GameOver;
 
             confirmButton.Visibility = (showButton) ? ViewStates.Visible : ViewStates.Invisible;
         }
@@ -375,7 +383,7 @@ namespace CardsAgainstHumility.Android
         private void UpdatePlayerList()
         {
             PlayerListHeader.Text = $"Players ({CardsAgainstHumility.Players.Count} of {CardsAgainstHumility.MaxPlayers})";
-            PlayerArrayAdapter.NewData(CardsAgainstHumility.Players);
+            PlayerArrayAdapter.NewData(CardsAgainstHumility.Players.OrderByDescending(c => c.AwesomePoints).ToList());
         }
 
         private void UpdateRoundWinner()

@@ -9,6 +9,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
         android:background="#282828">
         <include
             layout="@layout/BlackCard"
@@ -30,7 +31,7 @@
             android:id="@+id/gv_CardCzar"
             android:text="You are the Card Czar"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:textSize="20dp"
             android:gravity="center" />
