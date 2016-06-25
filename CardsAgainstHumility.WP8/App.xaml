@@ -8,6 +8,54 @@
     <!--Application Resources-->
     <Application.Resources>
         <local:LocalizedStrings xmlns:local="clr-namespace:CardsAgainstHumility.WP8" x:Key="LocalizedStrings"/>
+        <FontFamily x:Key="CustomFontHelvetica">/Fonts/Helvetica-Bold.ttf#Helvetica</FontFamily>
+        <Style TargetType="Button" x:Key="ButtonStyle">
+            <Setter Property="FontFamily" Value="{StaticResource CustomFontHelvetica}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Width="{TemplateBinding Width}" 
+                                Height="{TemplateBinding Height}" 
+                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                Margin="{TemplateBinding Margin}"
+                                Background="#484848" 
+                                BorderBrush="#161616" 
+                                BorderThickness="0,0,0,1"
+                                CornerRadius="2">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Content="{TemplateBinding Content}"
+                                              Margin="{TemplateBinding Padding}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <DataTemplate x:Key="WhiteCardTemplate">
+            <Border Width="240" Height="336" Background="#FFFFFE" CornerRadius="12" Margin="1" BorderBrush="#DDDDDC" BorderThickness="1">
+                <TextBlock Text="{Binding Text}" 
+                           Foreground="Black" 
+                           Margin="20" 
+                           FontFamily="Arial" 
+                           TextWrapping="Wrap"
+                           FontSize="{Binding FontSize}"
+                           FontWeight="Bold"/>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="BlackCardTemplate">
+            <Border Width="240" Height="336" Background="#080808" CornerRadius="12" Margin="1" BorderBrush="#161616" BorderThickness="1">
+                <TextBlock Text="{Binding Text}" 
+                           Foreground="#FFFFFE" 
+                           Margin="20" 
+                           FontFamily="Arial" 
+                           TextWrapping="Wrap"
+                           FontSize="{Binding FontSize}"
+                           FontWeight="Bold"/>
+            </Border>
+        </DataTemplate>
     </Application.Resources>
 
     <Application.ApplicationLifetimeObjects>

@@ -130,7 +130,7 @@ namespace CardsAgainstHumility
             return sb.ToString();
         }
 
-        private static async Task<JsonValue> JsonRequestAsync(Method method, string route, object param, bool expectResponse = true)
+        private static async Task<string> JsonRequestAsync(Method method, string route, object param, bool expectResponse = true)
         {
             string content = null;
             if(method == Method.POST && param != null)
@@ -161,7 +161,7 @@ namespace CardsAgainstHumility
                 
                 if (response.IsSuccessStatusCode)
                 {
-                    return JsonValue.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                    return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 }
                 return null;
             }
@@ -275,21 +275,22 @@ namespace CardsAgainstHumility
 
         public static async Task<List<GameInstance>> ListAsync()
         {
-            JsonValue value = await JsonRequestAsync(Method.GET, "list", null).ConfigureAwait(false);
-            var instances = new List<GameInstance>();
-            foreach (JsonObject item in value)
-            {
-                if (item.ContainsKey("id"))
-                {
-                    instances.Add(new GameInstance
-                    {
-                        Id = item["id"],
-                        Name = item.ContainsKey("name") ? (string)item["name"] : "(no name)",
-                        Players = item.ContainsKey("players") ? (int)item["players"] : 0,
-                        MaxPlayers = item.ContainsKey("maxPlayers") ? (int)item["maxPlayers"] : 10
-                    });
-                }
-            }
+            string json = await JsonRequestAsync(Method.GET, "list", null).ConfigureAwait(false);
+            //var instances = new List<GameInstance>();
+            //foreach (JsonObject item in value)
+            //{
+            //    if (item.ContainsKey("id"))
+            //    {
+            //        instances.Add(new GameInstance
+            //        {
+            //            Id = item["id"],
+            //            Name = item.ContainsKey("name") ? (string)item["name"] : "(no name)",
+            //            Players = item.ContainsKey("players") ? (int)item["players"] : 0,
+            //            MaxPlayers = item.ContainsKey("maxPlayers") ? (int)item["maxPlayers"] : 10
+            //        });
+            //    }
+            //}
+            var instances = JsonConvert.DeserializeObject<List<GameInstance>>(json);
             return instances;
         }
 
@@ -307,9 +308,9 @@ namespace CardsAgainstHumility
                 maxPlayers = maxPlayers,
                 pointsToWin = pointsToWin
             };
-            JsonValue value = await JsonRequestAsync(Method.POST, "add", param).ConfigureAwait(false);
+            string value = await JsonRequestAsync(Method.POST, "add", param).ConfigureAwait(false);
 
-            return JsonConvert.DeserializeObject<GameState>(value.ToString()).id;
+            return JsonConvert.DeserializeObject<GameState>(value).id;
         }
 
         public static async Task JoinGame(string id)

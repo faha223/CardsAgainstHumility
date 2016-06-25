@@ -1,0 +1,40 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="CardsAgainstHumility.WP8.GamePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="clr-namespace:CardsAgainstHumility.WP8.ValueConverters"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+    <phone:PhoneApplicationPage.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style TargetType="ListBox">
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"></StackPanel>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </phone:PhoneApplicationPage.Resources>
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="#303030">
+        <ListBox x:Name="lstPlayerHand" 
+                 ItemsSource="{Binding PlayerHand}"
+                 ItemTemplate="{StaticResource WhiteCardTemplate}" 
+                 VerticalAlignment="Bottom" 
+                 Margin="0,0,0,-150" />
+        <Button Style="{StaticResource ButtonStyle}" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding ReadyCommand}" Visibility="{Binding ShowReadyButton, Converter={StaticResource BooleanToVisibilityConverter}}">READY</Button>
+        <Button Style="{StaticResource ButtonStyle}" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding ConfirmCommand}" Visibility="{Binding ShowConfirmButton, Converter={StaticResource BooleanToVisibilityConverter}}">CONFIRM</Button>
+    </Grid>
+</phone:PhoneApplicationPage>

@@ -8,54 +8,43 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:gc="clr-namespace:CardsAgainstHumility.GameClasses;assembly=CardsAgainstHumility"
     mc:Ignorable="d"
-    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontFamily="{StaticResource CustomFontHelvetica}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     shell:SystemTray.IsVisible="True">
     <phone:PhoneApplicationPage.Resources>
-        <DataTemplate x:Key="WhiteCardTemplate">
-            <Border Width="240" Height="336" Background="#FFFFFE" CornerRadius="12" Margin="1" BorderBrush="#DDDDDC" BorderThickness="1">
-                <TextBlock Text="{Binding Text}" 
-                           Foreground="Black" 
-                           Margin="20" 
-                           FontFamily="Arial" 
-                           TextWrapping="Wrap"
-                           FontSize="{Binding FontSize}"
-                           FontWeight="Bold"/>
-            </Border>
-        </DataTemplate>
-        <DataTemplate x:Key="BlackCardTemplate">
-            <Border Width="240" Height="336" Background="#080808" CornerRadius="12" Margin="1" BorderBrush="#161616" BorderThickness="1">
-                <TextBlock Text="{Binding Text}" 
-                           Foreground="#FFFFFE" 
-                           Margin="20" 
-                           FontFamily="Arial" 
-                           TextWrapping="Wrap"
-                           FontSize="{Binding FontSize}"
-                           FontWeight="Bold"/>
-            </Border>
-        </DataTemplate>
-        <Style TargetType="ListBox">
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Center"/>
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>
+        <Style TargetType="TextBlock" x:Key="TextBlock">
+            <!--<Setter Property="FontFamily" Value="Helvetica" />-->
+            <Setter Property="FontFamily" Value="{StaticResource CustomFontHelvetica}" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Foreground" Value="#FFFFFE" />
         </Style>
     </phone:PhoneApplicationPage.Resources>
     <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="#303030">
-        <ListBox x:Name="lstPlayerHand" ItemTemplate="{StaticResource WhiteCardTemplate}" VerticalAlignment="Bottom" Margin="0,0,0,-150">
-            <ListBox.Items>
-                <gc:WhiteCard Text="A slaughtered sperm whale." FontSize="20"></gc:WhiteCard>
-                <gc:WhiteCard Text="Getting really worried about global warming for a few seconds." FontSize="20"></gc:WhiteCard>
-            </ListBox.Items>
-        </ListBox>
-    </Grid>
+    <Grid x:Name="LayoutRoot" Background="#282828">
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+            <StackPanel.Resources>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlock}">
+                    <Setter Property="FontSize" Value="60" />
+                </Style>
+            </StackPanel.Resources>
+            <TextBlock Text="Cards" />
+            <TextBlock Text="Against" Margin="0,-10,0,0" />
+            <TextBlock Text="Humility" Margin="0,-10,0,0" />
+        </StackPanel>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="200">
+            <StackPanel.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="2" />
+                </Style>
+            </StackPanel.Resources>
+            <Button Command="{Binding CreateGameCommand}">CREATE GAME</Button>
+            <Button Command="{Binding JoinGameCommand}">JOIN GAME</Button>
+            <Button Command="{Binding SettingsCommand}">SETTINGS</Button>
+            <Button Command="{Binding QuitCommand}">QUIT</Button>
+        </StackPanel>
 
+    </Grid>
 </phone:PhoneApplicationPage>
