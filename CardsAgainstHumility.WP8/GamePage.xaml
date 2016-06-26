@@ -15,6 +15,7 @@
     shell:SystemTray.IsVisible="True">
     <phone:PhoneApplicationPage.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <!--<converters:IsNullToVisibilityConverter x:Key="IsNullToVisibilityConverter" />-->
         <Style TargetType="ListBox">
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
@@ -27,14 +28,38 @@
             </Setter>
         </Style>
     </phone:PhoneApplicationPage.Resources>
-    <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="#303030">
+        <TextBlock Foreground="#c0c0c0" 
+                   Text="{Binding Status}"
+                   FontSize="26" 
+                   FontFamily="{StaticResource CustomFontHelvetica}" 
+                   VerticalAlignment="Top" 
+                   HorizontalAlignment="Center"/>
+        <ContentPresenter ContentTemplate="{StaticResource BlackCardTemplate}" 
+                          Content="{Binding CurrentQuestion}"
+                          VerticalAlignment="Top"
+                          HorizontalAlignment="Center"
+                          Margin="0,50,0,0"/>
+        <ContentPresenter ContentTemplate="{StaticResource WhiteCardTemplate}" 
+                          Content="{Binding SelectedWhiteCard}" 
+                          VerticalAlignment="Top"
+                          HorizontalAlignment="Center"
+                          Margin="0,50,0,0" />
         <ListBox x:Name="lstPlayerHand" 
                  ItemsSource="{Binding PlayerHand}"
+                 SelectedItem="{Binding SelectedWhiteCard}"
                  ItemTemplate="{StaticResource WhiteCardTemplate}" 
                  VerticalAlignment="Bottom" 
                  Margin="0,0,0,-150" />
-        <Button Style="{StaticResource ButtonStyle}" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding ReadyCommand}" Visibility="{Binding ShowReadyButton, Converter={StaticResource BooleanToVisibilityConverter}}">READY</Button>
-        <Button Style="{StaticResource ButtonStyle}" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding ConfirmCommand}" Visibility="{Binding ShowConfirmButton, Converter={StaticResource BooleanToVisibilityConverter}}">CONFIRM</Button>
+        <Button Style="{StaticResource ButtonStyle}" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Bottom" 
+                Command="{Binding ReadyCommand}" 
+                Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToVisibilityConverter}}">READY</Button>
+        <Button Style="{StaticResource ButtonStyle}" 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Bottom" 
+                Command="{Binding ConfirmCommand}" 
+                Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToVisibilityConverter}}">CONFIRM</Button>
     </Grid>
 </phone:PhoneApplicationPage>

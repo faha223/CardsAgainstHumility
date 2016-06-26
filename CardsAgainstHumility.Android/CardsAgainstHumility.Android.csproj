@@ -96,6 +96,7 @@
     <Compile Include="ArrayAdapters\GameInstanceArrayAdapter.cs" />
     <Compile Include="Controls\HorizontalListView.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="NetServices\NetServices.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsActivity.cs" />

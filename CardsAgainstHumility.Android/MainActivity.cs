@@ -2,7 +2,7 @@
 using Android.Graphics;
 using Android.OS;
 using Android.Widget;
-using CardsAgainstHumility.Android.SocketManagement;
+using CardsAgainstHumility.Android.NetServices;
 using CardsAgainstHumility.Android.UIHelpers;
 
 using System;
@@ -21,7 +21,7 @@ namespace CardsAgainstHumility.Android
 
         protected override void OnCreate(Bundle bundle)
         {
-            CardsAgainstHumility.InitDefaultValues(new SettingsLoader(this), new SocketManager());
+            CardsAgainstHumility.InitDefaultValues(new SettingsLoader(this), new NetServices.NetServices());
 
             dialogBuilder = new AlertDialog.Builder(this, 0);
 

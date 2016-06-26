@@ -33,11 +33,10 @@
             <TextBlock Text="Against" Margin="0,-10,0,0" />
             <TextBlock Text="Humility" Margin="0,-10,0,0" />
         </StackPanel>
-        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="200">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="230">
             <StackPanel.Resources>
                 <Style TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
-                    <Setter Property="Margin" Value="2" />
                 </Style>
             </StackPanel.Resources>
             <Button Command="{Binding CreateGameCommand}">CREATE GAME</Button>

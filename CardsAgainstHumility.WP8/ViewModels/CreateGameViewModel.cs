@@ -61,8 +61,10 @@ namespace CardsAgainstHumility.WP8.ViewModels
 
         #region Start Game Command
 
-        internal void StartGame()
+        internal async void StartGame()
         {
+            var gid = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId(), GameName, MaxPlayers, MaxScore);
+            await CardsAgainstHumility.JoinGame(gid);
             navService.Navigate(new Uri("/GamePage.xaml", UriKind.Relative));
         }
 

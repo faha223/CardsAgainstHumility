@@ -2,6 +2,7 @@
 using CardsAgainstHumility.WP8.MVVM_Helpers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows.Input;
 
@@ -43,7 +44,6 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
-
         public LobbyViewModel(): base()
         {
             var thd = new Thread(() =>
@@ -75,7 +75,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
         {
             dispatcher.BeginInvoke(() =>
             {
-                Games = e.Games;
+                Games = e.Games.Where(c => c != null).ToList();
             });
         }
 
@@ -89,6 +89,8 @@ namespace CardsAgainstHumility.WP8.ViewModels
 
         private bool CanJoinGame(GameInstance game)
         {
+            if (game == null)
+                return false;
             return game.Players < game.MaxPlayers;
         }
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Phone.Controls;
 using CardsAgainstHumility.WP8.ViewModels;
 using CardsAgainstHumility.WP8.Settings;
-using CardsAgainstHumility.WP8.SocketManagement;
 
 namespace CardsAgainstHumility.WP8
 {
@@ -13,7 +12,7 @@ namespace CardsAgainstHumility.WP8
         {
             InitializeComponent();
 
-            CardsAgainstHumility.InitDefaultValues(new SettingsLoader(), new SocketManager());
+            CardsAgainstHumility.InitDefaultValues(new SettingsLoader(), new NetServices.NetServices());
 
             vm = new MainViewModel();
             DataContext = vm;

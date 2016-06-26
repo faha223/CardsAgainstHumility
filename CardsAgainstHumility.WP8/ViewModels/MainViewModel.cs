@@ -45,7 +45,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
 
         internal void Settings()
         {
-
+            navService.Navigate(new Uri("/SettingsPage.xaml", UriKind.Relative));
         }
 
         private bool CanSettings()

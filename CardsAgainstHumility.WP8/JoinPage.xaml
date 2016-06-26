@@ -14,20 +14,32 @@
     shell:SystemTray.IsVisible="True">
     <phone:PhoneApplicationPage.Resources>
         <DataTemplate x:Key="GameInstanceTemplate">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="auto" />
-                </Grid.ColumnDefinitions>
-                <Button Command="{Binding JoinGameCommand}" CommandParameter="{Binding}">Join Game</Button>
-                <TextBlock Text="{Binding Name}" />
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{Binding Players}" />
-                    <TextBlock Text="/" />
-                    <TextBlock Text="{Binding MaxPlayers}" />
-                </StackPanel>
-            </Grid>
+            <Border HorizontalAlignment="Stretch"
+                    Background="Transparent"
+                    BorderBrush="#484848"
+                    BorderThickness="0,0,0,1">
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <Button Style="{StaticResource ButtonStyle}" 
+                            Command="{Binding ElementName=lstGames, Path=DataContext.JoinGameCommand}"
+                            CommandParameter="{Binding}">JOIN GAME</Button>
+                    <TextBlock Text="{Binding Name}"
+                               Grid.Column="1" 
+                               VerticalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Column="2"
+                                VerticalAlignment="Center" 
+                                HorizontalAlignment="Right">
+                        <TextBlock Text="{Binding Players}" />
+                        <TextBlock Text="/" />
+                        <TextBlock Text="{Binding MaxPlayers}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
         </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
 
@@ -37,9 +49,18 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock Text="{Binding Status}" HorizontalAlignment="Center"/>
-        <ListBox ItemsSource="{Binding Games}"
+        <ListBox x:Name="lstGames" ItemsSource="{Binding Games}"
                  Grid.Row="1"
-                 ItemTemplate="{StaticResource GameInstanceTemplate}" />
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch"
+                 ItemTemplate="{StaticResource GameInstanceTemplate}" 
+                 HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
 
     </Grid>
 

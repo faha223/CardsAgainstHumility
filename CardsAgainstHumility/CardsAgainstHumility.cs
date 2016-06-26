@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Json;
 using CardsAgainstHumility.GameClasses;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -9,7 +8,6 @@ using CardsAgainstHumility.Events;
 using CardsAgainstHumility.SocketComm;
 using System.Linq;
 using CardsAgainstHumility.Interfaces;
-using System.Net.Http;
 
 namespace CardsAgainstHumility
 {
@@ -130,48 +128,14 @@ namespace CardsAgainstHumility
             return sb.ToString();
         }
 
-        private static async Task<string> JsonRequestAsync(Method method, string route, object param, bool expectResponse = true)
-        {
-            string content = null;
-            if(method == Method.POST && param != null)
-            {
-                content = JsonConvert.SerializeObject(param);
-            }
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri($"{Host}");
-
-                HttpResponseMessage response = null;
-
-                switch (method)
-                {
-                    case Method.GET:
-                        response = await client.GetAsync(route).ConfigureAwait(false);
-                        break;
-                    case Method.POST:
-                        if (expectResponse)
-                            response = await client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).ConfigureAwait(false);
-                        else
-                            client.PostAsync(route, new StringContent(content, Encoding.UTF8, "application/json")).Wait();
-                        break;
-                    default:
-                        return null;
-                }
-                
-                if (response.IsSuccessStatusCode)
-                {
-                    return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                }
-                return null;
-            }
-        }
-
         #endregion Helper Functions
 
-        public static void InitDefaultValues(ISettingsLoader settings, ISocketManager socketManager)
+        private static INetServices NetServices;
+
+        public static void InitDefaultValues(ISettingsLoader settings, INetServices netServices)
         {
-            SocketManager = socketManager;
+            NetServices = netServices;
+            SocketManager = netServices.GetSocketManager();
 
             Host = "https://polar-harbor-54061.herokuapp.com";
             PlayerName = "Smelly Idiot";
@@ -275,7 +239,7 @@ namespace CardsAgainstHumility
 
         public static async Task<List<GameInstance>> ListAsync()
         {
-            string json = await JsonRequestAsync(Method.GET, "list", null).ConfigureAwait(false);
+            string json = await NetServices.JsonRequestAsync(Method.GET, Host, "list", null).ConfigureAwait(false);
             //var instances = new List<GameInstance>();
             //foreach (JsonObject item in value)
             //{
@@ -308,7 +272,7 @@ namespace CardsAgainstHumility
                 maxPlayers = maxPlayers,
                 pointsToWin = pointsToWin
             };
-            string value = await JsonRequestAsync(Method.POST, "add", param).ConfigureAwait(false);
+            string value = await NetServices.JsonRequestAsync(Method.POST, Host, "add", param).ConfigureAwait(false);
 
             return JsonConvert.DeserializeObject<GameState>(value).id;
         }
@@ -324,7 +288,7 @@ namespace CardsAgainstHumility
                 playerName = PlayerName
             };
 
-            var value = JsonRequestAsync(Method.POST, "joingame", param).ConfigureAwait(false);
+            var value = NetServices.JsonRequestAsync(Method.POST, Host, "joingame", param).ConfigureAwait(false);
 
             var gameState = JsonConvert.DeserializeObject<GameState>((await value).ToString());
 
@@ -343,7 +307,7 @@ namespace CardsAgainstHumility
                     playerId = PlayerId
                 };
 
-                JsonRequestAsync(Method.POST, "departgame", param, false).ConfigureAwait(false);
+                NetServices.JsonRequestAsync(Method.POST, Host, "departgame", param, false).ConfigureAwait(false);
                 GameId = null;
 
                 DisconnectSocket();
@@ -363,7 +327,7 @@ namespace CardsAgainstHumility
                     whiteCardId = whiteCard.Id
                 };
 
-                await JsonRequestAsync(Method.POST, "selectCard", param).ConfigureAwait(false);
+                await NetServices.JsonRequestAsync(Method.POST, Host, "selectCard", param).ConfigureAwait(false);
             }
         }
 
@@ -377,7 +341,7 @@ namespace CardsAgainstHumility
                     cardId = card.Id
                 };
 
-                await JsonRequestAsync(Method.POST, "selectWinner", param).ConfigureAwait(false);
+                await NetServices.JsonRequestAsync(Method.POST, Host, "selectWinner", param).ConfigureAwait(false);
             }
         }
 
@@ -391,7 +355,7 @@ namespace CardsAgainstHumility
                     gameId = GameId
                 };
 
-                await JsonRequestAsync(Method.POST, "readyForNextRound", param).ConfigureAwait(false);
+                await NetServices.JsonRequestAsync(Method.POST, Host, "readyForNextRound", param).ConfigureAwait(false);
             }
         }
 
