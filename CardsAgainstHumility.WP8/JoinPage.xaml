@@ -6,8 +6,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    FontFamily="{StaticResource PhoneFontFamilyNormal}"
-    FontSize="{StaticResource PhoneFontSizeNormal}"
+    FontFamily="{StaticResource CustomFontHelvetica}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
@@ -18,6 +17,9 @@
                     Background="Transparent"
                     BorderBrush="#484848"
                     BorderThickness="0,0,0,1">
+                <Border.Resources>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}" />
+                </Border.Resources>
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />

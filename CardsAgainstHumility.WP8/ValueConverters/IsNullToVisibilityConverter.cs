@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace CardsAgainstHumility.WP8.ValueConverters
 {
-    class IsNullToVisibilityConverter : IValueConverter
+    public class IsNullToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

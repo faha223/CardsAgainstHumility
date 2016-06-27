@@ -1,8 +1,6 @@
-﻿using CardsAgainstHumility.Helpers;
-using CardsAgainstHumility.WP8.MVVM_Helpers;
+﻿using CardsAgainstHumility.WP8.MVVM_Helpers;
 using System;
 using System.Windows.Input;
-using System.Windows.Navigation;
 
 namespace CardsAgainstHumility.WP8.ViewModels
 {

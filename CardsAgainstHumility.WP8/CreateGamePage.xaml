@@ -7,29 +7,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     FontFamily="{StaticResource CustomFontHelvetica}"
-    FontSize="{StaticResource PhoneFontSizeNormal}"
+    FontSize="15"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
-    <phone:PhoneApplicationPage.Resources>
-        <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#c0c0c0" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="TextAlignment" Value="Right" />
-            <Setter Property="FontFamily" Value="{StaticResource CustomFontHelvetica}" />
-            <Setter Property="FontWeight" Value="Normal" />
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0,0,0,1" />
-            <Setter Property="Foreground" Value="#DDDDDD" />
-        </Style>
-    </phone:PhoneApplicationPage.Resources>
-    <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid Background="#282828">
+        <Grid.Resources>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}">
+                <Setter Property="TextAlignment" Value="Right" />
+            </Style>
+        </Grid.Resources>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" MinWidth="160" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -38,12 +28,12 @@
             <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock Text="Game Name:" Margin="5,0" />
-        <TextBlock Text="Max Players:" Grid.Row="1" Margin="5,0" />
-        <TextBlock Text="Points to Win:" Grid.Row="2" Margin="5,0" />
+        <TextBlock Text="Game Name" Margin="5,0" />
+        <TextBlock Text="Max Players" Grid.Row="1" Margin="5,0" />
+        <TextBlock Text="Points to Win" Grid.Row="2" Margin="5,0" />
         <TextBox Text="{Binding GameName}" Grid.Column="1" />
-        <TextBox Text="{Binding MaxPlayers}" Grid.Row="1" Grid.Column="1" />
-        <TextBox Text="{Binding MaxScore}" Grid.Row="2" Grid.Column="1" />
+        <TextBox Text="{Binding MaxPlayers}" Grid.Row="1" Grid.Column="1" InputScope="Number" />
+        <TextBox Text="{Binding MaxScore}" Grid.Row="2" Grid.Column="1" InputScope="Number" />
         <Button Command="{Binding StartGameCommand}" 
                 Style="{StaticResource ButtonStyle}"
                 VerticalAlignment="Bottom" 
