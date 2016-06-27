@@ -3,7 +3,7 @@ using Android.App;
 using Android.Content;
 using CardsAgainstHumility.Interfaces;
 
-namespace CardsAgainstHumility.Android
+namespace CardsAgainstHumility.Android.Settings
 {
     class SettingsLoader : ISettingsLoader
     {
@@ -16,15 +16,15 @@ namespace CardsAgainstHumility.Android
 
         public string GetStoredHost(string defValue)
         {
-            if ((settings != null) && (settings.Contains("Host")))
-                return settings.GetString("Host", defValue);
+            if ((settings != null) && (settings.Contains(SettingsConstants.hostKey)))
+                return settings.GetString(SettingsConstants.hostKey, defValue);
             return defValue;
         }
 
         public string GetStoredPlayerName(string defValue)
         {
-            if ((settings != null) && (settings.Contains("PlayerName")))
-                return settings.GetString("PlayerName", defValue);
+            if ((settings != null) && (settings.Contains(SettingsConstants.playerNameKey)))
+                return settings.GetString(SettingsConstants.playerNameKey, defValue);
             return defValue;
         }
     }

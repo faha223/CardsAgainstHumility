@@ -3,7 +3,7 @@ using Android.Content;
 using Android.Graphics;
 using Android.OS;
 using Android.Widget;
-
+using CardsAgainstHumility.Android.Settings;
 using CardsAgainstHumility.Android.UIHelpers;
 
 namespace CardsAgainstHumility.Android
@@ -39,8 +39,8 @@ namespace CardsAgainstHumility.Android
                 using (var settings = GetSharedPreferences("CardsAgainstHumility", FileCreationMode.Private))
                 using (var editor = settings.Edit())
                 {
-                    editor.PutString("PlayerName", txtPlayerName.Text);
-                    editor.PutString("Host", txtHostName.Text);
+                    editor.PutString(SettingsConstants.playerNameKey, txtPlayerName.Text);
+                    editor.PutString(SettingsConstants.hostKey, txtHostName.Text);
                     editor.Commit();
                 }
 

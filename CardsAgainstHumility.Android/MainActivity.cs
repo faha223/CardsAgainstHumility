@@ -2,7 +2,7 @@
 using Android.Graphics;
 using Android.OS;
 using Android.Widget;
-using CardsAgainstHumility.Android.NetServices;
+using CardsAgainstHumility.Android.Settings;
 using CardsAgainstHumility.Android.UIHelpers;
 
 using System;
