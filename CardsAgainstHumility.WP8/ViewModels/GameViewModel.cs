@@ -80,6 +80,23 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
+        private bool showPlayerHand;
+        public bool ShowPlayerHand
+        {
+            get
+            {
+                return showPlayerHand;
+            }
+            set
+            {
+                if (showPlayerHand != value)
+                {
+                    showPlayerHand = value;
+                    OnPropertyChanged("ShowPlayerHand");
+                }
+            }
+        }
+
         private int maxPlayers;
         public int MaxPlayers
         {
@@ -209,7 +226,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
 
         private void UpdatePlayerHand()
         {
-            var newHand = CardsAgainstHumility.PlayerHand;
+            var newHand = CardsAgainstHumility.IsCardCzar ? CardsAgainstHumility.PlayedCards : CardsAgainstHumility.PlayerHand;
             if (newHand == null)
                 newHand = new List<WhiteCard>();
 
@@ -227,6 +244,28 @@ namespace CardsAgainstHumility.WP8.ViewModels
             foreach (var card in newHand.Where(c => idsToAdd.Contains(c.Id)))
             {
                 PlayerHand.Add(card);
+            }
+
+            if (CardsAgainstHumility.GameStarted)
+            {
+                if (CardsAgainstHumility.IsCardCzar)
+                {
+                    if (CardsAgainstHumility.ReadyToSelectWinner)
+                        ShowPlayerHand = true;
+                    else
+                        ShowPlayerHand = false;
+                }
+                else
+                {
+                    if (ConfirmedWhiteCard != null)
+                        ShowPlayerHand = false;
+                    else
+                        ShowPlayerHand = true;
+                }
+            }
+            else
+            {
+                ShowPlayerHand = true;
             }
         }
 
