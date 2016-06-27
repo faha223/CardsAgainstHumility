@@ -27,8 +27,8 @@
             <RowDefinition Height="auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock Text="Player Name:" Margin="5,0" VerticalAlignment="Center" />
-        <TextBlock Text="Server Address:" Margin="5,0" Grid.Row="1" VerticalAlignment="Center" />
+        <TextBlock Text="Player Name" Margin="0" VerticalAlignment="Center" />
+        <TextBlock Text="Server Url" Margin="0" Grid.Row="1" VerticalAlignment="Center" />
         <TextBox Text="{Binding PlayerName, Mode=TwoWay}" Grid.Column="1" />
         <TextBox Text="{Binding ServerAddress, Mode=TwoWay}" Grid.Column="1" Grid.Row="1" />
         <Button Command="{Binding SaveChangesCommand}" Grid.Row="2" 

@@ -4,23 +4,23 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="48dp">
-  <Button
-      android:id="@+id/gi_Join"
-      android:layout_alignParentLeft="true"
-      android:layout_centerVertical="true"
-      android:layout_width="96dp"
-      android:layout_height="36dp"
-      android:text="Join Game" />
-  <TextView
-      android:id="@+id/gi_Name"
-      android:layout_toRightOf="@id/gi_Join"
-      android:layout_centerVertical="true"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content" />
-  <TextView
-      android:id="@+id/gi_Players"
-      android:layout_alignParentRight="true"
-      android:layout_centerVertical="true"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/gi_Join"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_width="96dp"
+        android:layout_height="wrap_content"
+        android:text="Join Game" />
+    <TextView
+        android:id="@+id/gi_Name"
+        android:layout_toRightOf="@id/gi_Join"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/gi_Players"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

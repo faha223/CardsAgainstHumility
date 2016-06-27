@@ -202,7 +202,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
                 else
                 {
                     if (CardsAgainstHumility.SelectedCard == null)
-                        Status = "Select a Card";
+                        Status = "Select an Answer";
                     else
                         Status = $"Waiting for other players ({CardsAgainstHumility.Players.Count - CardsAgainstHumility.PlayedCards.Count} of {CardsAgainstHumility.Players.Count})";
                 }

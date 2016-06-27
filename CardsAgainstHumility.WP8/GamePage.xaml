@@ -40,19 +40,19 @@
                           Visibility="{Binding CurrentQuestion, Converter={StaticResource IsNullToVisibilityConverter}}"
                           VerticalAlignment="Top"
                           HorizontalAlignment="Center"
-                          Margin="0,50,0,0"/>
+                          Margin="0,65,0,0"/>
         <ContentPresenter ContentTemplate="{StaticResource WhiteCardTemplate}" 
                           Content="{Binding SelectedWhiteCard}" 
                           Visibility="{Binding SelectedWhiteCard, Converter={StaticResource IsNullToVisibilityConverter}}"
                           VerticalAlignment="Top"
                           HorizontalAlignment="Center"
-                          Margin="0,50,0,0" />
+                          Margin="0,65,0,0" />
         <ListBox x:Name="lstPlayerHand" 
                  ItemsSource="{Binding PlayerHand}"
                  SelectedItem="{Binding SelectedWhiteCard}"
                  ItemTemplate="{StaticResource WhiteCardTemplate}" 
                  VerticalAlignment="Bottom" 
-                 Margin="0,0,0,-150" />
+                 Margin="0,0,0,-176" />
         <Button x:Name="btnReady"
                 Style="{StaticResource ButtonStyle}" 
                 HorizontalAlignment="Center" 

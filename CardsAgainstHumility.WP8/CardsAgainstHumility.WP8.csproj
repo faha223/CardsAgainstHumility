@@ -130,6 +130,7 @@
     <Compile Include="SocketManagement\Socket.cs" />
     <Compile Include="SocketManagement\SocketManager.cs" />
     <Compile Include="ValueConverters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="ValueConverters\FontSizeScaler.cs" />
     <Compile Include="ValueConverters\IsNullToVisibilityConverter.cs" />
     <Compile Include="ViewModels\CreateGameViewModel.cs" />
     <Compile Include="ViewModels\GameViewModel.cs" />
