@@ -78,6 +78,57 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
+        private int maxPlayers;
+        public int MaxPlayers
+        {
+            get
+            {
+                return maxPlayers;
+            }
+            set
+            {
+                if (maxPlayers != value)
+                {
+                    maxPlayers = value;
+                    OnPropertyChanged("MaxPlayers");
+                }
+            }
+        }
+
+        private ObservableCollection<Player> players;
+        public ObservableCollection<Player> Players
+        {
+            get
+            {
+                return players;
+            }
+            set
+            {
+                if (players != value)
+                {
+                    players = value;
+                    OnPropertyChanged("Players");
+                }
+            }
+        }
+        
+        private bool isPlayerListOpen;
+        public bool IsPlayerListOpen
+        {
+            get
+            {
+                return isPlayerListOpen;
+            }
+            set
+            {
+                if (isPlayerListOpen != value)
+                {
+                    isPlayerListOpen = value;
+                    OnPropertyChanged("IsPlayerListOpen");
+                }
+            }
+        }
+
         private string status;
         public string Status
         {
@@ -133,10 +184,13 @@ namespace CardsAgainstHumility.WP8.ViewModels
             PlayerHand = new ObservableCollection<WhiteCard>();
             CardsAgainstHumility.Game_Update += UpdateGame;
 
+            IsPlayerListOpen = false;
+
             UpdatePlayerHand();
             UpdateConfirmedWhiteCard();
             UpdateCurrentQuestion();
             UpdateStatusText();
+            UpdatePlayerList();
         }
 
         private void UpdateGame(object sender, GameUpdateEventArgs args)
@@ -147,6 +201,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
                 UpdateConfirmedWhiteCard();
                 UpdateCurrentQuestion();
                 UpdateStatusText();
+                UpdatePlayerList();
             });
         }
 
@@ -211,6 +266,16 @@ namespace CardsAgainstHumility.WP8.ViewModels
             {
                 Status = $"Waiting for {CardsAgainstHumility.RequiredNumberOfPlayers - CardsAgainstHumility.Players.Count} more players";
             }
+        }
+
+        private void UpdatePlayerList()
+        {
+            MaxPlayers = CardsAgainstHumility.MaxPlayers;
+            if (Players == null)
+                Players = new ObservableCollection<Player>();
+            else
+                Players.Clear();
+            foreach (var p in CardsAgainstHumility.Players) { Players.Add(p); }
         }
     }
 }

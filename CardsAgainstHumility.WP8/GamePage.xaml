@@ -6,6 +6,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:gc="clr-namespace:CardsAgainstHumility.GameClasses;assembly=CardsAgainstHumility"
     xmlns:converters="clr-namespace:CardsAgainstHumility.WP8.ValueConverters"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="15"
@@ -16,7 +17,26 @@
     <phone:PhoneApplicationPage.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:IsNullToVisibilityConverter x:Key="IsNullToVisibilityConverter" />
-        <Style TargetType="ListBox">
+        <Style TargetType="ListBox" x:Key="PlayerListStyle">
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical"></StackPanel>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="ListBox" x:Key="PlayerHandStyle">
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
             <Setter Property="ItemsPanel">
@@ -27,6 +47,33 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <DataTemplate x:Key="PlayerListItemTemplate">
+            <Border Background="Transparent" BorderBrush="#161616" BorderThickness="0,0,0,1">
+                <Grid HorizontalAlignment="Stretch" Margin="5">
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}" />
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Czar" 
+                               TextAlignment="Center"
+                               Visibility="{Binding IsCzar, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Text="{Binding AwesomePoints}" 
+                               TextAlignment="Center"
+                               Margin="5,0"
+                               Grid.Column="1" />
+                    <TextBlock Text="{Binding Name}" 
+                               Grid.Column="2" />
+                    <TextBlock Text="Ready" 
+                               Grid.Column="3"
+                               Visibility="{Binding IsReady, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </Grid>
+            </Border>
+        </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
     <Grid x:Name="LayoutRoot" Background="#303030">
         <TextBlock Foreground="#c0c0c0" 
@@ -48,6 +95,7 @@
                           HorizontalAlignment="Center"
                           Margin="0,65,0,0" />
         <ListBox x:Name="lstPlayerHand" 
+                 Style="{StaticResource PlayerHandStyle}"
                  ItemsSource="{Binding PlayerHand}"
                  SelectedItem="{Binding SelectedWhiteCard}"
                  ItemTemplate="{StaticResource WhiteCardTemplate}" 
@@ -64,5 +112,38 @@
                 VerticalAlignment="Bottom" 
                 Command="{Binding ConfirmCommand}" 
                 Visibility="{Binding Path=IsEnabled, ElementName=btnConfirm, Converter={StaticResource BooleanToVisibilityConverter}}">CONFIRM</Button>
+        <Border x:Name="PlayerListShadow" 
+                Background="#dd000000" 
+                HorizontalAlignment="Stretch" 
+                VerticalAlignment="Stretch"
+                Visibility="{Binding IsPlayerListOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Border Background="#282828" 
+                    Width="300"
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Stretch">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Zune 8.1's Game" HorizontalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" 
+                                Grid.Row="1" 
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="Players (" />
+                        <TextBlock Text="{Binding Players.Count}" />
+                        <TextBlock Text="/" />
+                        <TextBlock Text="{Binding MaxPlayers}" />
+                        <TextBlock Text=")" />
+                    </StackPanel>
+                    <ListBox Style="{StaticResource PlayerListStyle}"
+                             ItemsSource="{Binding Players}"
+                             ItemTemplate="{StaticResource PlayerListItemTemplate}" 
+                             Grid.Row="2" >
+                    </ListBox>
+                </Grid>
+            </Border>
+        </Border>
     </Grid>
 </phone:PhoneApplicationPage>
