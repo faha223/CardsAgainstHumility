@@ -89,16 +89,17 @@
                           HorizontalAlignment="Center"
                           Margin="0,65,0,0"/>
         <ContentPresenter ContentTemplate="{StaticResource WhiteCardTemplate}" 
-                          Content="{Binding SelectedWhiteCard}" 
-                          Visibility="{Binding SelectedWhiteCard, Converter={StaticResource IsNullToVisibilityConverter}}"
+                          Content="{Binding ConfirmedWhiteCard}" 
+                          Visibility="{Binding ConfirmedWhiteCard, Converter={StaticResource IsNullToVisibilityConverter}}"
                           VerticalAlignment="Top"
                           HorizontalAlignment="Center"
                           Margin="0,65,0,0" />
         <ListBox x:Name="lstPlayerHand" 
                  Style="{StaticResource PlayerHandStyle}"
                  ItemsSource="{Binding PlayerHand}"
-                 SelectedItem="{Binding SelectedWhiteCard}"
+                 SelectedItem="{Binding SelectedWhiteCard, Mode=TwoWay}"
                  ItemTemplate="{StaticResource WhiteCardTemplate}" 
+                 SelectionMode="Single"
                  VerticalAlignment="Bottom" 
                  Margin="0,0,0,-176" />
         <Button x:Name="btnReady"

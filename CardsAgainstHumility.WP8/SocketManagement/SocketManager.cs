@@ -1,10 +1,5 @@
 ﻿using CardsAgainstHumility.Interfaces;
 using Quobject.SocketIoClientDotNet.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CardsAgainstHumility.WP8.SocketManagement
 {
@@ -18,7 +13,9 @@ namespace CardsAgainstHumility.WP8.SocketManagement
 
         public ISocket GetSocket(string uri, string query)
         {
-            var sock = IO.Socket($"{uri}?{query}");
+            var opts = new IO.Options();
+            opts.QueryString = query;
+            var sock = IO.Socket($"{uri}", opts);
             return new Socket(sock);
         }
     }

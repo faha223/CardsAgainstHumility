@@ -26,6 +26,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
                 {
                     selectedWhiteCard = value;
                     OnPropertyChanged("SelectedWhiteCard");
+                    OnPropertyChanged("ConfirmCommand");
                 }
             }
         }
@@ -43,6 +44,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
                 {
                     confirmedWhiteCard = value;
                     OnPropertyChanged("ConfirmedWhiteCard");
+                    OnPropertyChanged("ConfirmCommand");
                 }
             }
         }
