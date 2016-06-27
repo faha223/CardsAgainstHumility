@@ -51,15 +51,16 @@
                  ItemTemplate="{StaticResource WhiteCardTemplate}" 
                  VerticalAlignment="Bottom" 
                  Margin="0,0,0,-150" />
-        <Button Style="{StaticResource ButtonStyle}" 
+        <Button x:Name="btnReady"
+                Style="{StaticResource ButtonStyle}" 
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Bottom" 
                 Command="{Binding ReadyCommand}" 
-                Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToVisibilityConverter}}">READY</Button>
-        <Button Style="{StaticResource ButtonStyle}" 
+                Visibility="{Binding Path=IsEnabled, ElementName=btnReady, Converter={StaticResource BooleanToVisibilityConverter}}">READY</Button>
+        <Button x:Name="btnConfirm" Style="{StaticResource ButtonStyle}" 
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Bottom" 
                 Command="{Binding ConfirmCommand}" 
-                Visibility="{Binding IsEnabled, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToVisibilityConverter}}">CONFIRM</Button>
+                Visibility="{Binding Path=IsEnabled, ElementName=btnConfirm, Converter={StaticResource BooleanToVisibilityConverter}}">CONFIRM</Button>
     </Grid>
 </phone:PhoneApplicationPage>
