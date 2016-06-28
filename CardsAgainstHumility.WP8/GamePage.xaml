@@ -106,7 +106,7 @@
                           HorizontalAlignment="Center"
                           Margin="0,100,0,0">
             <ContentPresenter.RenderTransform>
-                <TranslateTransform X="0" Y="{Binding ElementName=bc_Text, Path=ActualHeight, Mode=OneWay}" />
+                <TranslateTransform X="0" Y="{Binding ElementName=bc_Text, Path=ActualHeight, Mode=OneWay, FallbackValue=0}" />
             </ContentPresenter.RenderTransform>
         </ContentPresenter>
         <ListBox x:Name="lstPlayerHand" 
@@ -143,13 +143,13 @@
                         <RowDefinition Height="auto" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Zune 8.1's Game" HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding GameName}" HorizontalAlignment="Center" />
                     <StackPanel Orientation="Horizontal" 
                                 Grid.Row="1" 
                                 HorizontalAlignment="Center">
                         <TextBlock Text="Players (" />
                         <TextBlock Text="{Binding Players.Count}" />
-                        <TextBlock Text="/" />
+                        <TextBlock Text=" of " />
                         <TextBlock Text="{Binding MaxPlayers}" />
                         <TextBlock Text=")" />
                     </StackPanel>

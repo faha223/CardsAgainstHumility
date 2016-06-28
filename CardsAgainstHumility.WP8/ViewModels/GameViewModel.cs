@@ -11,6 +11,8 @@ namespace CardsAgainstHumility.WP8.ViewModels
 {
     class GameViewModel : ViewModelBase
     {
+        #region Properties
+
         private WhiteCard selectedWhiteCard;
         public WhiteCard SelectedWhiteCard
         {
@@ -91,6 +93,23 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
+        private string gameName;
+        public string GameName
+        {
+            get
+            {
+                return gameName;
+            }
+            set
+            {
+                if (gameName != value)
+                {
+                    gameName = value;
+                    OnPropertyChanged("GameName");
+                }
+            }
+        }
+
         private int maxPlayers;
         public int MaxPlayers
         {
@@ -159,6 +178,8 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
+        #endregion Properties
+
         #region Ready Command
 
         internal void Ready()
@@ -190,7 +211,14 @@ namespace CardsAgainstHumility.WP8.ViewModels
 
         private bool CanConfirm()
         {
-            return (SelectedWhiteCard != null) && (ConfirmedWhiteCard == null);
+            bool showButton = (SelectedWhiteCard != null);
+            if (CardsAgainstHumility.IsCardCzar)
+                showButton &= CardsAgainstHumility.RoundWinner == null;
+            else
+                showButton &= CardsAgainstHumility.SelectedCard == null;
+
+            showButton &= !CardsAgainstHumility.GameOver;
+            return showButton;
         }
 
         public ICommand ConfirmCommand { get { return new ParameterlessCommandRouter(Confirm, CanConfirm); } }
@@ -216,8 +244,8 @@ namespace CardsAgainstHumility.WP8.ViewModels
             dispatcher.BeginInvoke(() =>
             {
                 UpdatePlayerHand();
-                UpdateConfirmedWhiteCard();
                 UpdateCurrentQuestion();
+                UpdateConfirmedWhiteCard();
                 UpdateStatusText();
                 UpdatePlayerList();
                 OnPropertyChanged("ReadyCommand");
@@ -247,18 +275,18 @@ namespace CardsAgainstHumility.WP8.ViewModels
                 PlayerHand.Add(card);
             }
 
-            if (CardsAgainstHumility.GameStarted)
+            if (CardsAgainstHumility.GameStarted && !CardsAgainstHumility.GameOver)
             {
                 if (CardsAgainstHumility.IsCardCzar)
                 {
-                    if (CardsAgainstHumility.ReadyToSelectWinner)
+                    if (CardsAgainstHumility.ReadyToSelectWinner && CardsAgainstHumility.WinningCard == null)
                         ShowPlayerHand = true;
                     else
                         ShowPlayerHand = false;
                 }
                 else
                 {
-                    if (ConfirmedWhiteCard != null)
+                    if (!CardsAgainstHumility.ReadyToSelectWinner && !CardsAgainstHumility.ReadyForReview && CardsAgainstHumility.SelectedCard != null)
                         ShowPlayerHand = false;
                     else
                         ShowPlayerHand = true;
@@ -282,41 +310,43 @@ namespace CardsAgainstHumility.WP8.ViewModels
 
         private void UpdateCurrentQuestion()
         {
-            CurrentQuestion = CardsAgainstHumility.CurrentQuestion;
+            CurrentQuestion = (CardsAgainstHumility.GameOver ? null : CardsAgainstHumility.CurrentQuestion);
         }
 
         private void UpdateStatusText()
         {
-            if(CardsAgainstHumility.GameOver)
+            if (CardsAgainstHumility.GameStarted)
             {
-                Status = $"Game Over{Environment.NewLine}{CardsAgainstHumility.Winner} Won{Environment.NewLine}Ready up to Start the next Game";
-            }
-            if(CardsAgainstHumility.GameStarted)
-            {
-                if(CardsAgainstHumility.IsCardCzar)
+                if (CardsAgainstHumility.GameOver)
                 {
-                    if (CardsAgainstHumility.ReadyToSelectWinner)
-                        Status = "Select a Winner";
-                    else
-                        Status = "You are Card Czar";
+                    Status = $"Game Over{Environment.NewLine}{CardsAgainstHumility.Winner} Won{Environment.NewLine}Ready up to play again";
                 }
+                else if (CardsAgainstHumility.ReadyForReview)
+                {
+                    string readyStatus = $"Waiting on other players ({CardsAgainstHumility.Players.Count(c => c.IsReady)} of {CardsAgainstHumility.Players.Count})";
+                    string czarNotReadyStatus = $"{CardsAgainstHumility.RoundWinner} won the round";
+                    string playerNotReadyStatus = "Get Ready for the Next Round";
+                    Status = CardsAgainstHumility.IsReady ? readyStatus : (CardsAgainstHumility.IsCardCzar ? czarNotReadyStatus : playerNotReadyStatus);
+                }
+                else if (CardsAgainstHumility.IsCardCzar)
+                    Status = "You are the Card Czar";
+                else if (!CardsAgainstHumility.ReadyToSelectWinner)
+                    Status = (CardsAgainstHumility.SelectedCard == null ? "Select an Answer" : $"Waiting for other players ({CardsAgainstHumility.PlayersNotYetSubmitted.Count} of {CardsAgainstHumility.Players.Count})");
                 else
-                {
-                    if (CardsAgainstHumility.SelectedCard == null)
-                        Status = "Select an Answer";
-                    else
-                        Status = $"Waiting for other players ({CardsAgainstHumility.Players.Count - CardsAgainstHumility.PlayedCards.Count} of {CardsAgainstHumility.Players.Count})";
-                }
+                    Status = "Card Czar is Choosing a Winner";
             }
             else
             {
-                Status = $"Waiting for {CardsAgainstHumility.RequiredNumberOfPlayers - CardsAgainstHumility.Players.Count} more players";
+                var numPlayersNeeded = CardsAgainstHumility.RequiredNumberOfPlayers - CardsAgainstHumility.Players.Count;
+                Status = $"Waiting for {numPlayersNeeded} more player{(numPlayersNeeded == 1 ? string.Empty : "s")}";
             }
         }
 
         private void UpdatePlayerList()
         {
+            GameName = CardsAgainstHumility.GameName;
             MaxPlayers = CardsAgainstHumility.MaxPlayers;
+
             if (Players == null)
                 Players = new ObservableCollection<Player>();
             else
