@@ -62,6 +62,24 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
+        private int currentQuestionTextHeight;
+        public int CurrentQuestionTextHeight
+        {
+            get
+            {
+                return currentQuestionTextHeight;
+            }
+            set
+            {
+                if (currentQuestionTextHeight != value)
+                {
+                    currentQuestionTextHeight = value;
+                    OnPropertyChanged("CurrentQuestionTextHeight");
+                }
+            }
+        }
+
+
         private ObservableCollection<WhiteCard> _playerHand;
         public ObservableCollection<WhiteCard> PlayerHand
         {
