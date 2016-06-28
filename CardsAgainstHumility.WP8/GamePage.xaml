@@ -82,18 +82,33 @@
                    FontFamily="{StaticResource CustomFontHelvetica}" 
                    VerticalAlignment="Top" 
                    HorizontalAlignment="Center"/>
-        <ContentPresenter ContentTemplate="{StaticResource BlackCardTemplate}" 
-                          Content="{Binding CurrentQuestion}"
-                          Visibility="{Binding CurrentQuestion, Converter={StaticResource IsNullToVisibilityConverter}}"
-                          VerticalAlignment="Top"
-                          HorizontalAlignment="Center"
-                          Margin="0,65,0,0"/>
+        <Grid VerticalAlignment="Top"
+              DataContext="{Binding CurrentQuestion}"
+              Visibility="{Binding Path=DataContext.CurrentQuestion, ElementName=LayoutRoot, Converter={StaticResource IsNullToVisibilityConverter}}"
+              HorizontalAlignment="Center"
+              Margin="0,65,0,0">
+            <Border Width="312" Height="436" Background="#080808" CornerRadius="16" Margin="2" BorderBrush="#161616" BorderThickness="1">
+                <TextBlock x:Name="bc_Text"
+                           Text="{Binding Text}" 
+                           Foreground="#FFFFFE" 
+                           Margin="26"
+                           VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                           FontFamily="{StaticResource CustomFontHelvetica}"
+                           TextWrapping="Wrap"
+                           FontSize="{Binding FontSize, Converter={StaticResource FontSizeScaler}}"
+                           FontWeight="Bold"/>
+            </Border>
+        </Grid>
         <ContentPresenter ContentTemplate="{StaticResource WhiteCardTemplate}" 
                           Content="{Binding ConfirmedWhiteCard}" 
-                          Visibility="{Binding ConfirmedWhiteCard, Converter={StaticResource IsNullToVisibilityConverter}}"
+                          Visibility="{Binding Path=DataContext.ConfirmedWhiteCard, ElementName=LayoutRoot, Converter={StaticResource IsNullToVisibilityConverter}}"
                           VerticalAlignment="Top"
                           HorizontalAlignment="Center"
-                          Margin="0,65,0,0" />
+                          Margin="0,100,0,0">
+            <ContentPresenter.RenderTransform>
+                <TranslateTransform X="0" Y="{Binding ElementName=bc_Text, Path=ActualHeight, Mode=OneWay}" />
+            </ContentPresenter.RenderTransform>
+        </ContentPresenter>
         <ListBox x:Name="lstPlayerHand" 
                  Style="{StaticResource PlayerHandStyle}"
                  ItemsSource="{Binding PlayerHand}"

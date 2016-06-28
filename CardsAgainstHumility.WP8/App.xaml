@@ -163,7 +163,7 @@
                 <TextBlock Text="{Binding Text}" 
                            Foreground="Black" 
                            Margin="26" 
-                           FontFamily="Arial" 
+                           FontFamily="{StaticResource CustomFontHelvetica}" 
                            TextWrapping="Wrap"
                            FontSize="{Binding FontSize, Converter={StaticResource FontSizeScaler}}"
                            FontWeight="Bold"/>
@@ -171,10 +171,11 @@
         </DataTemplate>
         <DataTemplate x:Key="BlackCardTemplate">
             <Border Width="312" Height="436" Background="#080808" CornerRadius="16" Margin="2" BorderBrush="#161616" BorderThickness="1">
-                <TextBlock Text="{Binding Text}" 
+                <TextBlock x:Name="bc_Text"
+                           Text="{Binding Text}" 
                            Foreground="#FFFFFE" 
-                           Margin="26" 
-                           FontFamily="Arial" 
+                           Margin="26"
+                           FontFamily="{StaticResource CustomFontHelvetica}"
                            TextWrapping="Wrap"
                            FontSize="{Binding FontSize, Converter={StaticResource FontSizeScaler}}"
                            FontWeight="Bold"/>

@@ -2,7 +2,6 @@
 using Microsoft.Phone.Controls;
 using CardsAgainstHumility.WP8.ViewModels;
 using Microsoft.Xna.Framework.Input.Touch;
-using System;
 using System.Windows.Input;
 
 namespace CardsAgainstHumility.WP8

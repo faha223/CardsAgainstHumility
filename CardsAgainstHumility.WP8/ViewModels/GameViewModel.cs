@@ -1,9 +1,7 @@
 ﻿using CardsAgainstHumility.GameClasses;
-using CardsAgainstHumility.Helpers;
 using CardsAgainstHumility.WP8.MVVM_Helpers;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Windows.Navigation;
 using System.Linq;
 using CardsAgainstHumility.Events;
 using System.Collections.Generic;
@@ -40,12 +38,8 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
             set
             {
-                if (confirmedWhiteCard != value)
-                {
-                    confirmedWhiteCard = value;
-                    OnPropertyChanged("ConfirmedWhiteCard");
-                    OnPropertyChanged("ConfirmCommand");
-                }
+                confirmedWhiteCard = value;
+                OnPropertyChanged("ConfirmedWhiteCard");
             }
         }
 
@@ -165,12 +159,11 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
-
         #region Ready Command
 
         internal void Ready()
         {
-
+            CardsAgainstHumility.ReadyForNextRound();
         }
 
         private bool CanReady()
@@ -182,11 +175,17 @@ namespace CardsAgainstHumility.WP8.ViewModels
 
         #endregion Ready Command
 
-        #region ConfirmCommand
+        #region Confirm Command
 
         internal void Confirm()
         {
-            CardsAgainstHumility.SelectCard(SelectedWhiteCard);
+            if (SelectedWhiteCard != null)
+            {
+                if (CardsAgainstHumility.IsCardCzar)
+                    CardsAgainstHumility.SelectWinner(SelectedWhiteCard);
+                else
+                    CardsAgainstHumility.SelectCard(SelectedWhiteCard);
+            }
         }
 
         private bool CanConfirm()
@@ -196,7 +195,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
 
         public ICommand ConfirmCommand { get { return new ParameterlessCommandRouter(Confirm, CanConfirm); } }
 
-        #endregion ConfirmCommand
+        #endregion Confirm Command
 
         public GameViewModel() : base()
         {
@@ -221,6 +220,8 @@ namespace CardsAgainstHumility.WP8.ViewModels
                 UpdateCurrentQuestion();
                 UpdateStatusText();
                 UpdatePlayerList();
+                OnPropertyChanged("ReadyCommand");
+                OnPropertyChanged("ConfirmCommand");
             });
         }
 
@@ -273,6 +274,10 @@ namespace CardsAgainstHumility.WP8.ViewModels
         {
             if (CardsAgainstHumility.SelectedCard != null)
                 ConfirmedWhiteCard = new WhiteCard(CardsAgainstHumility.SelectedCard, 20);
+            else if (CardsAgainstHumility.IsCardCzar && CardsAgainstHumility.ReadyForReview)
+                ConfirmedWhiteCard = new WhiteCard(CardsAgainstHumility.WinningCard, 20);
+            else
+                ConfirmedWhiteCard = null;
         }
 
         private void UpdateCurrentQuestion()
