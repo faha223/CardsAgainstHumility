@@ -107,6 +107,24 @@ namespace CardsAgainstHumility.WP8.ViewModels
                 {
                     showPlayerHand = value;
                     OnPropertyChanged("ShowPlayerHand");
+                    OnPropertyChanged("EnablePlayerHand");
+                }
+            }
+        }
+
+        private bool enablePlayerHand;
+        public bool EnablePlayerHand
+        {
+            get
+            {
+                return enablePlayerHand && showPlayerHand;
+            }
+            set
+            {
+                if (enablePlayerHand != value)
+                {
+                    enablePlayerHand = value;
+                    OnPropertyChanged("EnablePlayerHand");
                 }
             }
         }
@@ -273,9 +291,12 @@ namespace CardsAgainstHumility.WP8.ViewModels
 
         private void UpdatePlayerHand()
         {
-            var newHand = CardsAgainstHumility.IsCardCzar ? CardsAgainstHumility.PlayedCards : CardsAgainstHumility.PlayerHand;
+            var newHand = (CardsAgainstHumility.IsCardCzar || CardsAgainstHumility.ReadyToSelectWinner || CardsAgainstHumility.ReadyForReview) ? 
+                CardsAgainstHumility.PlayedCards : CardsAgainstHumility.PlayerHand;
             if (newHand == null)
                 newHand = new List<WhiteCard>();
+
+            #region New Data
 
             var oldHandIds = PlayerHand.Select(c => c.Id).ToList();
             var newHandIds = newHand.Select(c => c.Id).ToList();
@@ -293,26 +314,39 @@ namespace CardsAgainstHumility.WP8.ViewModels
                 PlayerHand.Add(card);
             }
 
+            #endregion
+
             if (CardsAgainstHumility.GameStarted && !CardsAgainstHumility.GameOver)
             {
                 if (CardsAgainstHumility.IsCardCzar)
                 {
                     if (CardsAgainstHumility.ReadyToSelectWinner && CardsAgainstHumility.WinningCard == null)
+                    {
                         ShowPlayerHand = true;
+                        EnablePlayerHand = true;
+                    }
                     else
+                    {
                         ShowPlayerHand = false;
+                    }
                 }
                 else
                 {
                     if (!CardsAgainstHumility.ReadyToSelectWinner && !CardsAgainstHumility.ReadyForReview && CardsAgainstHumility.SelectedCard != null)
+                    {
                         ShowPlayerHand = false;
+                    }
                     else
+                    {
                         ShowPlayerHand = true;
+                        EnablePlayerHand = true;
+                    }
                 }
             }
             else
             {
                 ShowPlayerHand = true;
+                EnablePlayerHand = false;
             }
         }
 

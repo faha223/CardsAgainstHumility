@@ -153,7 +153,8 @@
                  ItemsSource="{Binding PlayerHand}"
                  SelectedItem="{Binding SelectedWhiteCard, Mode=TwoWay}"
                  ItemTemplate="{StaticResource WhiteCardTemplate}" 
-                 Visibility="{Binding ShowPlayerHand, Converter={StaticResource BooleanToVisibilityConverter}}"
+                 Visibility="{Binding ShowPlayerHand, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay}"
+                 IsEnabled="{Binding EnablePlayerHand, Mode=TwoWay}"
                  SelectionMode="Single"
                  VerticalAlignment="Bottom" 
                  Margin="0,0,0,-126" />
