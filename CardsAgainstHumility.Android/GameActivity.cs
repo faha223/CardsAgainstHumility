@@ -187,7 +187,7 @@ namespace CardsAgainstHumility.Android
             else
             {
                 doubleBackToExitPressedOnce = true;
-                Toast.MakeText(this, "Plase press BACK again to Leave the Game", ToastLength.Short).Show();
+                Toast.MakeText(this, "Please press BACK again to Leave the Game", ToastLength.Short).Show();
                 new Handler().PostDelayed(() =>
                 {
                     doubleBackToExitPressedOnce = false;
