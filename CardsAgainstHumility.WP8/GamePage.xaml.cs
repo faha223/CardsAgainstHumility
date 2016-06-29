@@ -13,6 +13,7 @@ namespace CardsAgainstHumility.WP8
         public GamePage()
         {
             InitializeComponent();
+            _drawerLayout.InitializeDrawerLayout();
 
             vm = new GameViewModel();
 

@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:gc="clr-namespace:CardsAgainstHumility.GameClasses;assembly=CardsAgainstHumility"
     xmlns:converters="clr-namespace:CardsAgainstHumility.WP8.ValueConverters"
+    xmlns:controls="clr-namespace:DrawerLayout"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="15"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -19,7 +20,7 @@
         <converters:IsNullToVisibilityConverter x:Key="IsNullToVisibilityConverter" />
         <Style TargetType="ListBox" x:Key="PlayerListStyle">
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
             <Setter Property="ItemsPanel">
                 <Setter.Value>
                     <ItemsPanelTemplate>
@@ -100,7 +101,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Czar" 
                                TextAlignment="Center"
-                               Visibility="{Binding IsCzar, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                               Visibility="{Binding IsCardCzar, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <TextBlock Text="{Binding AwesomePoints}" 
                                TextAlignment="Center"
                                Margin="5,0"
@@ -114,93 +115,93 @@
             </Border>
         </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
-    <Grid x:Name="LayoutRoot" Background="#303030">
-        <TextBlock Foreground="#c0c0c0" 
-                   Text="{Binding Status}"
-                   FontSize="26" 
-                   FontFamily="{StaticResource CustomFontHelvetica}" 
-                   VerticalAlignment="Top" 
-                   HorizontalAlignment="Center"/>
-        <Grid VerticalAlignment="Top"
-              DataContext="{Binding CurrentQuestion}"
-              Visibility="{Binding Path=DataContext.CurrentQuestion, ElementName=LayoutRoot, Converter={StaticResource IsNullToVisibilityConverter}}"
-              HorizontalAlignment="Center"
-              Margin="0,65,0,0">
-            <Border Width="312" Height="436" Background="#080808" CornerRadius="16" Margin="2" BorderBrush="#161616" BorderThickness="1">
-                <TextBlock x:Name="bc_Text"
-                           Text="{Binding Text}" 
-                           Foreground="#FFFFFE" 
-                           Margin="26"
-                           VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                           FontFamily="{StaticResource CustomFontHelvetica}"
-                           TextWrapping="Wrap"
-                           FontSize="{Binding FontSize, Converter={StaticResource FontSizeScaler}}"
-                           FontWeight="Bold"/>
-            </Border>
-        </Grid>
-        <ContentPresenter ContentTemplate="{StaticResource WhiteCardTemplate}" 
-                          Content="{Binding ConfirmedWhiteCard}" 
-                          Visibility="{Binding Path=DataContext.ConfirmedWhiteCard, ElementName=LayoutRoot, Converter={StaticResource IsNullToVisibilityConverter}}"
-                          VerticalAlignment="Top"
-                          HorizontalAlignment="Center"
-                          Margin="0,100,0,0">
-            <ContentPresenter.RenderTransform>
-                <TranslateTransform X="0" Y="{Binding ElementName=bc_Text, Path=ActualHeight, Mode=OneWay, FallbackValue=0}" />
-            </ContentPresenter.RenderTransform>
-        </ContentPresenter>
-        <ListBox x:Name="lstPlayerHand" 
-                 Style="{StaticResource PlayerHandStyle}"
-                 ItemsSource="{Binding PlayerHand}"
-                 SelectedItem="{Binding SelectedWhiteCard, Mode=TwoWay}"
-                 ItemTemplate="{StaticResource WhiteCardTemplate}" 
-                 Visibility="{Binding ShowPlayerHand, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay}"
-                 IsEnabled="{Binding EnablePlayerHand, Mode=TwoWay}"
-                 SelectionMode="Single"
-                 VerticalAlignment="Bottom" 
-                 Margin="0,0,0,-126" />
-        <Button x:Name="btnReady"
-                Style="{StaticResource ButtonStyle}" 
-                HorizontalAlignment="Center" 
-                VerticalAlignment="Bottom" 
-                Command="{Binding ReadyCommand}" 
-                Visibility="{Binding Path=IsEnabled, ElementName=btnReady, Converter={StaticResource BooleanToVisibilityConverter}}">READY</Button>
-        <Button x:Name="btnConfirm" Style="{StaticResource ButtonStyle}" 
-                HorizontalAlignment="Center" 
-                VerticalAlignment="Bottom" 
-                Command="{Binding ConfirmCommand}" 
-                Visibility="{Binding Path=IsEnabled, ElementName=btnConfirm, Converter={StaticResource BooleanToVisibilityConverter}}">CONFIRM</Button>
-        <Border x:Name="PlayerListShadow" 
-                Background="#dd000000" 
-                HorizontalAlignment="Stretch" 
-                VerticalAlignment="Stretch"
-                Visibility="{Binding IsPlayerListOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Border Background="#282828" 
-                    Width="300"
-                    HorizontalAlignment="Left" 
-                    VerticalAlignment="Stretch">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <TextBlock Text="{Binding GameName}" HorizontalAlignment="Center" />
-                    <StackPanel Orientation="Horizontal" 
-                                Grid.Row="1" 
-                                HorizontalAlignment="Center">
-                        <TextBlock Text="Players (" />
-                        <TextBlock Text="{Binding Players.Count}" />
-                        <TextBlock Text=" of " />
-                        <TextBlock Text="{Binding MaxPlayers}" />
-                        <TextBlock Text=")" />
-                    </StackPanel>
-                    <ListBox Style="{StaticResource PlayerListStyle}"
-                             ItemsSource="{Binding Players}"
-                             ItemTemplate="{StaticResource PlayerListItemTemplate}" 
-                             Grid.Row="2" >
-                    </ListBox>
+    <Grid x:Name="LayoutRoot">
+        <controls:DrawerLayout x:Name="_drawerLayout">
+            <Grid x:Name="MainLayout" Background="#303030">
+                <TextBlock Foreground="#c0c0c0" 
+                       Text="{Binding Status}"
+                       FontSize="26" 
+                       FontFamily="{StaticResource CustomFontHelvetica}" 
+                       VerticalAlignment="Top" 
+                       HorizontalAlignment="Center"/>
+                <Grid VerticalAlignment="Top"
+                  DataContext="{Binding CurrentQuestion}"
+                  Visibility="{Binding Path=DataContext.CurrentQuestion, ElementName=LayoutRoot, Converter={StaticResource IsNullToVisibilityConverter}}"
+                  HorizontalAlignment="Center"
+                  Margin="0,65,0,0">
+                    <Border Width="312" Height="436" Background="#080808" CornerRadius="16" Margin="2" BorderBrush="#161616" BorderThickness="1">
+                        <TextBlock x:Name="bc_Text"
+                               Text="{Binding Text}" 
+                               Foreground="#FFFFFE" 
+                               Margin="26"
+                               VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                               FontFamily="{StaticResource CustomFontHelvetica}"
+                               TextWrapping="Wrap"
+                               FontSize="{Binding FontSize, Converter={StaticResource FontSizeScaler}}"
+                               FontWeight="Bold"/>
+                    </Border>
                 </Grid>
-            </Border>
-        </Border>
+                <ContentPresenter ContentTemplate="{StaticResource WhiteCardTemplate}" 
+                              Content="{Binding ConfirmedWhiteCard}" 
+                              Visibility="{Binding Path=DataContext.ConfirmedWhiteCard, ElementName=LayoutRoot, Converter={StaticResource IsNullToVisibilityConverter}}"
+                              VerticalAlignment="Top"
+                              HorizontalAlignment="Center"
+                              Margin="0,100,0,0">
+                    <ContentPresenter.RenderTransform>
+                        <TranslateTransform X="0" Y="{Binding ElementName=bc_Text, Path=ActualHeight, Mode=OneWay, FallbackValue=0}" />
+                    </ContentPresenter.RenderTransform>
+                </ContentPresenter>
+                <ListBox x:Name="lstPlayerHand" 
+                     Style="{StaticResource PlayerHandStyle}"
+                     ItemsSource="{Binding PlayerHand}"
+                     SelectedItem="{Binding SelectedWhiteCard, Mode=TwoWay}"
+                     ItemTemplate="{StaticResource WhiteCardTemplate}" 
+                     Visibility="{Binding ShowPlayerHand, Converter={StaticResource BooleanToVisibilityConverter}, Mode=TwoWay}"
+                     IsEnabled="{Binding EnablePlayerHand, Mode=TwoWay}"
+                     SelectionMode="Single"
+                     VerticalAlignment="Bottom" 
+                     Margin="0,0,0,-126" />
+                <Button x:Name="btnReady"
+                    Style="{StaticResource ButtonStyle}" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Bottom" 
+                    Command="{Binding ReadyCommand}" 
+                    Visibility="{Binding Path=IsEnabled, ElementName=btnReady, Converter={StaticResource BooleanToVisibilityConverter}}">READY</Button>
+                <Button x:Name="btnConfirm" Style="{StaticResource ButtonStyle}" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Bottom" 
+                    Command="{Binding ConfirmCommand}" 
+                    Visibility="{Binding Path=IsEnabled, ElementName=btnConfirm, Converter={StaticResource BooleanToVisibilityConverter}}">CONFIRM</Button>
+            </Grid>
+            <Grid x:Name="Drawer">
+                <Border Background="#282828" 
+                        Width="300"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Stretch">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding GameName}" HorizontalAlignment="Center" />
+                        <StackPanel Orientation="Horizontal" 
+                                    Grid.Row="1" 
+                                    HorizontalAlignment="Center">
+                            <TextBlock Text="Players (" />
+                            <TextBlock Text="{Binding Players.Count}" />
+                            <TextBlock Text=" of " />
+                            <TextBlock Text="{Binding MaxPlayers}" />
+                            <TextBlock Text=")" />
+                        </StackPanel>
+                        <ListBox Style="{StaticResource PlayerListStyle}"
+                                 ItemsSource="{Binding Players}"
+                                 ItemTemplate="{StaticResource PlayerListItemTemplate}" 
+                                 Grid.Row="2" >
+                        </ListBox>
+                    </Grid>
+                </Border>
+            </Grid>
+        </controls:DrawerLayout>
     </Grid>
 </phone:PhoneApplicationPage>
