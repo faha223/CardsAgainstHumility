@@ -7,6 +7,10 @@ using Android.Graphics;
 using System;
 using System.Threading.Tasks;
 using CardsAgainstHumility.Android.UIHelpers;
+using System.Collections.Generic;
+using CardsAgainstHumility.Android.Controls;
+using System.Linq;
+using CardsAgainstHumility.Android.ArrayAdapters;
 
 namespace CardsAgainstHumility.Android
 {
@@ -17,8 +21,10 @@ namespace CardsAgainstHumility.Android
         EditText gameNameTxt;
         EditText maxPlayersTxt;
         EditText pointsToWinTxt;
+        ListView decksList;
+        List<SelectableItem> decks;
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected async override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.CreateGameMenu);
@@ -27,6 +33,8 @@ namespace CardsAgainstHumility.Android
             gameNameTxt = FindViewById<EditText>(Resource.Id.cg_txtGameName);
             maxPlayersTxt = FindViewById<EditText>(Resource.Id.cg_txtMaxPlayers);
             pointsToWinTxt = FindViewById<EditText>(Resource.Id.cg_txtPointsToWin);
+            decksList = FindViewById<ListView>(Resource.Id.cg_deckList);
+
             var gameNameLbl = FindViewById<TextView>(Resource.Id.cg_lblGameName);
             var maxPlayersLbl = FindViewById<TextView>(Resource.Id.cg_lblMaxPlayers);
             var pointsToWinLbl = FindViewById<TextView>(Resource.Id.cg_lblPointsToWin);
@@ -46,6 +54,7 @@ namespace CardsAgainstHumility.Android
             maxPlayersTxt.Text = "10";
             pointsToWinTxt.Text = "10";
 
+            startBtn.Enabled = false;
             startBtn.Click += async delegate
             {
                 try
@@ -57,6 +66,21 @@ namespace CardsAgainstHumility.Android
                     ShowAlert("Unexpected Error", ex.Message);
                 }
             };
+
+            Task.Run(async () =>
+            {
+                var deckTitles = await CardsAgainstHumility.GetDecks();
+                RunOnUiThread(() =>
+                {
+                    decks = deckTitles.Select(c => new SelectableItem()
+                    {
+                        IsSelected = true,
+                        Text = c
+                    }).ToList();
+                    decksList.Adapter = new SelectionListArrayAdapter(this, decks);
+                    startBtn.Enabled = true;
+                });
+            }).Wait();
         }
 
         private async Task CreateGame()
@@ -79,7 +103,7 @@ namespace CardsAgainstHumility.Android
                 }
                 if ((maxPlayers >= 3) && (pointsToWin >= 5))
                 {
-                    var gid = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId(), gameNameTxt.Text, maxPlayers, pointsToWin);
+                    var gid = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId(), gameNameTxt.Text, decks.Where(c => c.IsSelected).Select(c => c.Text).ToList(), maxPlayers, pointsToWin);
                     CardsAgainstHumility.JoinGame(gid).Wait();
                     StartActivity(typeof(GameActivity));
                     Finish();

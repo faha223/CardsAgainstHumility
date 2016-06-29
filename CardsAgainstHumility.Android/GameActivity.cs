@@ -10,13 +10,13 @@ using Android.Widget;
 
 using CardsAgainstHumility.Android.ArrayAdapters;
 using CardsAgainstHumility.Android.Controls;
+using CardsAgainstHumility.Android.UIHelpers;
 using CardsAgainstHumility.Events;
 using CardsAgainstHumility.GameClasses;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CardsAgainstHumility.Android.UIHelpers;
 
 namespace CardsAgainstHumility.Android
 {

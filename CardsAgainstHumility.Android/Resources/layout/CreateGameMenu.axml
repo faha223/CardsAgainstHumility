@@ -75,4 +75,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/cg_txtPointsToWin" />
     </LinearLayout>
+    <ListView
+        android:id="@+id/cg_deckList"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/cg_lPointsToWin"
+        android:layout_above="@id/cg_btnStart" />
 </RelativeLayout>

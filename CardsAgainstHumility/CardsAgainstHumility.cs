@@ -258,19 +258,31 @@ namespace CardsAgainstHumility
             return instances;
         }
 
-        public static async Task<string> Add(string id)
+        public static async Task<List<string>> GetDecks()
         {
-            return await Add(id, $"{PlayerName}'s Game", 10, 5);
+            var json = await NetServices.JsonRequestAsync(Method.GET, Host, "decks", null).ConfigureAwait(false);
+            return JsonConvert.DeserializeObject<List<string>>(json);
         }
 
-        public static async Task<string> Add(string id, string gameName, int maxPlayers, int pointsToWin)
+        public static async Task<string> Add(string id)
         {
+            return await Add(id, $"{PlayerName}'s Game", null, 10, 5);
+        }
+
+        public static async Task<string> Add(string id, string gameName, List<string> decks, int maxPlayers, int pointsToWin)
+        {
+            // Do NOT pass an empty list
+            if (decks != null)
+                if (decks.Count == 0)
+                    decks = null;
+
             var param = new
             {
                 name = gameName,
                 id = id,
                 maxPlayers = maxPlayers,
-                pointsToWin = pointsToWin
+                pointsToWin = pointsToWin,
+                decks = decks
             };
             string value = await NetServices.JsonRequestAsync(Method.POST, Host, "add", param).ConfigureAwait(false);
 

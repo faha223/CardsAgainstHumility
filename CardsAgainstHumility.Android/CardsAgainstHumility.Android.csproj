@@ -90,6 +90,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArrayAdapters\SelectionListArrayAdapter.cs" />
+    <Compile Include="Controls\SelectableItem.cs" />
     <Compile Include="CreateGameActivity.cs" />
     <Compile Include="GameActivity.cs" />
     <Compile Include="GameBrowserActivity.cs" />
@@ -140,6 +142,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\RoundWinnerAnnouncement.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\SelectableItem.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
