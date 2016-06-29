@@ -35,6 +35,8 @@ namespace CardsAgainstHumility.Android
         PlayerArrayAdapter PlayerArrayAdapter;
         DrawerLayout _drawer;
         bool WinnerAlertShown = false;
+        bool isDrawerOpen = false;
+        bool doubleBackToExitPressedOnce = false;
         View CurrentQuestionView;
         View SelectedAnswerView;
 
@@ -142,6 +144,7 @@ namespace CardsAgainstHumility.Android
             _drawer = FindViewById<DrawerLayout>(Resource.Id.gv_drawer);
             _drawer.DrawerOpened += (sender, args) =>
             {
+                isDrawerOpen = true;
                 _drawer.Invalidate();
             };
 
@@ -168,6 +171,28 @@ namespace CardsAgainstHumility.Android
             CardsAgainstHumility.Game_SocketConnectTimeout += OnSocketConnectTimeout;
             CardsAgainstHumility.Game_Update += OnUpdateGame;
             CardsAgainstHumility.Game_Error += OnGameError;
+        }
+
+        public override void OnBackPressed()
+        {
+            if (isDrawerOpen)
+            {
+                _drawer.CloseDrawers();
+                isDrawerOpen = false;
+            }
+            else if (doubleBackToExitPressedOnce)
+            {
+                base.OnBackPressed();
+            }
+            else
+            {
+                doubleBackToExitPressedOnce = true;
+                Toast.MakeText(this, "Plase press BACK again to Leave the Game", ToastLength.Short).Show();
+                new Handler().PostDelayed(() =>
+                {
+                    doubleBackToExitPressedOnce = false;
+                }, 2000);
+            }
         }
 
         protected override void OnDestroy()

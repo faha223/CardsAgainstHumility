@@ -79,6 +79,39 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
+        private bool winnerModalShown;
+        public bool WinnerModalShown
+        {
+            get
+            {
+                return winnerModalShown;
+            }
+            set
+            {
+                if (winnerModalShown != value)
+                {
+                    winnerModalShown = value;
+                    OnPropertyChanged("WinnerModalShown");
+                }
+            }
+        }
+
+        private bool showWinnerModal;
+        public bool ShowWinnerModal
+        {
+            get
+            {
+                return showWinnerModal;
+            }
+            set
+            {
+                if (showWinnerModal != value)
+                {
+                    showWinnerModal = value;
+                    OnPropertyChanged("ShowWinnerModal");
+                }
+            }
+        }
 
         private ObservableCollection<WhiteCard> _playerHand;
         public ObservableCollection<WhiteCard> PlayerHand
@@ -214,6 +247,40 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
+        private string winnerModalText;
+        public string WinnerModalText
+        {
+            get
+            {
+                return winnerModalText;
+            }
+            set
+            {
+                if (winnerModalText != value)
+                {
+                    winnerModalText = value;
+                    OnPropertyChanged("WinnerModalText");
+                }
+            }
+        }
+
+        private WhiteCard winningCard;
+        public WhiteCard WinningCard
+        {
+            get
+            {
+                return winningCard;
+            }
+            set
+            {
+                if (winningCard != value)
+                {
+                    winningCard = value;
+                    OnPropertyChanged("WinningCard");
+                }
+            }
+        }
+
         #endregion Properties
 
         #region Ready Command
@@ -221,6 +288,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
         internal void Ready()
         {
             CardsAgainstHumility.ReadyForNextRound();
+            WinnerModalShown = false;
         }
 
         private bool CanReady()
@@ -261,6 +329,22 @@ namespace CardsAgainstHumility.WP8.ViewModels
 
         #endregion Confirm Command
 
+        #region Close Winner Modal Command
+
+        internal void CloseWinnerModal()
+        {
+            ShowWinnerModal = false;
+        }
+
+        private bool CanCloseWinnerModal()
+        {
+            return ShowWinnerModal;
+        }
+
+        public ICommand CloseWinnerModalCommand { get { return new ParameterlessCommandRouter(CloseWinnerModal, CanCloseWinnerModal); } }
+
+        #endregion Close Winner Modal Command
+
         public GameViewModel() : base()
         {
             PlayerHand = new ObservableCollection<WhiteCard>();
@@ -273,7 +357,30 @@ namespace CardsAgainstHumility.WP8.ViewModels
             UpdateCurrentQuestion();
             UpdateStatusText();
             UpdatePlayerList();
+            UpdateRoundWinnerModal();
         }
+
+        public bool BackButtonPressed()
+        {
+            if (WinnerModalShown)
+            {
+                CloseWinnerModal();
+                return true;
+            }
+            if (IsPlayerListOpen)
+            {
+                CloseDrawer?.Invoke(this, null);
+                return true;
+            }
+            return false;
+        }
+
+        public void SetDrawerLayoutOpen(bool open)
+        {
+            IsPlayerListOpen = open;
+        }
+
+        public event EventHandler CloseDrawer;
 
         private void UpdateGame(object sender, GameUpdateEventArgs args)
         {
@@ -284,6 +391,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
                 UpdateConfirmedWhiteCard();
                 UpdateStatusText();
                 UpdatePlayerList();
+                UpdateRoundWinnerModal();
                 OnPropertyChanged("ReadyCommand");
                 OnPropertyChanged("ConfirmCommand");
             });
@@ -404,6 +512,22 @@ namespace CardsAgainstHumility.WP8.ViewModels
             else
                 Players.Clear();
             foreach (var p in CardsAgainstHumility.Players) { Players.Add(p); }
+        }
+
+        private void UpdateRoundWinnerModal()
+        {
+            if (!CardsAgainstHumility.IsCardCzar && CardsAgainstHumility.ReadyForReview && !CardsAgainstHumility.IsReady && !WinnerModalShown)
+            {
+                WinnerModalShown = true;
+                _showWinnerModal();
+            }
+        }
+
+        private void _showWinnerModal()
+        {
+            WinnerModalText = $"{(CardsAgainstHumility.RoundWinner == CardsAgainstHumility.PlayerName ? "You" : CardsAgainstHumility.RoundWinner)} Won";
+            WinningCard = new WhiteCard(CardsAgainstHumility.WinningCard, 20);
+            ShowWinnerModal = true;
         }
     }
 }

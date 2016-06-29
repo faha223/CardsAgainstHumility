@@ -203,5 +203,43 @@
                 </Border>
             </Grid>
         </controls:DrawerLayout>
+        <Border Background="#D0000000" Visibility="{Binding ShowWinnerModal, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid Margin="10">
+                <TextBlock Foreground="#c0c0c0" 
+                       Text="{Binding WinnerModalText}"
+                       FontSize="26" 
+                       FontFamily="{StaticResource CustomFontHelvetica}" 
+                       VerticalAlignment="Top" 
+                       HorizontalAlignment="Center"/>
+                <Grid VerticalAlignment="Top"
+                  DataContext="{Binding CurrentQuestion}"
+                  Visibility="{Binding Path=DataContext.CurrentQuestion, ElementName=LayoutRoot, Converter={StaticResource IsNullToVisibilityConverter}}"
+                  HorizontalAlignment="Center"
+                  Margin="0,65,0,0">
+                    <Border Width="312" Height="436" Background="#080808" CornerRadius="16" Margin="2" BorderBrush="#161616" BorderThickness="1">
+                        <TextBlock x:Name="wm_bc_Text"
+                               Text="{Binding Text}" 
+                               Foreground="#FFFFFE" 
+                               Margin="26"
+                               VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                               FontFamily="{StaticResource CustomFontHelvetica}"
+                               TextWrapping="Wrap"
+                               FontSize="{Binding FontSize, Converter={StaticResource FontSizeScaler}}"
+                               FontWeight="Bold"/>
+                    </Border>
+                </Grid>
+                <ContentPresenter ContentTemplate="{StaticResource WhiteCardTemplate}" 
+                              Content="{Binding WinningCard}" 
+                              Visibility="{Binding Path=DataContext.WinningCard, ElementName=LayoutRoot, Converter={StaticResource IsNullToVisibilityConverter}}"
+                              VerticalAlignment="Top"
+                              HorizontalAlignment="Center"
+                              Margin="0,100,0,0">
+                    <ContentPresenter.RenderTransform>
+                        <TranslateTransform X="0" Y="{Binding ElementName=wm_bc_Text, Path=ActualHeight, Mode=OneWay, FallbackValue=0}" />
+                    </ContentPresenter.RenderTransform>
+                </ContentPresenter>
+                <Button Command="{Binding CloseWinnerModalCommand}" Style="{StaticResource ButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Top">X</Button>
+            </Grid>
+        </Border>
     </Grid>
 </phone:PhoneApplicationPage>

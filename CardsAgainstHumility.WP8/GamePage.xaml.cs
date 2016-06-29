@@ -3,6 +3,7 @@ using Microsoft.Phone.Controls;
 using CardsAgainstHumility.WP8.ViewModels;
 using Microsoft.Xna.Framework.Input.Touch;
 using System.Windows.Input;
+using System.ComponentModel;
 
 namespace CardsAgainstHumility.WP8
 {
@@ -16,6 +17,20 @@ namespace CardsAgainstHumility.WP8
             _drawerLayout.InitializeDrawerLayout();
 
             vm = new GameViewModel();
+            _drawerLayout.DrawerOpened += sender =>
+            {
+                vm.SetDrawerLayoutOpen(true);
+            };
+
+            _drawerLayout.DrawerClosed += sender =>
+            {
+                vm.SetDrawerLayoutOpen(false);
+            };
+
+            vm.CloseDrawer += (sender, args) =>
+            {
+                _drawerLayout.CloseDrawer();
+            };
 
             DataContext = vm;
 
@@ -60,6 +75,16 @@ namespace CardsAgainstHumility.WP8
         bool IsClosePlayerListGesture(GestureSample gesture)
         {
             return (gesture.Delta.X < 0);
+        }
+
+        protected override void OnBackKeyPress(CancelEventArgs e)
+        {
+            if (vm.BackButtonPressed())
+            {
+                e.Cancel = true;
+                return;
+            }
+            base.OnBackKeyPress(e);
         }
     }
 }
