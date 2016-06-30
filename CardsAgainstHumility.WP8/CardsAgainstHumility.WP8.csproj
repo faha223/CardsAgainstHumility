@@ -101,6 +101,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DrawerLayout.cs" />
+    <Compile Include="ViewModels\SelectableItem.cs" />
     <Compile Include="CreateGamePage.xaml.cs">
       <DependentUpon>CreateGamePage.xaml</DependentUpon>
     </Compile>

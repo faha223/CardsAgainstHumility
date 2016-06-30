@@ -17,6 +17,11 @@
             <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}">
                 <Setter Property="TextAlignment" Value="Right" />
             </Style>
+            <DataTemplate x:Key="SelectableItemTemplate">
+                <CheckBox IsChecked="{Binding IsSelected}">
+                    <TextBlock Text="{Binding Text}" Style="{StaticResource TextBlockStyle}" />
+                </CheckBox>
+            </DataTemplate>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" MinWidth="160" />
@@ -27,6 +32,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <TextBlock Text="Game Name" Margin="5,0" />
         <TextBlock Text="Max Players" Grid.Row="1" Margin="5,0" />
@@ -34,12 +40,16 @@
         <TextBox Text="{Binding GameName}" Grid.Column="1" />
         <TextBox Text="{Binding MaxPlayers}" Grid.Row="1" Grid.Column="1" InputScope="Number" />
         <TextBox Text="{Binding MaxScore}" Grid.Row="2" Grid.Column="1" InputScope="Number" />
+        <ListBox ItemsSource="{Binding Decks}" 
+                 ItemTemplate="{StaticResource SelectableItemTemplate}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                 Grid.Row="3"
+                 Grid.ColumnSpan="2"/>
         <Button Command="{Binding StartGameCommand}" 
                 Style="{StaticResource ButtonStyle}"
                 VerticalAlignment="Bottom" 
                 HorizontalAlignment="Stretch" 
                 Grid.ColumnSpan="2" 
-                Grid.Row="3">START GAME</Button>
+                Grid.Row="4">START GAME</Button>
     </Grid>
 
 </phone:PhoneApplicationPage>

@@ -1,5 +1,8 @@
 ﻿using CardsAgainstHumility.WP8.MVVM_Helpers;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Windows.Input;
 
 namespace CardsAgainstHumility.WP8.ViewModels
@@ -57,11 +60,29 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
+        private List<SelectableItem> _decks;
+        public List<SelectableItem> Decks
+        {
+            get
+            {
+                return _decks;
+            }
+            set
+            {
+                if (_decks != value)
+                {
+                    _decks = value;
+                    OnPropertyChanged("Decks");
+                }
+            }
+        }
+
         #region Start Game Command
 
         internal async void StartGame()
         {
-            var gid = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId(), GameName, MaxPlayers, MaxScore);
+            List<string> decks = Decks.Where(c => c.IsSelected).Select(c => c.Text).ToList();
+            var gid = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId(), GameName, decks, MaxPlayers, MaxScore);
             await CardsAgainstHumility.JoinGame(gid);
             navService.Navigate(new Uri("/GamePage.xaml", UriKind.Relative));
         }
@@ -74,5 +95,30 @@ namespace CardsAgainstHumility.WP8.ViewModels
         public ICommand StartGameCommand { get { return new ParameterlessCommandRouter(StartGame, CanStartGame); } }
 
         #endregion Start Game Command
+
+        public CreateGameViewModel() : base()
+        {
+            Decks = new List<SelectableItem>(0);
+            Thread thd = new Thread(async () =>
+            {
+                List<string> deckNames = await CardsAgainstHumility.GetDecks();
+                dispatcher.BeginInvoke(() =>
+                {
+                    try
+                    {
+                        Decks = deckNames.Select(c => new SelectableItem()
+                        {
+                            IsSelected = true,
+                            Text = c
+                        }).ToList();
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                });
+            });
+            thd.Start();
+        }
     }
 }
