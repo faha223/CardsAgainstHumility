@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using CardsAgainstHumility.Android.Controls;
 using System.Linq;
 using CardsAgainstHumility.Android.ArrayAdapters;
+using System.Threading;
 
 namespace CardsAgainstHumility.Android
 {
@@ -22,6 +23,7 @@ namespace CardsAgainstHumility.Android
         EditText maxPlayersTxt;
         EditText pointsToWinTxt;
         ListView decksList;
+        TextView decksListStatus;
         List<SelectableItem> decks;
 
         protected async override void OnCreate(Bundle savedInstanceState)
@@ -34,6 +36,7 @@ namespace CardsAgainstHumility.Android
             maxPlayersTxt = FindViewById<EditText>(Resource.Id.cg_txtMaxPlayers);
             pointsToWinTxt = FindViewById<EditText>(Resource.Id.cg_txtPointsToWin);
             decksList = FindViewById<ListView>(Resource.Id.cg_deckList);
+            decksListStatus = FindViewById<TextView>(Resource.Id.cg_deckListStatus);
 
             var gameNameLbl = FindViewById<TextView>(Resource.Id.cg_lblGameName);
             var maxPlayersLbl = FindViewById<TextView>(Resource.Id.cg_lblMaxPlayers);
@@ -67,7 +70,7 @@ namespace CardsAgainstHumility.Android
                 }
             };
 
-            Task.Run(async () =>
+            var thd = new Thread(async () =>
             {
                 var deckTitles = await CardsAgainstHumility.GetDecks();
                 RunOnUiThread(() =>
@@ -77,10 +80,12 @@ namespace CardsAgainstHumility.Android
                         IsSelected = true,
                         Text = c
                     }).ToList();
+                    decksListStatus.Text = $"{deckTitles.Count} Decks Available";
                     decksList.Adapter = new SelectionListArrayAdapter(this, decks);
                     startBtn.Enabled = true;
                 });
-            }).Wait();
+            });
+            thd.Start();
         }
 
         private async Task CreateGame()
