@@ -9,6 +9,7 @@
     xmlns:gc="clr-namespace:CardsAgainstHumility.GameClasses;assembly=CardsAgainstHumility"
     xmlns:converters="clr-namespace:CardsAgainstHumility.WP8.ValueConverters"
     xmlns:controls="clr-namespace:DrawerLayout"
+    xmlns:bindings="clr-namespace:CardsAgainstHumility.WP8"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="15"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -130,8 +131,43 @@
                   HorizontalAlignment="Center"
                   Margin="0,65,0,0">
                     <Border Width="312" Height="436" Background="#080808" CornerRadius="16" Margin="2" BorderBrush="#161616" BorderThickness="1">
-                        <TextBlock x:Name="bc_Text"
-                               Text="{Binding Text}" 
+                        <Grid>
+                            <ContentPresenter Name="PART_LogoPresenter" 
+                                      HorizontalAlignment="Left" 
+                                      VerticalAlignment="Bottom"
+                                      Margin="15,0,0,10">
+                                <Canvas Height="26">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <ContentPresenter>
+                                            <Canvas Height="17.5" Width="35">
+                                                <Rectangle Width="13.125" Height="13.125" Fill="{StaticResource cardColor_Black}" Stroke="{StaticResource cardColor_White}" StrokeThickness="0.25" Margin="0,0,0,0">
+                                                    <Rectangle.RenderTransform>
+                                                        <RotateTransform Angle="-15" CenterX="5.675" CenterY="6.5625" />
+                                                    </Rectangle.RenderTransform>
+                                                </Rectangle>
+                                                <Rectangle Width="13.125" Height="13.125" Fill="{StaticResource cardColor_White}" Stroke="{StaticResource cardColor_Black}" StrokeThickness="0.25" Margin="6,1.5,0,-1" />
+                                                <Rectangle Width="13.125" Height="13.125" Fill="{StaticResource cardColor_White}" Stroke="{StaticResource cardColor_Black}" StrokeThickness="0.25" Margin="9,1.5,0,0">
+                                                    <Rectangle.RenderTransform>
+                                                        <TransformGroup>
+                                                            <RotateTransform Angle="15" CenterX="5.675" CenterY="6.5625" />
+                                                        </TransformGroup>
+                                                    </Rectangle.RenderTransform>
+                                                </Rectangle>
+                                            </Canvas>
+                                            <ContentPresenter.RenderTransform>
+                                                <ScaleTransform ScaleX="1.3" ScaleY="1.3" />
+                                            </ContentPresenter.RenderTransform>
+                                        </ContentPresenter>
+                                        <TextBlock Text="{StaticResource GameTitle}" 
+                                                   FontFamily="{StaticResource CustomFontHelvetica}"
+                                                   FontSize="12" 
+                                                   VerticalAlignment="Bottom" 
+                                                   Foreground="{StaticResource cardColor_White}" />
+                                    </StackPanel>
+                                </Canvas>
+                            </ContentPresenter>
+                            <TextBlock x:Name="bc_Text"
+                               bindings:GamePage.InlineList="{Binding Text, Converter={StaticResource TextBlockInlineConvertor}}"
                                Foreground="#FFFFFE" 
                                Margin="26"
                                VerticalAlignment="Top" HorizontalAlignment="Stretch"
@@ -139,6 +175,7 @@
                                TextWrapping="Wrap"
                                FontSize="{Binding FontSize, Converter={StaticResource FontSizeScaler}}"
                                FontWeight="Bold"/>
+                        </Grid>
                     </Border>
                 </Grid>
                 <ContentPresenter ContentTemplate="{StaticResource WhiteCardTemplate}" 
