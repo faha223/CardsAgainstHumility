@@ -73,17 +73,34 @@ namespace CardsAgainstHumility.Android
 
             var thd = new Thread(async () =>
             {
-                var deckTitles = await CardsAgainstHumility.GetDecks();
+                string error = null;
+                List<string> deckTitles = null;
+                try
+                {
+                    deckTitles = await CardsAgainstHumility.GetDecks();
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Error getting deck titles: {0}", ex.Message);
+                    error = "Connection Error";
+                }
                 RunOnUiThread(() =>
                 {
-                    decks = deckTitles.Select(c => new SelectableItem()
+                    if (error == null)
                     {
-                        IsSelected = true,
-                        Text = c
-                    }).ToList();
-                    decksListStatus.Text = $"{deckTitles.Count} Decks Available";
-                    decksList.Adapter = new SelectionListArrayAdapter(this, decks);
-                    startBtn.Enabled = true;
+                        decks = deckTitles.Select(c => new SelectableItem()
+                        {
+                            IsSelected = true,
+                            Text = c
+                        }).ToList();
+                        decksListStatus.Text = $"{deckTitles.Count} Decks Available";
+                        decksList.Adapter = new SelectionListArrayAdapter(this, decks);
+                        startBtn.Enabled = true;
+                    }
+                    else
+                    {
+                        decksListStatus.Text = error;
+                    }
                 });
             });
             thd.Start();
