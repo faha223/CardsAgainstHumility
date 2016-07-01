@@ -1,4 +1,5 @@
 ﻿using CardsAgainstHumility.WP8.MVVM_Helpers;
+using CardsAgainstHumility.WP8.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,11 +95,14 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
+        SettingsLoader settings;
+
         #region Start Game Command
 
         internal async void StartGame()
         {
             List<string> decks = Decks.Where(c => c.IsSelected).Select(c => c.Text).ToList();
+            settings.SavePreferredDecks(decks);
             var gid = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId(), GameName, decks, MaxPlayers, MaxScore);
             await CardsAgainstHumility.JoinGame(gid);
             navService.Navigate(new Uri("/GamePage.xaml", UriKind.Relative));
@@ -116,6 +120,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
         public CreateGameViewModel() : base()
         {
             Decks = new List<SelectableItem>(0);
+            settings = new SettingsLoader();
             LoadDecksStatus = "Refreshing Decks";
             Thread thd = new Thread(async () =>
             {
@@ -124,9 +129,10 @@ namespace CardsAgainstHumility.WP8.ViewModels
                 {
                     try
                     {
+                        var preferredDecks = settings.GetPreferredDecks(deckNames);
                         Decks = deckNames.Select(c => new SelectableItem()
                         {
-                            IsSelected = true,
+                            IsSelected = preferredDecks.Contains(c),
                             Text = c
                         }).ToList();
                         LoadDecksStatus = $"{deckNames.Count} Decks Available";

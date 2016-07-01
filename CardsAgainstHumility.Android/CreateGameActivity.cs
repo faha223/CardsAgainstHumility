@@ -12,6 +12,7 @@ using CardsAgainstHumility.Android.Controls;
 using System.Linq;
 using CardsAgainstHumility.Android.ArrayAdapters;
 using System.Threading;
+using CardsAgainstHumility.Android.Settings;
 
 namespace CardsAgainstHumility.Android
 {
@@ -25,11 +26,13 @@ namespace CardsAgainstHumility.Android
         ListView decksList;
         TextView decksListStatus;
         List<SelectableItem> decks;
+        SettingsLoader settings;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.CreateGameMenu);
+            settings = new SettingsLoader(this);
 
             startBtn = FindViewById<Button>(Resource.Id.cg_btnStart);
             gameNameTxt = FindViewById<EditText>(Resource.Id.cg_txtGameName);
@@ -88,9 +91,10 @@ namespace CardsAgainstHumility.Android
                 {
                     if (error == null)
                     {
+                        var preferredDecks = settings.GetPreferredDecks(deckTitles);
                         decks = deckTitles.Select(c => new SelectableItem()
                         {
-                            IsSelected = true,
+                            IsSelected = preferredDecks.Contains(c),
                             Text = c
                         }).ToList();
                         decksListStatus.Text = $"{deckTitles.Count} Decks Available";
@@ -126,7 +130,9 @@ namespace CardsAgainstHumility.Android
                 }
                 if ((maxPlayers >= 3) && (pointsToWin >= 5))
                 {
-                    var gid = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId(), gameNameTxt.Text, decks.Where(c => c.IsSelected).Select(c => c.Text).ToList(), maxPlayers, pointsToWin);
+                    var selectedDecks = decks.Where(c => c.IsSelected).Select(c => c.Text).ToList();
+                    settings.SavePreferredDecks(selectedDecks);
+                    var gid = await CardsAgainstHumility.Add(CardsAgainstHumility.NewId(), gameNameTxt.Text, selectedDecks, maxPlayers, pointsToWin);
                     CardsAgainstHumility.JoinGame(gid).Wait();
                     StartActivity(typeof(GameActivity));
                     Finish();

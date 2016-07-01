@@ -4,5 +4,6 @@
     {
         public static readonly string playerNameKey = "PlayerName";
         public static readonly string serverAddressKey = "ServerAddress";
+        public static readonly string preferredDecksKey = "PreferredDecks";
     }
 }
