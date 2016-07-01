@@ -27,8 +27,8 @@
                 <Setter Property="TextAlignment" Value="Right" />
             </Style>
             <DataTemplate x:Key="SelectableItemTemplate">
-                <Border BorderBrush="#DDDDDD" BorderThickness="0,0,0,1" Background="Transparent">
-                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Content="{Binding Text}" Style="{StaticResource CheckBoxStyle}" Margin="10" />
+                <Border BorderBrush="#484848" BorderThickness="0,0,0,1" Background="Transparent">
+                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" Content="{Binding Text}" Style="{StaticResource CheckBoxStyle}" Margin="6" />
                 </Border>
             </DataTemplate>
         </Grid.Resources>

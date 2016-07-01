@@ -84,17 +84,19 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Border BorderBrush="#DDDDDD" Background="Transparent" BorderThickness="2" CornerRadius="2" Margin="5">
-                                <Border Name="PART_Highlight" Background="#545454" BorderBrush="Transparent" BorderThickness="2" Height="32" Width="32">
-                                    <Canvas Width="32" Height="32" Canvas.Left="0" Canvas.Top="0">
-                                        <Path x:Name="PART_Check" Visibility="Collapsed"  Width="24.7917" Height="19.375" Canvas.Left="2" Canvas.Top="6" Data="F1 M 10.3333,10.25L 20.0833,0.5L 24.2917,4.70833L 10.125,18.875L 0.5,9.25L 4.91667,4.83333L 10.3333,10.25 Z " StrokeLineJoin="Round" StrokeThickness="0">
-                                            <Path.Fill>
-                                                <LinearGradientBrush StartPoint="0.5,1.17458" EndPoint="0.5,-0.174583">
+                                <Border Name="PART_Highlight" Background="#545454" BorderBrush="Transparent" BorderThickness="2" Height="40" Width="40">
+                                    <Canvas Width="40" Height="40" Canvas.Left="0" Canvas.Top="0">
+                                        <Path x:Name="PART_Check" Visibility="Collapsed" Width="21.1667" Height="14.9167" Canvas.Left="8" Canvas.Top="9" Stretch="Fill" Data="M 6.93864,15.3134L 13.6053,21.9801L 26.3553,8.39673" StrokeThickness="4" StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeMiterLimit="2.75">
+                                            <Path.Stroke>
+                                                <LinearGradientBrush StartPoint="0.5,0.606145" EndPoint="0.5,0.259777">
                                                     <LinearGradientBrush.GradientStops>
                                                         <GradientStop Color="#FF71C53B" Offset="0"/>
-                                                        <GradientStop Color="#FFD3FF71" Offset="1"/>
+                                                        <GradientStop Color="#FF89D14A" Offset="0.30672"/>
+                                                        <GradientStop Color="#FFA1DD5A" Offset="0.607306"/>
+                                                        <GradientStop Color="#FFC3E37C" Offset="1"/>
                                                     </LinearGradientBrush.GradientStops>
                                                 </LinearGradientBrush>
-                                            </Path.Fill>
+                                            </Path.Stroke>
                                         </Path>
                                     </Canvas>
                                 </Border>

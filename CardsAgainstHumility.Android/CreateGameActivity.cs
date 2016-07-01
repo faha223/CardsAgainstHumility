@@ -26,7 +26,7 @@ namespace CardsAgainstHumility.Android
         TextView decksListStatus;
         List<SelectableItem> decks;
 
-        protected async override void OnCreate(Bundle savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.CreateGameMenu);
@@ -51,6 +51,7 @@ namespace CardsAgainstHumility.Android
                 gameNameLbl.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
                 maxPlayersLbl.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
                 pointsToWinLbl.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
+                decksListStatus.SetTypeface(UIAssets.AppFont, TypefaceStyle.Normal);
             }
 
             gameNameTxt.Text = $"{CardsAgainstHumility.PlayerName}'s Game";
