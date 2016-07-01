@@ -77,6 +77,23 @@ namespace CardsAgainstHumility.WP8.ViewModels
             }
         }
 
+        private string loadDecksStatus;
+        public string LoadDecksStatus
+        {
+            get
+            {
+                return loadDecksStatus;
+            }
+            set
+            {
+                if (loadDecksStatus != value)
+                {
+                    loadDecksStatus = value;
+                    OnPropertyChanged("LoadDecksStatus");
+                }
+            }
+        }
+
         #region Start Game Command
 
         internal async void StartGame()
@@ -99,6 +116,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
         public CreateGameViewModel() : base()
         {
             Decks = new List<SelectableItem>(0);
+            LoadDecksStatus = "Refreshing Decks";
             Thread thd = new Thread(async () =>
             {
                 List<string> deckNames = await CardsAgainstHumility.GetDecks();
@@ -111,6 +129,7 @@ namespace CardsAgainstHumility.WP8.ViewModels
                             IsSelected = true,
                             Text = c
                         }).ToList();
+                        LoadDecksStatus = $"{deckNames.Count} Decks Available";
                     }
                     catch(Exception ex)
                     {
