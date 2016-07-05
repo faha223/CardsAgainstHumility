@@ -12,7 +12,7 @@
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="True">
-    <Grid x:Name="LayoutRoot" Background="#282828">
+    <Grid x:Name="LayoutRoot" Background="#232323">
         <Grid.Resources>
             <Style TargetType="TextBlock" BasedOn="{StaticResource TextBlockStyle}">
                 <Setter Property="TextAlignment" Value="Right" />

@@ -45,7 +45,7 @@
         </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
 
-    <Grid Background="#282828">
+    <Grid Background="#232323">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />

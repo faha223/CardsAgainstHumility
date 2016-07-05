@@ -118,7 +118,7 @@
     </phone:PhoneApplicationPage.Resources>
     <Grid x:Name="LayoutRoot">
         <controls:DrawerLayout x:Name="_drawerLayout">
-            <Grid x:Name="MainLayout" Background="#303030">
+            <Grid x:Name="MainLayout" Background="#232323">
                 <TextBlock Foreground="#c0c0c0" 
                        Text="{Binding Status}"
                        FontSize="26" 
@@ -211,7 +211,7 @@
                     Visibility="{Binding Path=IsEnabled, ElementName=btnConfirm, Converter={StaticResource BooleanToVisibilityConverter}}">CONFIRM</Button>
             </Grid>
             <Grid x:Name="Drawer">
-                <Border Background="#282828" 
+                <Border Background="#232323" 
                         Width="300"
                         HorizontalAlignment="Left" 
                         VerticalAlignment="Stretch">

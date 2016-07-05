@@ -15,7 +15,7 @@ namespace CardsAgainstHumility.WP8
             CardsAgainstHumility.InitDefaultValues(new SettingsLoader(), new NetServices.NetServices());
 
             vm = new MainViewModel();
-            DataContext = vm;
+            LayoutRoot.DataContext = vm;
 
             Loaded += delegate
             {
