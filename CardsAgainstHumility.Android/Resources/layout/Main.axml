@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#282828">
+    android:background="#232323">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
@@ -17,30 +17,47 @@
             android:layout_height="wrap_content"
             android:textSize="48dp"
             android:layout_marginTop="-10dp"
-            android:textColor="#FFFFFE"
+            android:textColor="#FFFFFF"
             android:id="@+id/main_logo1" />
         <TextView
             android:text="Against"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="48dp"
-            android:layout_marginTop="-30dp"
-            android:textColor="#FFFFFE"
+            android:layout_marginTop="-32dp"
+            android:textColor="#FFFFFF"
             android:id="@+id/main_logo2" />
         <TextView
             android:text="Humility"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="48dp"
-            android:layout_marginTop="-30dp"
+            android:layout_marginTop="-32dp"
             android:textColor="#FFFFFE"
             android:id="@+id/main_logo3" />
+        <TextView
+            android:text="A party game"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:layout_marginTop="0dp"
+            android:textColor="#FFFFFF"
+            android:id="@+id/main_logo4" />
+        <TextView
+            android:text="for horrible people."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:layout_marginTop="-10dp"
+            android:textColor="#FFFFFF"
+            android:id="@+id/main_logo5" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
         android:gravity="center"
         android:id="@+id/main_uiList"
         android:orientation="vertical">

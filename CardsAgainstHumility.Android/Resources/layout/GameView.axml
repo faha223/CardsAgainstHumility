@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
-        android:background="#282828">
+        android:background="#232323">
         <include
             layout="@layout/BlackCard"
             android:id="@+id/gv_CurrentQuestion"
@@ -72,7 +72,7 @@
     <RelativeLayout
         android:layout_width="240dp"
         android:layout_height="match_parent"
-        android:background="#282828"
+        android:background="#232323"
         android:layout_gravity="start">
         <TextView
             android:id="@+id/gv_GameName"

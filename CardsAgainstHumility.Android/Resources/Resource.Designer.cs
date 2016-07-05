@@ -180,23 +180,23 @@ namespace CardsAgainstHumility.Android
 			// aapt resource value: 0x7f05001d
 			public const int gv_playerListBtn = 2131034141;
 			
-			// aapt resource value: 0x7f050032
-			public const int is_Selected = 2131034162;
+			// aapt resource value: 0x7f050034
+			public const int is_Selected = 2131034164;
 			
-			// aapt resource value: 0x7f050033
-			public const int is_Text = 2131034163;
-			
-			// aapt resource value: 0x7f050026
-			public const int main_btnCreateGame = 2131034150;
-			
-			// aapt resource value: 0x7f050027
-			public const int main_btnJoinGame = 2131034151;
-			
-			// aapt resource value: 0x7f050029
-			public const int main_btnQuitGame = 2131034153;
+			// aapt resource value: 0x7f050035
+			public const int is_Text = 2131034165;
 			
 			// aapt resource value: 0x7f050028
-			public const int main_btnSettings = 2131034152;
+			public const int main_btnCreateGame = 2131034152;
+			
+			// aapt resource value: 0x7f050029
+			public const int main_btnJoinGame = 2131034153;
+			
+			// aapt resource value: 0x7f05002b
+			public const int main_btnQuitGame = 2131034155;
+			
+			// aapt resource value: 0x7f05002a
+			public const int main_btnSettings = 2131034154;
 			
 			// aapt resource value: 0x7f050021
 			public const int main_logo = 2131034145;
@@ -211,61 +211,67 @@ namespace CardsAgainstHumility.Android
 			public const int main_logo3 = 2131034148;
 			
 			// aapt resource value: 0x7f050025
-			public const int main_uiList = 2131034149;
+			public const int main_logo4 = 2131034149;
 			
-			// aapt resource value: 0x7f05002d
-			public const int p_Name = 2131034157;
+			// aapt resource value: 0x7f050026
+			public const int main_logo5 = 2131034150;
 			
-			// aapt resource value: 0x7f05002b
-			public const int p_aPoints = 2131034155;
-			
-			// aapt resource value: 0x7f05002a
-			public const int p_isCzar = 2131034154;
-			
-			// aapt resource value: 0x7f05002c
-			public const int p_ready = 2131034156;
-			
-			// aapt resource value: 0x7f050034
-			public const int s_btnSave = 2131034164;
-			
-			// aapt resource value: 0x7f050035
-			public const int s_lPlayerName = 2131034165;
-			
-			// aapt resource value: 0x7f050038
-			public const int s_lServerAddress = 2131034168;
-			
-			// aapt resource value: 0x7f050036
-			public const int s_lblPlayerName = 2131034166;
-			
-			// aapt resource value: 0x7f050039
-			public const int s_lblServerAddress = 2131034169;
-			
-			// aapt resource value: 0x7f050037
-			public const int s_txtPlayerName = 2131034167;
-			
-			// aapt resource value: 0x7f05003a
-			public const int s_txtServerAddress = 2131034170;
-			
-			// aapt resource value: 0x7f05003b
-			public const int wc_CardText = 2131034171;
-			
-			// aapt resource value: 0x7f05003c
-			public const int wc_logo_image = 2131034172;
-			
-			// aapt resource value: 0x7f05003d
-			public const int wc_logo_text = 2131034173;
+			// aapt resource value: 0x7f050027
+			public const int main_uiList = 2131034151;
 			
 			// aapt resource value: 0x7f05002f
-			public const int wm_BlackCard = 2131034159;
+			public const int p_Name = 2131034159;
 			
-			// aapt resource value: 0x7f050030
-			public const int wm_WhiteCard = 2131034160;
+			// aapt resource value: 0x7f05002d
+			public const int p_aPoints = 2131034157;
+			
+			// aapt resource value: 0x7f05002c
+			public const int p_isCzar = 2131034156;
 			
 			// aapt resource value: 0x7f05002e
-			public const int wm_Winner = 2131034158;
+			public const int p_ready = 2131034158;
+			
+			// aapt resource value: 0x7f050036
+			public const int s_btnSave = 2131034166;
+			
+			// aapt resource value: 0x7f050037
+			public const int s_lPlayerName = 2131034167;
+			
+			// aapt resource value: 0x7f05003a
+			public const int s_lServerAddress = 2131034170;
+			
+			// aapt resource value: 0x7f050038
+			public const int s_lblPlayerName = 2131034168;
+			
+			// aapt resource value: 0x7f05003b
+			public const int s_lblServerAddress = 2131034171;
+			
+			// aapt resource value: 0x7f050039
+			public const int s_txtPlayerName = 2131034169;
+			
+			// aapt resource value: 0x7f05003c
+			public const int s_txtServerAddress = 2131034172;
+			
+			// aapt resource value: 0x7f05003d
+			public const int wc_CardText = 2131034173;
+			
+			// aapt resource value: 0x7f05003e
+			public const int wc_logo_image = 2131034174;
+			
+			// aapt resource value: 0x7f05003f
+			public const int wc_logo_text = 2131034175;
 			
 			// aapt resource value: 0x7f050031
-			public const int wm_closeBtn = 2131034161;
+			public const int wm_BlackCard = 2131034161;
+			
+			// aapt resource value: 0x7f050032
+			public const int wm_WhiteCard = 2131034162;
+			
+			// aapt resource value: 0x7f050030
+			public const int wm_Winner = 2131034160;
+			
+			// aapt resource value: 0x7f050033
+			public const int wm_closeBtn = 2131034163;
 			
 			static Id()
 			{
@@ -334,6 +340,9 @@ namespace CardsAgainstHumility.Android
 			
 			// aapt resource value: 0x7f040000
 			public const int Hello = 2130968576;
+			
+			// aapt resource value: 0x7f040002
+			public const int Motto = 2130968578;
 			
 			static String()
 			{

@@ -2,4 +2,5 @@
 <resources>
     <string name="Hello">Hello World, Click Me!</string>
     <string name="ApplicationName">CardsAgainstHumility</string>
+  <string name="Motto">A party game<br/>for horrible people.</string>
 </resources>
